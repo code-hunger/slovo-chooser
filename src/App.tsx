@@ -7,7 +7,11 @@ import TextEditor from "./TextEditor";
 import { CardEditor } from "./CardEditor";
 import * as UnknownWordsList from "./UnknownWordsList";
 import { Word, NumberedWordView, NumberedWord, Clickable } from "./Word";
-import { TextClickStrategy } from "./TextClickStrategies";
+import {
+  ContextSelector,
+  UnknownWordSelector,
+  TextClickStrategy
+} from "./TextClickStrategies";
 
 import exportToCsv from "./exportToCSV";
 
@@ -78,6 +82,20 @@ class AppClass extends React.Component<AppProps> {
     exportToCsv("anki_export.csv", csvArray);
   }
 
+  provideWordSelectControls = () => {
+    store.dispatch({
+      type: "SET_TEXT_CLICK_STRATEGY",
+      strategy: UnknownWordSelector
+    });
+  };
+
+  provideContextSelectControls = () => {
+    store.dispatch({
+      type: "SET_TEXT_CLICK_STRATEGY",
+      strategy: ContextSelector
+    });
+  };
+
   render() {
     const editedMarked = this.props.editedMarked,
       words = this.props.words;
@@ -122,7 +140,11 @@ class AppClass extends React.Component<AppProps> {
             selectedUnknown={selectedUnknown}
             notSelectedUnknown={notSelectedUnknown}
             contextString={contextString}
-            clickStrategy={this.props.textClickStrategy}
+            provideWordSelectControls={this.provideWordSelectControls}
+            provideContextSelectControls={this.provideContextSelectControls}
+            isSelectingContext={
+              this.props.textClickStrategy === ContextSelector
+            }
             switchToNextChunk={this.switchToNextChunk}
             words={marked}
             onSave={this.props.onCardSave}

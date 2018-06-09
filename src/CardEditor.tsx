@@ -1,11 +1,6 @@
 import * as React from "react";
 import { Word, NumberedWord, NumberedWordView } from "./Word";
 import { WordCollector } from "./WordCollector";
-import {
-  ContextSelector,
-  UnknownWordSelector,
-  TextClickStrategy
-} from "./TextClickStrategies";
 
 import * as _ from "lodash";
 import store from "./store";
@@ -13,13 +8,16 @@ import store from "./store";
 interface Props {
   readonly selectedUnknown: number[];
   readonly notSelectedUnknown: number[];
-  readonly clickStrategy: TextClickStrategy;
   readonly onSave: (obj: any) => void;
   readonly words: Word[];
   readonly contextString: string;
 
   readonly switchToNextChunk: () => void;
   readonly chunkId: number;
+
+  isSelectingContext: boolean;
+  provideWordSelectControls: () => void;
+  provideContextSelectControls: () => void;
 }
 
 interface State {
@@ -87,7 +85,7 @@ export class CardEditor extends React.Component<Props, State> {
       this.state.unknownFieldMeaning === newState.unknownFieldMeaning &&
       this.state.dictionarySearch === newState.dictionarySearch &&
       this.props.contextString === nextProps.contextString &&
-      this.props.clickStrategy === nextProps.clickStrategy
+      this.props.isSelectingContext === nextProps.isSelectingContext
     );
   }
 
@@ -241,26 +239,16 @@ export class CardEditor extends React.Component<Props, State> {
                         Choose context sentence for <em>{dictionarySearch}</em>:
                         <p id="contextStringParagraph">
                           {this.props.contextString || "No context selected"}
-                          {this.props.clickStrategy !== ContextSelector ||
+                          {!this.props.isSelectingContext ||
                           !this.props.contextString ? (
                             <button
-                              onClick={() =>
-                                store.dispatch({
-                                  type: "SET_TEXT_CLICK_STRATEGY",
-                                  strategy: ContextSelector
-                                })
-                              }
+                              onClick={this.props.provideContextSelectControls}
                             >
                               Select context words
                             </button>
                           ) : (
                             <button
-                              onClick={() =>
-                                store.dispatch({
-                                  type: "SET_TEXT_CLICK_STRATEGY",
-                                  strategy: UnknownWordSelector
-                                })
-                              }
+                              onClick={this.props.provideWordSelectControls}
                             >
                               Done
                             </button>
