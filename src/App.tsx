@@ -69,16 +69,12 @@ class AppClass extends React.Component<AppProps> {
         responseType: "json"
       })
       .then(({ data: { text, chunkId } }) =>
-        this.props.setText(
-          text || (alert("No text from server"), ""),
-          chunkId
-        )
+        this.props.setText(text || (alert("No text from server"), ""), chunkId)
       );
   }
 
   generateCsvFile() {
     const csvArray = _.flatMap(this.props.savedChunks).map(_.values);
-    console.log(csvArray);
     exportToCsv("anki_export.csv", csvArray);
   }
 
@@ -106,13 +102,6 @@ class AppClass extends React.Component<AppProps> {
           .reduce((str, { word }) => str + " " + word, ""))(
         this.props.contextBoundaries
       );
-
-    console.log(
-      "saved chunks: ",
-      this.props.savedChunks,
-      "saved words: ",
-      this.props.savedWords
-    );
 
     return (
       <>

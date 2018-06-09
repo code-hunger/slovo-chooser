@@ -171,7 +171,7 @@ function chunkIdReducer(chunkId: number | undefined, action: WordAction) {
 }
 
 function savedChunksReducer(
-  savedChunks: SavedChunks ,
+  savedChunks: SavedChunks,
   action: WordAction,
   chunkId: number = 0
 ) {
@@ -204,10 +204,16 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
       marked: markedWordsReducer(undefined, action),
       editedMarked: editedMarkedReducer(undefined, action),
       // @TODO fix style
-      savedChunks: savedChunksReducer(JSON.parse(localStorage.getItem('savedChunks') || "{}"), action),
+      savedChunks: savedChunksReducer(
+        JSON.parse(localStorage.getItem("savedChunks") || "{}"),
+        action
+      ),
       chunkId: chunkIdReducer(undefined, action),
 
-      savedWords: savedWordsReducer(JSON.parse(localStorage.getItem('savedWords') || "[]"), action),
+      savedWords: savedWordsReducer(
+        JSON.parse(localStorage.getItem("savedWords") || "[]"),
+        action
+      )
     };
   return <WordState>{
     words: textWordsReducer(wordState.words, action),
