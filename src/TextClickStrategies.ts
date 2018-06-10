@@ -3,23 +3,26 @@ import { Dispatch } from "react-redux";
 import { State, WordAction } from "./store";
 
 export interface TextClickStrategy {
-  onWordClick(wordId: number, dispatch: Dispatch<WordAction>): void;
-  onContextMenu(wordId: number, dispatch: Dispatch<WordAction>): void;
+  onWordClick(wordId: number): void;
+  onContextMenu(wordId: number): void;
 }
 
-export const UnknownWordSelector = {
-  onWordClick(wordId: number, dispatch: Dispatch<State>) {
-    dispatch({ type: "WORD_CLICKED", word: wordId });
+export const UnknownWordSelector = (dispatch: Dispatch<State>) => ({
+  onWordClick(wordId: number) {
+    dispatch({ type: "WORD_CLICKED", word: wordId } as WordAction);
   },
   onContextMenu(wordId: number) {
     return;
   }
-};
+});
 
-export const ContextSelector = {
+export const ContextSelector = (
+  dispatch: Dispatch<State>,
+  wordCount: number
+) => ({
   start: 0,
-  length: 30,
-  onWordClick(wordId: number, dispatch: Dispatch<State>) {
+  length: wordCount,
+  onWordClick(wordId: number) {
     if (!_.isNumber(this.start)) {
       this.start = wordId;
       return;
@@ -50,4 +53,4 @@ export const ContextSelector = {
   onContextMenu(wordId: number) {
     return;
   }
-};
+});

@@ -1,13 +1,12 @@
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { State, WordAction } from "./store";
-import { TextClickStrategy, ContextSelector } from "./TextClickStrategies";
 
 import { NumberedWord, NumberedWordView } from "./Word";
 import { WordCollector, WordCollectorProps } from "./WordCollector";
 import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
 
-type TextEditorProps = PropsFromState & PropsFromDispatch & PropsFromOutside;
+type TextEditorProps = PropsFromState & PropsFromOutside;
 
 interface TextEditorState {
   words: NumberedWord[];
@@ -33,7 +32,7 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
       <div
         className={
           "textEditor " +
-          (this.props.clickStrategy === ContextSelector ? "selectContext" : " ")
+          (this.props.className)
         }
       >
         <KeyboardSelectableContainer
@@ -54,36 +53,22 @@ const mapStateToProps = ({ wordState: { words, contextBoundaries } }) => ({
   contextBoundaries
 });
 
-const mapDispatchToProps = (
-  dispatch: Dispatch<State>,
-  ownProps: TextEditorProps
-): PropsFromDispatch => ({
-  onWordClick(wordId: number) {
-    ownProps.clickStrategy.onWordClick(wordId, dispatch);
-  },
-  onContextMenu(wordId: number) {
-    ownProps.clickStrategy.onWordClick(wordId, dispatch);
-  }
-});
-
 interface PropsFromState {
   readonly words: NumberedWord[];
   readonly contextBoundaries: { start: number; length: number };
 }
 
-interface PropsFromDispatch {
-  onWordClick(wordId: number);
-  onContextMenu(wordId: number);
-}
-
 interface PropsFromOutside {
+  className: string;
   tabIndex: number;
   emptyText: string;
+
   wordType: React.ComponentClass | React.StatelessComponent;
-  clickStrategy: TextClickStrategy;
+
+  onWordClick: (wordId: number) => void;
+  onContextMenu: (wordId: number) => void;
 }
 
-export default connect<PropsFromState, PropsFromDispatch, PropsFromOutside>(
-  mapStateToProps,
-  mapDispatchToProps
-)(TextEditor);
+export default connect<PropsFromState, void, PropsFromOutside>(mapStateToProps)(
+  TextEditor
+);

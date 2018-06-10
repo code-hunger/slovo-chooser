@@ -64,7 +64,12 @@ class DictionaryView extends React.Component<DictionaryProps> {
   }
 }
 
-class AppClass extends React.Component<AppProps, any> {
+interface AppState {
+  textClickStrategy: TextClickStrategy;
+  isSelectingContext: boolean;
+}
+
+class AppClass extends React.Component<AppProps, AppState> {
   private chunkRetriever: ChunkRetriever;
 
   constructor(props: AppProps) {
@@ -79,7 +84,10 @@ class AppClass extends React.Component<AppProps, any> {
       this
     );
 
-    this.state = { textClickStrategy: UnknownWordSelector };
+    this.state = {
+      textClickStrategy: UnknownWordSelector(store.dispatch),
+      isSelectingContext: false
+    };
   }
 
   switchToNextChunk() {
@@ -98,15 +106,22 @@ class AppClass extends React.Component<AppProps, any> {
     exportToCsv("anki_export.csv", csvArray);
   }
 
-  provideWordSelectControls = () => {
-    console.log('word selcct');
-    this.setState({ textClickStrategy: UnknownWordSelector });
-  };
+  provideWordSelectControls() {
+    this.setState({
+      textClickStrategy: UnknownWordSelector(store.dispatch),
+      isSelectingContext: false
+    });
+  }
 
-  provideContextSelectControls = () => {
-    console.log('context selcct');
-    this.setState({ textClickStrategy: ContextSelector });
-  };
+  provideContextSelectControls() {
+    this.setState({
+      textClickStrategy: ContextSelector(
+        store.dispatch,
+        this.props.words.length
+      ),
+      isSelectingContext: true
+    });
+  }
 
   render() {
     const editedMarked = this.props.editedMarked,
@@ -142,7 +157,16 @@ class AppClass extends React.Component<AppProps, any> {
             tabIndex={0}
             emptyText="Loading text..."
             wordType={TextWord}
-            clickStrategy={this.state.textClickStrategy}
+            onWordClick={this.state.textClickStrategy.onWordClick.bind(
+              this.state.textClickStrategy
+            )}
+            onContextMenu={this.state.textClickStrategy.onContextMenu.bind(
+              this.state.textClickStrategy
+            )}
+            className={
+              "textEditor " +
+              (this.state.isSelectingContext ? "selectContext" : " ")
+            }
           />
 
           <h3>Marked unknown:</h3>
@@ -154,9 +178,7 @@ class AppClass extends React.Component<AppProps, any> {
             contextString={contextString}
             provideWordSelectControls={this.provideWordSelectControls}
             provideContextSelectControls={this.provideContextSelectControls}
-            isSelectingContext={
-              this.state.textClickStrategy === ContextSelector
-            }
+            isSelectingContext={this.state.isSelectingContext}
             switchToNextChunk={this.switchToNextChunk}
             words={marked}
             onSave={this.props.onCardSave}
