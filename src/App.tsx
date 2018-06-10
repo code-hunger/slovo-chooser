@@ -85,8 +85,11 @@ class AppClass extends React.Component<AppProps, AppState> {
 
     this.chunkRetriever
       .getNextChunk(chunkId)
-      .then(({ data: { text, chunkId } }) =>
-        this.props.setText(text || (alert("No text from server"), ""), chunkId)
+      .then(({ data: { text, chunkId: newChunkId } }) =>
+        this.props.setText(
+          text || (alert("No text from server"), ""),
+          newChunkId
+        )
       );
   }
 
