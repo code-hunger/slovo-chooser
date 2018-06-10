@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Word, NumberedWord, NumberedWordView } from "./Word";
 import { WordCollector } from "./WordCollector";
+import UnknownField from "./UnknownFieldInput";
 
 import * as _ from "lodash";
-import store from "./store";
+import store, { WordAction } from "./store";
 
 interface Props {
   readonly selectedUnknown: number[];
@@ -14,7 +15,7 @@ interface Props {
 
   readonly switchToNextChunk: () => void;
   readonly chunkId: number;
-  readonly dictionary: React.ComponentClass<{word: string}>;
+  readonly dictionary: React.ComponentClass<{ word: string }>;
 
   isSelectingContext: boolean;
   provideWordSelectControls: () => void;
@@ -27,32 +28,12 @@ interface State {
   readonly dictionarySearch: string;
 }
 
-function cleanOldWords(unknownField: string, oldWords: string[]) {
-  return oldWords.reduce((str, word) => str.replace(word, ""), unknownField);
-}
-
-function updateFieldWithNewHints(
-  field: string,
-  removedWords: string[],
-  addedWords: string[]
-) {
-  return [
-    cleanOldWords(field, removedWords)
-      .replace(/\s{2,}/, " ")
-      .trim()
-  ]
-    .concat(addedWords.filter(w => !field.includes(w))) // add words only if not already there
-    .join(" ")
-    .trim();
-}
-
 export class CardEditor extends React.Component<Props, State> {
   static MIN_WORD_LENGTH = 3;
 
   constructor(props: Props) {
     super(props);
     this.onchange = this.onchange.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
     this.loadDictionary = this.loadDictionary.bind(this);
     this.onSave = this.onSave.bind(this);
     this.resetState = this.resetState.bind(this);
@@ -89,69 +70,18 @@ export class CardEditor extends React.Component<Props, State> {
       // New text chunk; reset state
       this.resetState();
     }
-
-    const newHints = nextProps.selectedUnknown,
-      oldHints = this.props.selectedUnknown;
-
-    const wordedOld = oldHints.map(hint => this.props.words[hint].word),
-      wordedNew = newHints.map(hint => nextProps.words[hint].word);
-
-    // Could be optimized, but no need for that
-    const addedWords = _.difference(wordedNew, wordedOld),
-      removedWords = _.difference(wordedOld, wordedNew);
-
-    if (addedWords.length || removedWords.length) {
-      this.setState(({ unknownField }) => ({
-        unknownField: updateFieldWithNewHints(
-          unknownField,
-          removedWords,
-          addedWords
-        )
-      }));
-    }
   }
 
   onchange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     switch (e.target.name) {
-      case "unknownField":
-        const selectedUnknown = this.props.selectedUnknown,
-          notSelectedUnknown = this.props.notSelectedUnknown,
-          unknownField = e.target.value;
-
-        this.setState({ unknownField });
-
-        const hasWord = id => unknownField.includes(this.props.words[id].word);
-        const removedSelectedUnknown = selectedUnknown.filter(
-          _.negate(hasWord)
-        );
-        const addedSelectedUnknown = notSelectedUnknown.filter(hasWord);
-
-        if (removedSelectedUnknown.length || addedSelectedUnknown.length) {
-          store.dispatch({
-            type: "TOGGLE_EDITED_UNKNOWN_WORDS",
-            added: addedSelectedUnknown,
-            removed: removedSelectedUnknown
-          });
-        }
-        break;
       case "unknownFieldMeaning":
         const unknownFieldMeaning = e.target.value;
         this.setState({ unknownFieldMeaning });
     }
   }
 
-  onKeyDown(e: any) {
-    switch (e.target.name) {
-      case "unknownField":
-        if (e.keyCode === 13) this.loadDictionary();
-        break;
-      case "unknownFieldMeaning":
-        break;
-    }
-  }
-
-  loadDictionary() {
-    this.setState(state => ({ dictionarySearch: state.unknownField }));
+  loadDictionary(value: string) {
+    this.setState({ dictionarySearch: value, unknownField: value });
   }
 
   onContextWordSelect(wordId: number) {
@@ -183,23 +113,29 @@ export class CardEditor extends React.Component<Props, State> {
     return (
       <div className="cardEditor">
         {[
-          <>
-            <input
-              key="unknownField"
-              name="unknownField"
-              value={this.state.unknownField}
-              onChange={this.onchange}
-              onKeyDown={this.onKeyDown}
-            />
-            {this.state.unknownField.length >= CardEditor.MIN_WORD_LENGTH ? (
-              <button onClick={this.loadDictionary}>Find in dictionary</button>
-            ) : null}
-          </>,
+          <UnknownField
+            words={this.props.words}
+            usedHints={this.props.selectedUnknown}
+            unusedHints={this.props.notSelectedUnknown}
+            minLength={CardEditor.MIN_WORD_LENGTH}
+            toggleHints={(added, removed) =>
+              store.dispatch({
+                type: "TOGGLE_EDITED_UNKNOWN_WORDS",
+                added,
+                removed
+              } as WordAction)
+            }
+            key="unknownField"
+            onReady={this.loadDictionary}
+          />,
           ...(dictionarySearch.length > CardEditor.MIN_WORD_LENGTH
             ? [
                 <>
                   Dictionary results for <strong>{dictionarySearch}</strong>:
-                  <this.props.dictionary word={dictionarySearch} key="dictionary" />
+                  <this.props.dictionary
+                    word={dictionarySearch}
+                    key="dictionary"
+                  />
                 </>,
                 <>
                   Choose meaning from the dictionaries:
