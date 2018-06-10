@@ -4,6 +4,7 @@ import "./App.css";
 import TextEditor from "./TextEditor";
 import { CardEditor } from "./CardEditor";
 import * as UnknownWordsList from "./UnknownWordsList";
+import Dictionary from "./Dictionary";
 import { Word, NumberedWordView, NumberedWord, Clickable } from "./Word";
 import {
   ContextSelector,
@@ -51,18 +52,6 @@ const mapStateToTextWordProps = (
 const TextWord = connect<Word, null, { index: number }>(
   mapStateToTextWordProps
 )(NumberedWordView);
-
-// @TODO To be taken out
-interface DictionaryProps {
-  word: string;
-}
-
-class DictionaryView extends React.Component<DictionaryProps> {
-  render() {
-    const src = "http://localhost:3001/showdict?word=" + this.props.word;
-    return <iframe src={src} width="100%" />;
-  }
-}
 
 interface AppState {
   textClickStrategy: TextClickStrategy;
@@ -183,7 +172,7 @@ class AppClass extends React.Component<AppProps, AppState> {
             words={marked}
             onSave={this.props.onCardSave}
             chunkId={this.props.chunkId}
-            dictionary={DictionaryView}
+            dictionary={Dictionary}
           />
           <>{JSON.stringify(this.props.savedWords)}</>
           <>{JSON.stringify(this.props.savedChunks)}</>
