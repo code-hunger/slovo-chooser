@@ -79,12 +79,12 @@ class AppClass extends React.Component<AppProps, AppState> {
     };
   }
 
-  switchToNextChunk() {
+  switchToNextChunk(chunkId: number = 1 + this.props.chunkId) {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
 
     this.chunkRetriever
-      .getNextChunk()
+      .getNextChunk(chunkId)
       .then(({ data: { text, chunkId } }) =>
         this.props.setText(text || (alert("No text from server"), ""), chunkId)
       );
