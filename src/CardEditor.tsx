@@ -4,6 +4,7 @@ import { WordCollector } from "./WordCollector";
 import UnknownField from "./UnknownFieldInput";
 
 import * as _ from "lodash";
+import reactbind from 'react-bind-decorator';
 import store, { WordAction } from "./store";
 
 interface Props {
@@ -28,23 +29,15 @@ interface State {
   readonly dictionarySearch: string;
 }
 
+@reactbind()
 export class CardEditor extends React.Component<Props, State> {
   static MIN_WORD_LENGTH = 3;
 
-  constructor(props: Props) {
-    super(props);
-    this.onchange = this.onchange.bind(this);
-    this.loadDictionary = this.loadDictionary.bind(this);
-    this.onSave = this.onSave.bind(this);
-    this.resetState = this.resetState.bind(this);
-    this.trySwitchToNextChunk = this.trySwitchToNextChunk.bind(this);
-
-    this.state = {
-      unknownField: "",
-      unknownFieldMeaning: "",
-      dictionarySearch: ""
-    };
-  }
+  state = {
+    unknownField: "",
+    unknownFieldMeaning: "",
+    dictionarySearch: ""
+  };
 
   shouldComponentUpdate(nextProps: Props, newState: State) {
     return !(

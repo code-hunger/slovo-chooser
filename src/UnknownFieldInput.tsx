@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as _ from "lodash";
 import { Word, NumberedWord } from "./Word";
+import reactbind from 'react-bind-decorator';
 
 interface UnknownFieldProps {
   words: Word[];
@@ -36,19 +37,12 @@ function updateFieldWithNewHints(
     .trim();
 }
 
+@reactbind()
 export default class UnknownField extends React.Component<
   UnknownFieldProps,
   UnknownFieldState
 > {
   state = { value: "" };
-
-  constructor(props: UnknownFieldProps) {
-    super(props);
-
-    this.onReady = this.onReady.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.onChange = this.onChange.bind(this);
-  }
 
   onChange(e: React.ChangeEvent<HTMLInputElement>) {
     const usedHints = this.props.usedHints,
