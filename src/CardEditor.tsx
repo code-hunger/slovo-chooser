@@ -14,6 +14,7 @@ interface Props {
 
   readonly switchToNextChunk: () => void;
   readonly chunkId: number;
+  readonly dictionary: React.ComponentClass<{word: string}>;
 
   isSelectingContext: boolean;
   provideWordSelectControls: () => void;
@@ -43,20 +44,6 @@ function updateFieldWithNewHints(
     .concat(addedWords.filter(w => !field.includes(w))) // add words only if not already there
     .join(" ")
     .trim();
-}
-
-interface DictionaryProps {
-  word: string;
-}
-
-class DictionaryView extends React.Component<DictionaryProps> {
-  render() {
-    console.log("Dictionary render");
-    let src;
-    src = "https://slovored.com/search/all/" + this.props.word;
-    //src = "http://localhost:3001/showdict?word=" + this.props.word;
-    return <iframe src={src} width="100%" />;
-  }
 }
 
 export class CardEditor extends React.Component<Props, State> {
@@ -212,7 +199,7 @@ export class CardEditor extends React.Component<Props, State> {
             ? [
                 <>
                   Dictionary results for <strong>{dictionarySearch}</strong>:
-                  <DictionaryView word={dictionarySearch} key="dictionary" />
+                  <this.props.dictionary word={dictionarySearch} key="dictionary" />
                 </>,
                 <>
                   Choose meaning from the dictionaries:

@@ -52,8 +52,17 @@ const TextWord = connect<Word, null, { index: number }>(
   mapStateToTextWordProps
 )(NumberedWordView);
 
-type CSVRow = string[];
-type CSVRows = CSVRow[];
+// @TODO To be taken out
+interface DictionaryProps {
+  word: string;
+}
+
+class DictionaryView extends React.Component<DictionaryProps> {
+  render() {
+    const src = "http://localhost:3001/showdict?word=" + this.props.word;
+    return <iframe src={src} width="100%" />;
+  }
+}
 
 class AppClass extends React.Component<AppProps, any> {
   private chunkRetriever: ChunkRetriever;
@@ -152,6 +161,7 @@ class AppClass extends React.Component<AppProps, any> {
             words={marked}
             onSave={this.props.onCardSave}
             chunkId={this.props.chunkId}
+            dictionary={DictionaryView}
           />
           <>{JSON.stringify(this.props.savedWords)}</>
           <>{JSON.stringify(this.props.savedChunks)}</>
