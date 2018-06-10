@@ -2,7 +2,8 @@ import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { State, WordAction } from "./store";
 
-import { NumberedWord, NumberedWordView } from "./Word";
+import { NumberedWord } from "./Word";
+import TextWord from './EnhancedTextWord';
 import { WordCollector, WordCollectorProps } from "./WordCollector";
 import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
 
@@ -22,7 +23,7 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
     //@TODO move to constructor
     const wordCollectorProps: WordCollectorProps = {
       words: this.props.words,
-      wordType: this.props.wordType,
+      wordType: TextWord,
       tabIndex: this.props.tabIndex,
       onWordClick: this.props.onWordClick,
       onWordRightClick: this.props.onContextMenu
@@ -62,8 +63,6 @@ interface PropsFromOutside {
   className: string;
   tabIndex: number;
   emptyText: string;
-
-  wordType: React.ComponentClass | React.StatelessComponent;
 
   onWordClick: (wordId: number) => void;
   onContextMenu: (wordId: number) => void;

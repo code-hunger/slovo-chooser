@@ -5,7 +5,7 @@ import TextEditor from "./TextEditor";
 import { CardEditor } from "./CardEditor";
 import * as UnknownWordsList from "./UnknownWordsList";
 import Dictionary from "./Dictionary";
-import { Word, NumberedWordView, NumberedWord, Clickable } from "./Word";
+import { NumberedWord } from "./Word";
 import {
   ContextSelector,
   UnknownWordSelector,
@@ -20,7 +20,6 @@ import store, {
   State,
   ContextBoundaries,
   SavedChunks,
-  SavedWord,
   SavedWords
 } from "./store";
 
@@ -28,30 +27,6 @@ import { connect, Dispatch } from "react-redux";
 import * as _ from "lodash";
 
 type AppProps = AppStateProps & AppDispatchProps;
-
-function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
-  let start = contextBoundaries.start,
-    end = start + contextBoundaries.length;
-  return index >= start && index <= end;
-}
-
-const mapStateToTextWordProps = (
-  { wordState: { words, contextBoundaries, savedWords } }: State,
-  { index }: NumberedWord
-): Word => ({
-  word: words[index].word,
-  classNames: [
-    ...words[index].classNames,
-    ...(contextBoundaries && insideBoundaries(contextBoundaries, index)
-      ? ["boundary"]
-      : []),
-    ...(savedWords.indexOf(words[index].word) > -1 ? ["fade-word"] : [])
-  ]
-});
-
-const TextWord = connect<Word, null, { index: number }>(
-  mapStateToTextWordProps
-)(NumberedWordView);
 
 interface AppState {
   textClickStrategy: TextClickStrategy;
@@ -148,7 +123,6 @@ class AppClass extends React.Component<AppProps, AppState> {
           <TextEditor
             tabIndex={0}
             emptyText="Loading text..."
-            wordType={TextWord}
             onWordClick={this.state.textClickStrategy.onWordClick.bind(
               this.state.textClickStrategy
             )}
@@ -191,7 +165,7 @@ class AppClass extends React.Component<AppProps, AppState> {
 
 interface AppStateProps {
   words: NumberedWord[];
-  savedWords: any[];
+  savedWords: string[];
   savedChunks: SavedChunks;
   marked: number[];
   editedMarked: number[];
