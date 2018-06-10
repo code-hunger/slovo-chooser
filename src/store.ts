@@ -1,7 +1,6 @@
 import { createStore, combineReducers } from "redux";
 import update from "immutability-helper";
 import { NumberedWord } from "./Word";
-import { TextClickStrategy, UnknownWordSelector } from "./TextClickStrategies";
 import * as _ from "lodash";
 
 const emptyStrArr: string[] = [];
@@ -15,11 +14,7 @@ export type WordAction =
   | { type: "WORD_NUMBER_TYPED_RESET" }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORDS"; added: number[]; removed: number[] }
-  | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
-  | {
-      type: "SET_TEXT_CLICK_STRATEGY";
-      strategy: TextClickStrategy;
-    };
+  | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number };
 
 function textWordsReducer(
   words: ReadonlyArray<NumberedWord> = [],
@@ -237,22 +232,6 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
   };
 }
 
-function textClickStrategyReducer(
-  strategy: TextClickStrategy,
-  action: WordAction
-) {
-  if (_.isUndefined(strategy)) return UnknownWordSelector;
-
-  switch (action.type) {
-    case "SET_TEXT_CLICK_STRATEGY":
-      return action.strategy;
-    case "SAVE_WORD":
-      return UnknownWordSelector;
-    default:
-      return strategy;
-  }
-}
-
 export interface ContextBoundaries {
   start: number;
   length: number;
@@ -283,12 +262,10 @@ interface WordState {
 
 export interface State {
   wordState: WordState;
-  textClickStrategy: TextClickStrategy;
 }
 
 const reducers = combineReducers({
   wordState: wordStateReducer,
-  textClickStrategy: textClickStrategyReducer,
   keyboardControl: combineReducers({
     wordNumberTyped: wordNumberTypedReducer
   })

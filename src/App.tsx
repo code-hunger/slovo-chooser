@@ -61,6 +61,13 @@ class AppClass extends React.Component<AppProps> {
 
     this.generateCsvFile = this.generateCsvFile.bind(this);
     (this.switchToNextChunk = this.switchToNextChunk.bind(this))(props.chunkId);
+
+    this.provideWordSelectControls = this.provideWordSelectControls.bind(this);
+    this.provideContextSelectControls = this.provideContextSelectControls.bind(
+      this
+    );
+
+    this.state = { textClickStrategy: UnknownWordSelector };
   }
 
   switchToNextChunk(chunk: number = this.props.chunkId + 1) {
@@ -83,17 +90,13 @@ class AppClass extends React.Component<AppProps> {
   }
 
   provideWordSelectControls = () => {
-    store.dispatch({
-      type: "SET_TEXT_CLICK_STRATEGY",
-      strategy: UnknownWordSelector
-    });
+    console.log('word selcct');
+    this.setState({ textClickStrategy: UnknownWordSelector });
   };
 
   provideContextSelectControls = () => {
-    store.dispatch({
-      type: "SET_TEXT_CLICK_STRATEGY",
-      strategy: ContextSelector
-    });
+    console.log('context selcct');
+    this.setState({ textClickStrategy: ContextSelector });
   };
 
   render() {
@@ -130,7 +133,7 @@ class AppClass extends React.Component<AppProps> {
             tabIndex={0}
             emptyText="Loading text..."
             wordType={TextWord}
-            clickStrategy={this.props.textClickStrategy}
+            clickStrategy={this.state.textClickStrategy}
           />
 
           <h3>Marked unknown:</h3>
@@ -143,7 +146,7 @@ class AppClass extends React.Component<AppProps> {
             provideWordSelectControls={this.provideWordSelectControls}
             provideContextSelectControls={this.provideContextSelectControls}
             isSelectingContext={
-              this.props.textClickStrategy === ContextSelector
+              this.state.textClickStrategy === ContextSelector
             }
             switchToNextChunk={this.switchToNextChunk}
             words={marked}
@@ -169,7 +172,6 @@ interface AppStateProps {
   marked: number[];
   editedMarked: number[];
   contextBoundaries: ContextBoundaries;
-  textClickStrategy: TextClickStrategy;
 
   chunkId: number;
 }
@@ -188,15 +190,13 @@ const mapStateToProps = ({
     contextBoundaries,
     chunkId,
     savedChunks
-  },
-  textClickStrategy
-}): AppStateProps => ({
+  }
+}: State): AppStateProps => ({
   words,
   savedWords,
   marked,
   editedMarked,
   contextBoundaries,
-  textClickStrategy,
   chunkId,
   savedChunks
 });
