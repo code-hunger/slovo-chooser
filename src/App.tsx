@@ -1,8 +1,6 @@
 import * as React from "react";
 import "./App.css";
 
-import axios from "axios";
-
 import TextEditor from "./TextEditor";
 import { CardEditor } from "./CardEditor";
 import * as UnknownWordsList from "./UnknownWordsList";
@@ -14,6 +12,8 @@ import {
 } from "./TextClickStrategies";
 
 import exportToCsv from "./exportToCSV";
+
+import ChunkRetriever from "./ChunkRetriever";
 
 import store, {
   State,
@@ -55,10 +55,13 @@ const TextWord = connect<Word, null, { index: number }>(
 type CSVRow = string[];
 type CSVRows = CSVRow[];
 
-class AppClass extends React.Component<AppProps> {
+class AppClass extends React.Component<AppProps, any> {
+  private chunkRetriever: ChunkRetriever;
+
   constructor(props: AppProps) {
     super(props);
 
+    this.chunkRetriever = new ChunkRetriever(props.chunkId);
     this.generateCsvFile = this.generateCsvFile.bind(this);
     (this.switchToNextChunk = this.switchToNextChunk.bind(this))(props.chunkId);
 
@@ -70,15 +73,12 @@ class AppClass extends React.Component<AppProps> {
     this.state = { textClickStrategy: UnknownWordSelector };
   }
 
-  switchToNextChunk(chunk: number = this.props.chunkId + 1) {
+  switchToNextChunk() {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
 
-    axios
-      .get("/text", {
-        params: { chunk },
-        responseType: "json"
-      })
+    this.chunkRetriever
+      .getNextChunk()
       .then(({ data: { text, chunkId } }) =>
         this.props.setText(text || (alert("No text from server"), ""), chunkId)
       );

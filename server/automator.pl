@@ -54,7 +54,7 @@ get '/showdict' => sub {
 };
 
 get '/text' => sub {
-    my $lineWanted = request->params->{chunk} || 1;
+    my $lineWanted = request->params->{chunkId} || 1;
 
     # This should be taken from the request
     my ($filePath) = keys %$files;
