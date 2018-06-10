@@ -1,26 +1,29 @@
-// Copied from https://stackoverflow.com/a/24922761
-export default function exportToCsv(filename: string, rows: any[]) {
-  var processRow = function(row) {
-    var finalVal = "";
-    for (var j = 0; j < row.length; j++) {
-      var innerValue = row[j] === null ? "" : row[j].toString();
-      if (row[j] instanceof Date) {
-        innerValue = row[j].toLocaleString();
-      }
-      var result = innerValue.replace(/"/g, '""');
-      if (result.search(/("|,|\n)/g) >= 0) result = '"' + result + '"';
-      if (j > 0) finalVal += ",";
-      finalVal += result;
-    }
-    return finalVal + "\n";
-  };
+type Field = number | string | null | Date;
+type Row = Field[];
 
-  var csvFile = "";
-  for (var i = 0; i < rows.length; i++) {
-    csvFile += processRow(rows[i]);
-  }
+const fieldToString = (field: Field): string => {
+  if (field === null) return "";
 
-  var blob = new Blob([csvFile], { type: "text/csv;charset=utf-8;" });
+  const innerValue =
+    field instanceof Date ? field.toLocaleString() : field.toString();
+  const result = innerValue.replace(/"/g, '""');
+
+  if (result.search(/("|,|\n)/g) >= 0) return '"' + result + '"';
+  return result;
+};
+
+const processRow = (row: Row): string =>
+  row.reduce(
+    (finalVal, field, j) =>
+      finalVal + (j > 0 ? "," : "") + fieldToString(field),
+    ""
+  ) + "\n";
+
+export const convertToCsv = (rows: Row[]): string =>
+  rows.reduce((prev, row) => prev + processRow(row), "");
+
+export function exportToFile(filename: string, content: string) {
+  const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
   if (navigator.msSaveBlob) {
     // IE 10+
     navigator.msSaveBlob(blob, filename);
@@ -39,3 +42,6 @@ export default function exportToCsv(filename: string, rows: any[]) {
     }
   }
 }
+
+export default (fileName: string, rows: Row[]): void =>
+  exportToFile(fileName, convertToCsv(rows));
