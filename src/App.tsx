@@ -1,6 +1,7 @@
 import * as React from "react";
 import "./App.css";
 
+import TextSourceChooser from "./TextSourceChooser";
 import TextEditor from "./TextEditor";
 import { CardEditor } from "./CardEditor";
 import * as UnknownWordsList from "./UnknownWordsList";
@@ -33,6 +34,7 @@ type AppProps = AppStateProps & AppDispatchProps;
 interface AppState {
   textClickStrategy: TextClickStrategy;
   isSelectingContext: boolean;
+  textSourceId?: number;
 }
 
 @reactbind()
@@ -43,20 +45,20 @@ class AppClass extends React.Component<AppProps, AppState> {
     super(props);
 
     this.chunkRetriever = new ChunkRetriever(props.chunkId);
-    this.switchToNextChunk(props.chunkId);
 
     this.state = {
       textClickStrategy: UnknownWordSelector(store.dispatch),
-      isSelectingContext: false
+      isSelectingContext: false,
+      textSourceId: undefined
     };
   }
 
-  switchToNextChunk(chunkId: number = 1 + this.props.chunkId) {
+  switchToNextChunk(textSourceId, chunkId: number = 1 + this.props.chunkId) {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
 
     this.chunkRetriever
-      .getNextChunk(chunkId)
+      .getNextChunk(textSourceId, chunkId)
       .then(({ data: { text, chunkId: newChunkId } }) =>
         this.props.setText(
           text || (alert("No text from server"), ""),
@@ -87,6 +89,16 @@ class AppClass extends React.Component<AppProps, AppState> {
     });
   }
 
+  setTextSource(id: number) {
+    if (
+      !_.isUndefined(this.state.textSourceId) &&
+      this.state.textSourceId === id
+    )
+      return;
+
+    this.setState({ textSourceId: id }, () => this.switchToNextChunk(id));
+  }
+
   render() {
     const editedMarked = this.props.editedMarked,
       words = this.props.words;
@@ -114,6 +126,10 @@ class AppClass extends React.Component<AppProps, AppState> {
 
     return (
       <>
+        <TextSourceChooser
+          textSources={this.chunkRetriever.getOptions()}
+          setTextSource={this.setTextSource}
+        />
         <div className="App">
           <h3>Choose words to check meaning:</h3>
 
@@ -142,7 +158,10 @@ class AppClass extends React.Component<AppProps, AppState> {
             provideWordSelectControls={this.provideWordSelectControls}
             provideContextSelectControls={this.provideContextSelectControls}
             isSelectingContext={this.state.isSelectingContext}
-            switchToNextChunk={this.switchToNextChunk}
+            switchToNextChunk={this.switchToNextChunk.bind(
+              this,
+              this.state.textSourceId
+            )}
             words={marked}
             onSave={this.props.onCardSave}
             chunkId={this.props.chunkId}
