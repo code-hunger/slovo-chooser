@@ -171,3 +171,8 @@ body {
   -webkit-logical-height: 1em; /* Chrome ignores auto, so we have to use this hack to set the correct height  */
   -webkit-logical-width: auto; /* Chrome ignores auto, but here for completeness */
 }
+
+.anchor[disabled] {
+    color: #999;
+    text-decoration: none;
+}
