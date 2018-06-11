@@ -1,29 +1,30 @@
 import axios from "axios";
 
+type MyPr = Promise<{ data: { text: string; chunkId: number } }>;
+type Source = (chunkId: number) => MyPr;
+
 export default class ChunkRetriever {
   private cachedChunkId;
-  private sourses = [
-    chunkId => {
-      this.cachedChunkId = chunkId;
-      return axios.get("/text", {
-        params: { chunkId },
-        responseType: "json"
-      });
-    }
-  ];
+  private sourses: Source[] = [this.chunkFromLocalServer.bind(this)];
 
   constructor(cachedChunkId) {
     this.cachedChunkId = cachedChunkId;
   }
 
+  chunkFromLocalServer(chunkId: number): MyPr {
+    return axios.get("/text", {
+      params: { chunkId },
+      responseType: "json"
+    });
+  }
+
   getOptions() {
-    axios
-      .get("/status", { responseType: "json" })
-      .then(data => console.log(data));
+    axios.get("/status", { responseType: "json" }).then(({ data }) => {});
     return [{ id: 0, description: "Local server" }];
   }
 
-  getNextChunk(textSourceId: number, chunkId = this.cachedChunkId + 1) {
-    return this.sourses[textSourceId].call(this, chunkId);
+  getNextChunk(textSourceId: number, chunkId = this.cachedChunkId + 1): MyPr {
+    this.cachedChunkId = chunkId;
+    return this.sourses[textSourceId](chunkId);
   }
 }
