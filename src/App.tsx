@@ -20,9 +20,11 @@ import store, {
   State,
   ContextBoundaries,
   SavedChunks,
-  SavedWords
+  SavedWords,
+  SavedWord
 } from "./store";
 
+import reactbind from "react-bind-decorator";
 import { connect, Dispatch } from "react-redux";
 import * as _ from "lodash";
 
@@ -33,6 +35,7 @@ interface AppState {
   isSelectingContext: boolean;
 }
 
+@reactbind()
 class AppClass extends React.Component<AppProps, AppState> {
   private chunkRetriever: ChunkRetriever;
 
@@ -40,13 +43,7 @@ class AppClass extends React.Component<AppProps, AppState> {
     super(props);
 
     this.chunkRetriever = new ChunkRetriever(props.chunkId);
-    this.generateCsvFile = this.generateCsvFile.bind(this);
-    (this.switchToNextChunk = this.switchToNextChunk.bind(this))(props.chunkId);
-
-    this.provideWordSelectControls = this.provideWordSelectControls.bind(this);
-    this.provideContextSelectControls = this.provideContextSelectControls.bind(
-      this
-    );
+    this.switchToNextChunk(props.chunkId);
 
     this.state = {
       textClickStrategy: UnknownWordSelector(store.dispatch),
@@ -175,7 +172,7 @@ interface AppStateProps {
 }
 
 interface AppDispatchProps {
-  onCardSave: (obj: any) => void;
+  onCardSave: (obj: SavedWord) => void;
   setText: (text: string, chunkId: number) => void;
 }
 
@@ -200,7 +197,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<State>): AppDispatchProps => ({
-  onCardSave(obj: any) {
+  onCardSave(obj: SavedWord) {
     dispatch({ type: "SAVE_WORD", obj });
   },
   setText(text: string, chunkId: number) {

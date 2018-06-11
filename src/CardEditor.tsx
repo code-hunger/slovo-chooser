@@ -5,12 +5,12 @@ import UnknownField from "./UnknownFieldInput";
 
 import * as _ from "lodash";
 import reactbind from 'react-bind-decorator';
-import store, { WordAction } from "./store";
+import store, { WordAction, SavedWord } from "./store";
 
 interface Props {
   readonly selectedUnknown: number[];
   readonly notSelectedUnknown: number[];
-  readonly onSave: (obj: any) => void;
+  readonly onSave: (obj: SavedWord) => void;
   readonly words: Word[];
   readonly contextString: string;
 

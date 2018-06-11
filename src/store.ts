@@ -9,7 +9,7 @@ const emptyNumArr: number[] = [];
 export type WordAction =
   | { type: "SET_TEXT"; text: string; chunkId: number }
   | { type: "WORD_CLICKED"; word: number }
-  | { type: "SAVE_WORD"; obj: any }
+  | { type: "SAVE_WORD"; obj: SavedWord }
   | { type: "WORD_NUMBER_SET"; number: number }
   | { type: "WORD_NUMBER_TYPED_RESET" }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
