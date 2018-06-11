@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as _ from "lodash";
 
-type MyPr = Promise<{ data: { text: string; chunkId: number } }>;
+type MyPr = Promise<{ text: string; newId: number }>;
 interface Source {
   fetch: (chunkId: number) => MyPr;
   description: string;
@@ -26,10 +26,15 @@ export default class ChunkRetriever {
     });
 
   chunkFromLocalServer(file: string, chunkId: number): MyPr {
-    return axios.get("/text", {
-      params: { chunkId, file },
-      responseType: "json"
-    });
+    return axios
+      .get("/text", {
+        params: { chunkId, file },
+        responseType: "json"
+      })
+      .then(({ data }) => {
+        this.cachedChunkId = data.newChunkId;
+        return { text: data.text, newId: data.chunkId };
+      });
   }
 
   getOptions() {
