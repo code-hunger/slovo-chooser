@@ -129,6 +129,7 @@ class AppClass extends React.Component<AppProps, AppState> {
         <TextSourceChooser
           textSources={this.chunkRetriever.getOptions()}
           setTextSource={this.setTextSource}
+          currentSourceId={this.state.textSourceId}
         />
         <div className="App">
           <h3>Choose words to check meaning:</h3>

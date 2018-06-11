@@ -9,6 +9,7 @@ interface TextSource {
 interface Props {
   textSources: TextSource[];
   setTextSource: (id: number) => void;
+  currentSourceId?: number;
 }
 
 interface State {}
@@ -23,6 +24,7 @@ export default class TextSourceChooser extends React.Component<Props, State> {
           {this.props.textSources.map(x => (
             <li>
               <button
+                disabled={x.id === this.props.currentSourceId}
                 className="anochor"
                 onClick={() => this.props.setTextSource(x.id)}
               >
