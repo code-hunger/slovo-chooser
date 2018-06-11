@@ -31,10 +31,18 @@ export default class ChunkRetriever {
         params: { chunkId, file },
         responseType: "json"
       })
-      .then(({ data }) => {
-        this.cachedChunkId = data.newChunkId;
-        return { text: data.text, newId: data.chunkId };
-      });
+      .then(
+        ({ data }) => {
+          this.cachedChunkId = data.newChunkId;
+          return { text: data.text, newId: data.chunkId };
+        },
+        error => {
+          if(error.response) {
+            throw error.response.data.error;
+          }
+          throw "Unknown error happened";
+        }
+      );
   }
 
   getOptions() {
