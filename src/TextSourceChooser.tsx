@@ -22,10 +22,10 @@ export default class TextSourceChooser extends React.Component<Props, State> {
         Choose a text source:
         <ul>
           {this.props.textSources.map(x => (
-            <li>
+            <li key={x.id}>
               <button
                 disabled={x.id === this.props.currentSourceId}
-                className="anochor"
+                className="anchor"
                 onClick={() => this.props.setTextSource(x.id)}
               >
                 {x.description}
