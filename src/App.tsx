@@ -96,7 +96,9 @@ class AppClass extends React.Component<AppProps, AppState> {
     )
       return;
 
-    this.setState({ textSourceId: id }, () => this.switchToNextChunk(id));
+    this.setState({ textSourceId: id }, () =>
+      this.switchToNextChunk(id, this.props.chunkId)
+    );
   }
 
   render() {
