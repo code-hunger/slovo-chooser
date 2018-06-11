@@ -35,6 +35,7 @@ interface AppState {
   textClickStrategy: TextClickStrategy;
   isSelectingContext: boolean;
   textSourceId?: number;
+  sources: { id: number; description: string }[];
 }
 
 @reactbind()
@@ -45,11 +46,15 @@ class AppClass extends React.Component<AppProps, AppState> {
     super(props);
 
     this.chunkRetriever = new ChunkRetriever(props.chunkId);
+    this.chunkRetriever
+      .getOptionsFromServer()
+      .then(sources => this.setState({ sources }));
 
     this.state = {
       textClickStrategy: UnknownWordSelector(store.dispatch),
       isSelectingContext: false,
-      textSourceId: undefined
+      textSourceId: undefined,
+      sources: this.chunkRetriever.getOptions()
     };
   }
 
@@ -129,7 +134,7 @@ class AppClass extends React.Component<AppProps, AppState> {
     return (
       <>
         <TextSourceChooser
-          textSources={this.chunkRetriever.getOptions()}
+          textSources={this.state.sources}
           setTextSource={this.setTextSource}
           currentSourceId={this.state.textSourceId}
         />

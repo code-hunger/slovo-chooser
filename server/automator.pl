@@ -56,8 +56,9 @@ get '/showdict' => sub {
 get '/text' => sub {
     my $lineWanted = request->params->{chunkId} || 1;
 
-    # This should be taken from the request
-    my ($filePath) = keys %$files;
+    my $filePath = request->params->{file}
+      or return to_json( { text => "File not given" } );
+
     $filePath = "$base/$filePath";
     open my $fh, '<:encoding(UTF-8)', $filePath
       or return to_json( { text => "$filePath: $!" } );

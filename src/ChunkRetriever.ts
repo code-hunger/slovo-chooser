@@ -1,30 +1,46 @@
 import axios from "axios";
+import * as _ from "lodash";
 
 type MyPr = Promise<{ data: { text: string; chunkId: number } }>;
-type Source = (chunkId: number) => MyPr;
-
+interface Source {
+  fetch: (chunkId: number) => MyPr;
+  description: string;
+}
 export default class ChunkRetriever {
-  private cachedChunkId;
-  private sourses: Source[] = [this.chunkFromLocalServer.bind(this)];
+  private cachedChunkId: number;
+  private sourses: Source[] = [];
 
   constructor(cachedChunkId) {
     this.cachedChunkId = cachedChunkId;
   }
 
-  chunkFromLocalServer(chunkId: number): MyPr {
+  getOptionsFromServer = () =>
+    axios.get("/status", { responseType: "json" }).then(({ data }) => {
+      _.forOwn(data, (_, file) => {
+        this.sourses.push({
+          description: file,
+          fetch: this.chunkFromLocalServer.bind(this, file)
+        });
+      });
+      return this.getOptions();
+    });
+
+  chunkFromLocalServer(file: string, chunkId: number): MyPr {
     return axios.get("/text", {
-      params: { chunkId },
+      params: { chunkId, file },
       responseType: "json"
     });
   }
 
   getOptions() {
-    axios.get("/status", { responseType: "json" }).then(({ data }) => {});
-    return [{ id: 0, description: "Local server" }];
+    return this.sourses.map((source, index) => ({
+      id: index,
+      description: source.description
+    }));
   }
 
   getNextChunk(textSourceId: number, chunkId = this.cachedChunkId + 1): MyPr {
     this.cachedChunkId = chunkId;
-    return this.sourses[textSourceId](chunkId);
+    return this.sourses[textSourceId].fetch(chunkId);
   }
 }
