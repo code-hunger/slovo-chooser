@@ -8,10 +8,9 @@ import reactbind from "react-bind-decorator";
 import store, { WordAction, SavedWord } from "./store";
 
 interface Props {
-  readonly selectedUnknown: number[];
-  readonly notSelectedUnknown: number[];
+  readonly usedHints: number[];
   readonly onSave: (obj: SavedWord) => void;
-  readonly words: Word[];
+  readonly words: NumberedWord[];
   readonly contextString: string;
 
   readonly switchToNextChunk: () => void;
@@ -41,7 +40,7 @@ export class CardEditor extends React.Component<Props, State> {
 
   shouldComponentUpdate(nextProps: Props, newState: State) {
     return !(
-      _.isEqual(this.props.selectedUnknown, nextProps.selectedUnknown) &&
+      _.isEqual(this.props.usedHints, nextProps.usedHints) &&
       this.state.unknownField === newState.unknownField &&
       this.state.unknownFieldMeaning === newState.unknownFieldMeaning &&
       this.state.dictionarySearch === newState.dictionarySearch &&
@@ -85,7 +84,7 @@ export class CardEditor extends React.Component<Props, State> {
     if (
       this.state.unknownField.length <= 1 ||
       confirm("Are you sure?") ||
-      this.props.selectedUnknown.length
+      this.props.usedHints.length
     )
       this.props.switchToNextChunk();
   }
@@ -115,8 +114,7 @@ export class CardEditor extends React.Component<Props, State> {
         {[
           <UnknownField
             words={this.props.words}
-            usedHints={this.props.selectedUnknown}
-            unusedHints={this.props.notSelectedUnknown}
+            usedHints={this.props.usedHints}
             minLength={CardEditor.MIN_WORD_LENGTH}
             toggleHints={this.toggleHints}
             key="unknownField"

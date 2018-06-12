@@ -132,21 +132,10 @@ class AppClass extends React.Component<AppProps, AppState> {
   }
 
   render() {
-    const editedMarked = this.props.editedMarked,
-      words = this.props.words;
-
-    const marked = this.state.marked;
-
-    const selectedUnknown = editedMarked;
-    const notSelectedUnknown = _.without(
-      marked.map(w => w.index),
-      ...selectedUnknown
-    );
-
     const contextString =
       this.props.contextBoundaries &&
       (({ start, length }) =>
-        words
+        this.props.words
           .slice(start, start + length + 1)
           .reduce((str, { word }) => str + " " + word, ""))(
         this.props.contextBoundaries
@@ -171,11 +160,10 @@ class AppClass extends React.Component<AppProps, AppState> {
           />
 
           <h3>Marked unknown:</h3>
-          <UnknownWordsList.View words={marked} tabIndex={0} />
+          <UnknownWordsList.View words={this.state.marked} tabIndex={0} />
 
           <CardEditor
-            selectedUnknown={selectedUnknown}
-            notSelectedUnknown={notSelectedUnknown}
+            usedHints={this.props.editedMarked}
             contextString={contextString}
             provideWordSelectControls={this.provideWordSelectControls}
             provideContextSelectControls={this.provideContextSelectControls}
@@ -184,7 +172,7 @@ class AppClass extends React.Component<AppProps, AppState> {
               this,
               this.state.textSourceId
             )}
-            words={marked}
+            words={this.state.marked}
             onSave={this.props.onCardSave}
             chunkId={this.props.chunkId}
             dictionary={Dictionary}

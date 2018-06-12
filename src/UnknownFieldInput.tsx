@@ -4,9 +4,8 @@ import { Word, NumberedWord } from "./Word";
 import reactbind from "react-bind-decorator";
 
 interface UnknownFieldProps {
-  words: Word[];
+  words: NumberedWord[];
   usedHints: number[];
-  unusedHints: number[];
 
   onReady: (value: string) => void;
   toggleHints: (added: number[], removed: number[]) => void;
@@ -46,7 +45,10 @@ export default class UnknownField extends React.PureComponent<
 
   onChange(e: React.ChangeEvent<HTMLInputElement>) {
     const usedHints = this.props.usedHints,
-      unusedHints = this.props.unusedHints,
+      unusedHints = _.without(
+        this.props.words.map(w => w.index),
+        ...this.props.usedHints
+      ),
       value = e.target.value;
 
     this.setState({ value });
