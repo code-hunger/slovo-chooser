@@ -7,10 +7,10 @@ import "./index.css";
 import { Provider } from "react-redux";
 import store from "./store";
 
-/*if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") {
   const { whyDidYouUpdate } = require("why-did-you-update");
   whyDidYouUpdate(React);
-}*/
+}
 
 ReactDOM.render(
   <Provider store={store}>

@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import { Dispatch } from "react-redux";
 import { State, WordAction } from "./store";
+import reactbind from "react-bind-decorator";
 
 export interface TextClickStrategy {
   onWordClick(wordId: number): void;
@@ -16,19 +17,24 @@ export const UnknownWordSelector = (dispatch: Dispatch<State>) => ({
   }
 });
 
-export const ContextSelector = (
-  dispatch: Dispatch<State>,
-  wordCount: number
-) => ({
-  start: 0,
-  length: wordCount,
+@reactbind()
+export class ContextSelector implements TextClickStrategy {
+  private start = 0;
+  private length: number;
+  private dispatch: Dispatch<State>;
+
+  constructor(dispatch: Dispatch<State>, wordCount: number) {
+    this.length = wordCount;
+    this.dispatch = dispatch;
+  }
+
   onWordClick(wordId: number) {
     if (!_.isNumber(this.start)) {
       this.start = wordId;
       return;
     }
 
-    let distanceToStart = Math.abs(this.start - wordId),
+    const distanceToStart = Math.abs(this.start - wordId),
       distanceToEnd = Math.abs(this.start + this.length - wordId);
 
     if (distanceToStart <= distanceToEnd * 0.6) {
@@ -44,13 +50,14 @@ export const ContextSelector = (
     if (!_.isNumber(this.start) || !_.isNumber(this.length))
       throw new Error("Start or length undefined!");
 
-    dispatch({
+    this.dispatch({
       type: "CONTEXT_SELECT_WORD_BOUNDARY",
       start: this.start,
       length: this.length
     } as WordAction);
-  },
+  }
+
   onContextMenu(wordId: number) {
     return;
   }
-});
+}

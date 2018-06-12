@@ -87,7 +87,7 @@ class AppClass extends React.Component<AppProps, AppState> {
 
   provideContextSelectControls() {
     this.setState({
-      textClickStrategy: ContextSelector(
+      textClickStrategy: new ContextSelector(
         store.dispatch,
         this.props.words.length
       ),
@@ -145,12 +145,8 @@ class AppClass extends React.Component<AppProps, AppState> {
           <TextEditor
             tabIndex={0}
             emptyText="Loading text..."
-            onWordClick={this.state.textClickStrategy.onWordClick.bind(
-              this.state.textClickStrategy
-            )}
-            onContextMenu={this.state.textClickStrategy.onContextMenu.bind(
-              this.state.textClickStrategy
-            )}
+            onWordClick={this.state.textClickStrategy.onWordClick}
+            onContextMenu={this.state.textClickStrategy.onContextMenu}
             className={this.state.isSelectingContext ? "selectContext" : ""}
           />
 
