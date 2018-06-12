@@ -11,7 +11,8 @@ interface State {
   currentNumberTyped: number;
 }
 
-export class KeyboardSelectableContainer extends React.Component<Props, State> {
+export class KeyboardSelectableContainer extends React.PureComponent<Props, State> {
+  private styles: React.CSSProperties = { position: "relative" };
   state = { currentNumberTyped: 0 };
 
   constructor(props: Props) {
@@ -33,7 +34,7 @@ export class KeyboardSelectableContainer extends React.Component<Props, State> {
     const value = this.state.currentNumberTyped;
 
     return (
-      <div style={{ position: "relative" }} onKeyDown={e => this.onKeyDown(e)}>
+      <div style={this.styles} onKeyDown={this.onKeyDown}>
         {!value ? null : (
           <div id="wordNumberTyped">Currently typing: {value}</div>
         )}
