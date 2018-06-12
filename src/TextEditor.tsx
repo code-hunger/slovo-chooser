@@ -1,41 +1,29 @@
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
-import { State, WordAction } from "./store";
+import { connect } from "react-redux";
+import { State } from "./store";
 
 import { NumberedWord } from "./Word";
 import TextWord from "./EnhancedTextWord";
-import { WordCollector, WordCollectorProps } from "./WordCollector";
+import { WordCollector } from "./WordCollector";
 import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
 
 type TextEditorProps = PropsFromState & PropsFromOutside;
 
-interface TextEditorState {
-  words: NumberedWord[];
-  contextBoundaries: { start: number; length: number };
-}
-
 class TextEditor extends React.PureComponent<TextEditorProps> {
-  wordRightClicked(wordId: number) {
-    return;
-  }
-
   render() {
-    //@TODO move to constructor
-    const wordCollectorProps: WordCollectorProps = {
-      words: this.props.words,
-      wordType: TextWord,
-      tabIndex: this.props.tabIndex,
-      onWordClick: this.props.onWordClick,
-      onWordRightClick: this.props.onContextMenu
-    };
-
     return this.props.words.length ? (
       <div className={"textEditor " + this.props.className}>
         <KeyboardSelectableContainer
           elementCount={this.props.words.length}
-          onSelectElement={wordCollectorProps.onWordClick}
+          onSelectElement={this.props.onWordClick}
         >
-          <WordCollector {...wordCollectorProps} />
+          <WordCollector
+            words={this.props.words}
+            wordType={TextWord}
+            tabIndex={this.props.tabIndex}
+            onWordClick={this.props.onWordClick}
+            onWordRightClick={this.props.onContextMenu}
+          />
         </KeyboardSelectableContainer>
       </div>
     ) : (
