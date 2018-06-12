@@ -3,7 +3,7 @@ import { connect, Dispatch } from "react-redux";
 import { State, WordAction } from "./store";
 
 import { NumberedWord } from "./Word";
-import TextWord from './EnhancedTextWord';
+import TextWord from "./EnhancedTextWord";
 import { WordCollector, WordCollectorProps } from "./WordCollector";
 import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
 
@@ -30,12 +30,7 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
     };
 
     return this.props.words.length ? (
-      <div
-        className={
-          "textEditor " +
-          (this.props.className)
-        }
-      >
+      <div className={"textEditor " + this.props.className}>
         <KeyboardSelectableContainer
           elementCount={this.props.words.length}
           onSelectElement={wordCollectorProps.onWordClick}
@@ -49,7 +44,9 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
   }
 }
 
-const mapStateToProps = ({ wordState: { words, contextBoundaries } }) => ({
+const mapStateToProps = ({
+  wordState: { words, contextBoundaries }
+}: State) => ({
   words,
   contextBoundaries
 });

@@ -10,7 +10,7 @@ export default class ChunkRetriever {
   private cachedChunkId: number;
   private sourses: Source[] = [];
 
-  constructor(cachedChunkId) {
+  constructor(cachedChunkId: number) {
     this.cachedChunkId = cachedChunkId;
   }
 

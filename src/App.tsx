@@ -58,7 +58,10 @@ class AppClass extends React.Component<AppProps, AppState> {
     };
   }
 
-  switchToNextChunk(textSourceId, chunkId: number = 1 + this.props.chunkId) {
+  switchToNextChunk(
+    textSourceId: number,
+    chunkId: number = 1 + this.props.chunkId
+  ) {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
 
@@ -66,7 +69,7 @@ class AppClass extends React.Component<AppProps, AppState> {
       .getNextChunk(textSourceId, chunkId)
       .then(
         chunk => this.props.setText(chunk.text, chunk.newId),
-        fail => alert('Error fetching chunk from server: ' + fail)
+        fail => alert("Error fetching chunk from server: " + fail)
       );
   }
 
@@ -148,10 +151,7 @@ class AppClass extends React.Component<AppProps, AppState> {
             onContextMenu={this.state.textClickStrategy.onContextMenu.bind(
               this.state.textClickStrategy
             )}
-            className={
-              "textEditor " +
-              (this.state.isSelectingContext ? "selectContext" : " ")
-            }
+            className={this.state.isSelectingContext ? "selectContext" : ""}
           />
 
           <h3>Marked unknown:</h3>

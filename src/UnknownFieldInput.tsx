@@ -83,7 +83,7 @@ export default class UnknownField extends React.Component<
     this.props.onReady(this.state.value);
   }
 
-  onKeyDown(e) {
+  onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.keyCode === 13) this.onReady();
   }
 
