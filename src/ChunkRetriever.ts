@@ -3,21 +3,28 @@ import * as _ from "lodash";
 
 type MyPr = Promise<{ text: string; newId: number }>;
 interface Source {
+  id: string;
   fetch: (chunkId: number) => MyPr;
   description: string;
 }
+
+interface CachedPositions {
+  [id: string]: number;
+}
+
 export default class ChunkRetriever {
-  private cachedChunkId: number;
+  private cachedPositions: CachedPositions;
   private sourses: Source[] = [];
 
-  constructor(cachedChunkId: number) {
-    this.cachedChunkId = cachedChunkId;
+  constructor(cachedPositions: CachedPositions = {}) {
+    this.cachedPositions = cachedPositions;
   }
 
   getOptionsFromServer = () =>
     axios.get("/status", { responseType: "json" }).then(({ data }) => {
       _.forOwn(data, (_, file) => {
         this.sourses.push({
+          id: file,
           description: file,
           fetch: this.chunkFromLocalServer.bind(this, file)
         });
@@ -33,11 +40,11 @@ export default class ChunkRetriever {
       })
       .then(
         ({ data }) => {
-          this.cachedChunkId = data.newChunkId;
+          this.cachedPositions[file] = data.newChunkId;
           return { text: data.text, newId: data.chunkId };
         },
         error => {
-          if(error.response) {
+          if (error.response) {
             throw error.response.data.error;
           }
           throw "Unknown error happened";
@@ -52,8 +59,17 @@ export default class ChunkRetriever {
     }));
   }
 
-  getNextChunk(textSourceId: number, chunkId = this.cachedChunkId + 1): MyPr {
-    this.cachedChunkId = chunkId;
+  positionBySource = (textSourceId: number, newValue?: number) => {
+    if (_.isUndefined(newValue))
+      return this.cachedPositions[this.sourses[textSourceId].id];
+    return (this.cachedPositions[this.sourses[textSourceId].id] = newValue);
+  };
+
+  getNextChunk(
+    textSourceId: number,
+    chunkId = this.positionBySource(textSourceId) + 1
+  ): MyPr {
+    this.positionBySource(textSourceId, chunkId);
     return this.sourses[textSourceId].fetch(chunkId);
   }
 }
