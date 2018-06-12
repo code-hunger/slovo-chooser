@@ -36,6 +36,22 @@ interface AppState {
   isSelectingContext: boolean;
   textSourceId?: number;
   sources: { id: number; description: string }[];
+
+  marked: NumberedWord[];
+}
+
+function markedIdsToWords({
+  marked,
+  words
+}: {
+  marked: number[];
+  words: NumberedWord[];
+}) {
+  return marked.map((id, index) => ({
+    word: words[id].word,
+    index,
+    classNames: words[id].classNames
+  }));
 }
 
 @reactbind()
@@ -54,8 +70,16 @@ class AppClass extends React.Component<AppProps, AppState> {
       textClickStrategy: UnknownWordSelector(store.dispatch),
       isSelectingContext: false,
       textSourceId: undefined,
+      marked: markedIdsToWords(props),
       sources: this.chunkRetriever.getOptions()
     };
+  }
+
+  componentWillReceiveProps(newProps: AppProps) {
+    if (newProps.marked !== this.props.marked)
+      this.setState({
+        marked: markedIdsToWords(newProps)
+      });
   }
 
   switchToNextChunk(
@@ -111,7 +135,7 @@ class AppClass extends React.Component<AppProps, AppState> {
     const editedMarked = this.props.editedMarked,
       words = this.props.words;
 
-    const marked = this.props.marked;
+    const marked = this.state.marked;
 
     const selectedUnknown = editedMarked;
     const notSelectedUnknown = _.without(
@@ -181,7 +205,7 @@ interface AppStateProps {
   words: NumberedWord[];
   savedWords: string[];
   savedChunks: SavedChunks;
-  marked: NumberedWord[];
+  marked: number[];
   editedMarked: number[];
   contextBoundaries: ContextBoundaries;
 
@@ -206,11 +230,7 @@ const mapStateToProps = ({
 }: State): AppStateProps => ({
   words,
   savedWords,
-  marked: marked.map((id, index) => ({
-    word: words[id].word,
-    index,
-    classNames: words[id].classNames
-  })),
+  marked,
   editedMarked,
   contextBoundaries,
   chunkId,

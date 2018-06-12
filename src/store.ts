@@ -66,7 +66,7 @@ function markedWordsReducer(
       if (state.indexOf(action.word) > -1) return _.without(state, action.word);
       return state.concat(action.word).sort((a, b) => a - b);
     case "SET_TEXT":
-      return [];
+      return emptyNumArr;
     default:
       return state;
   }
