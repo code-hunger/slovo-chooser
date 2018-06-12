@@ -111,11 +111,7 @@ class AppClass extends React.Component<AppProps, AppState> {
     const editedMarked = this.props.editedMarked,
       words = this.props.words;
 
-    const marked: NumberedWord[] = this.props.marked.map((id, index) => ({
-      word: words[id].word,
-      index,
-      classNames: words[id].classNames
-    }));
+    const marked = this.props.marked;
 
     const selectedUnknown = editedMarked;
     const notSelectedUnknown = _.without(
@@ -185,7 +181,7 @@ interface AppStateProps {
   words: NumberedWord[];
   savedWords: string[];
   savedChunks: SavedChunks;
-  marked: number[];
+  marked: NumberedWord[];
   editedMarked: number[];
   contextBoundaries: ContextBoundaries;
 
@@ -210,7 +206,11 @@ const mapStateToProps = ({
 }: State): AppStateProps => ({
   words,
   savedWords,
-  marked,
+  marked: marked.map((id, index) => ({
+    word: words[id].word,
+    index,
+    classNames: words[id].classNames
+  })),
   editedMarked,
   contextBoundaries,
   chunkId,

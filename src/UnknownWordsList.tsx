@@ -27,7 +27,7 @@ const MarkedWord = connect<Word, null, { index: number }>(
   markedWordStateToProps
 )(NumberedWordView);
 
-export class View extends React.Component<Props> {
+export class View extends React.PureComponent<Props> {
   constructor(props: Props) {
     super(props);
     this.onWordClick = this.onWordClick.bind(this);
