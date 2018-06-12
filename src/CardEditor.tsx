@@ -4,7 +4,7 @@ import { WordCollector } from "./WordCollector";
 import UnknownField from "./UnknownFieldInput";
 
 import * as _ from "lodash";
-import reactbind from 'react-bind-decorator';
+import reactbind from "react-bind-decorator";
 import store, { WordAction, SavedWord } from "./store";
 
 interface Props {
@@ -99,6 +99,13 @@ export class CardEditor extends React.Component<Props, State> {
     this.resetState();
   }
 
+  toggleHints = (added: number[], removed: number[]) =>
+    store.dispatch({
+      type: "TOGGLE_EDITED_UNKNOWN_WORDS",
+      added,
+      removed
+    } as WordAction);
+
   render() {
     const dictionarySearch = this.state.dictionarySearch;
     // @TODO: Improve nested conditional rendering.
@@ -111,13 +118,7 @@ export class CardEditor extends React.Component<Props, State> {
             usedHints={this.props.selectedUnknown}
             unusedHints={this.props.notSelectedUnknown}
             minLength={CardEditor.MIN_WORD_LENGTH}
-            toggleHints={(added, removed) =>
-              store.dispatch({
-                type: "TOGGLE_EDITED_UNKNOWN_WORDS",
-                added,
-                removed
-              } as WordAction)
-            }
+            toggleHints={this.toggleHints}
             key="unknownField"
             onReady={this.loadDictionary}
           />,

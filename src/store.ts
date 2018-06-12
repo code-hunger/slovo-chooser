@@ -73,9 +73,9 @@ function markedWordsReducer(
 }
 
 function editedMarkedReducer(
-  editedMarked: ReadonlyArray<number> = [],
+  editedMarked: ReadonlyArray<number> = emptyNumArr,
   action: WordAction,
-  marked: ReadonlyArray<number> = []
+  marked: ReadonlyArray<number> = emptyNumArr
 ) {
   switch (action.type) {
     case "TOGGLE_EDITED_UNKNOWN_WORD":
@@ -100,7 +100,7 @@ function editedMarkedReducer(
       );
     case "SAVE_WORD":
     case "SET_TEXT":
-      return [];
+      return emptyNumArr;
     default:
       return editedMarked;
   }
