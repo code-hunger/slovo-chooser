@@ -15,7 +15,7 @@ interface Props {
 interface State {}
 
 @reactbind()
-export default class TextSourceChooser extends React.Component<Props, State> {
+export default class TextSourceChooser extends React.PureComponent<Props, State> {
   render() {
     return (
       <>
