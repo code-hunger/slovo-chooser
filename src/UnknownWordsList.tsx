@@ -5,6 +5,7 @@ import { Word, NumberedWord, NumberedWordView } from "./Word";
 import { connect } from "react-redux";
 import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
 import * as _ from "lodash";
+import { TextClickStrategy } from "./TextClickStrategies";
 
 interface Props {
   words: NumberedWord[];
@@ -28,9 +29,17 @@ const MarkedWord = connect<Word, null, { index: number }>(
 )(NumberedWordView);
 
 export class View extends React.PureComponent<Props> {
+  private clickStrategy: TextClickStrategy;
+
   constructor(props: Props) {
     super(props);
     this.onWordClick = this.onWordClick.bind(this);
+    this.clickStrategy = {
+      onWordClick: this.onWordClick,
+      onContextMenu: _.stubTrue
+    };
+    this.clickStrategy.onWordClick.bind(this.clickStrategy);
+    this.clickStrategy.onContextMenu.bind(this.clickStrategy);
   }
   onWordClick(wordId: number) {
     store.dispatch({
@@ -50,8 +59,7 @@ export class View extends React.PureComponent<Props> {
           wordType={MarkedWord}
           words={this.props.words}
           tabIndex={this.props.tabIndex}
-          onWordClick={this.onWordClick}
-          onWordRightClick={_.stubTrue}
+          clickStrategy={this.clickStrategy}
         />
       </KeyboardSelectableContainer>
     ) : (

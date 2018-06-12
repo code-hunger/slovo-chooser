@@ -154,8 +154,7 @@ class AppClass extends React.Component<AppProps, AppState> {
           <TextEditor
             tabIndex={0}
             emptyText="Loading text..."
-            onWordClick={this.state.textClickStrategy.onWordClick}
-            onContextMenu={this.state.textClickStrategy.onContextMenu}
+            clickStrategy={this.state.textClickStrategy}
             className={this.state.isSelectingContext ? "selectContext" : ""}
           />
 

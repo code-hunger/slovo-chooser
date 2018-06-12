@@ -1,12 +1,12 @@
 import * as React from "react";
-import { NumberedWord } from './Word';
+import { NumberedWord } from "./Word";
+import { TextClickStrategy } from './TextClickStrategies';
 
 export interface WordCollectorProps {
   words: NumberedWord[];
   wordType: React.ComponentClass | React.StatelessComponent;
   tabIndex?: number;
-  onWordRightClick: (wordId: number) => void;
-  onWordClick: (wordId: number) => void;
+  clickStrategy: TextClickStrategy;
   className?: string;
 }
 
@@ -33,8 +33,8 @@ export class WordCollector<WordT> extends React.Component<WordCollectorProps> {
               index: word.index,
               word: word.word,
               classNames: word.classNames,
-              onClick: () => this.props.onWordClick(word.index),
-              onRightClick: () => this.props.onWordRightClick(word.index),
+              onClick: () => this.props.clickStrategy.onWordClick(word.index),
+              onRightClick: () => this.props.clickStrategy.onContextMenu(word.index),
             }}
           />
         ))}
