@@ -211,12 +211,6 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
       marked: markedWordsReducer(undefined, action),
       editedMarked: editedMarkedReducer(undefined, action),
       // @TODO fix style
-      savedChunks: savedChunksReducer(
-        JSON.parse(localStorage.getItem("savedChunks") || "{}"),
-        action
-      ),
-      textSourcePositions: chunkIdReducer(undefined, action),
-
       savedWords: savedWordsReducer(
         JSON.parse(localStorage.getItem("savedWords") || "[]"),
         action
@@ -234,9 +228,7 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
       wordState.contextBoundaries,
       action
     ),
-    savedWords: savedWordsReducer(wordState.savedWords, action),
-    textSourcePositions: chunkIdReducer(wordState.textSourcePositions, action),
-    savedChunks: savedChunksReducer(wordState.savedChunks, action)
+    savedWords: savedWordsReducer(wordState.savedWords, action)
   };
 }
 
@@ -265,17 +257,18 @@ interface WordState {
   readonly editedMarked: number[];
   readonly contextBoundaries: ContextBoundaries;
   readonly savedWords: string[];
+}
 
+export interface State {
+  readonly wordState: WordState;
   readonly textSourcePositions: CachedPositions;
   readonly savedChunks: SavedChunks;
 }
 
-export interface State {
-  wordState: WordState;
-}
-
 const reducers = combineReducers({
   wordState: wordStateReducer,
+  textSourcePositions: chunkIdReducer,
+  savedChunks: savedChunksReducer,
   keyboardControl: combineReducers({
     wordNumberTyped: wordNumberTypedReducer
   })

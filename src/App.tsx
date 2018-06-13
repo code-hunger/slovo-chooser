@@ -204,15 +204,9 @@ interface AppDispatchProps {
 }
 
 const mapStateToProps = ({
-  wordState: {
-    words,
-    savedWords,
-    marked,
-    editedMarked,
-    contextBoundaries,
-    textSourcePositions,
-    savedChunks
-  }
+  wordState: { words, savedWords, marked, editedMarked, contextBoundaries },
+  textSourcePositions,
+  savedChunks
 }: State): AppStateProps => ({
   words,
   savedWords,
