@@ -82,10 +82,7 @@ class AppClass extends React.Component<AppProps, AppState> {
       });
   }
 
-  switchToNextChunk(
-    textSourceId: string,
-    chunkId: number = 1 + this.props.textSourcePositions[textSourceId]
-  ) {
+  switchToNextChunk(textSourceId: string, chunkId?: number) {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
 
@@ -149,41 +146,41 @@ class AppClass extends React.Component<AppProps, AppState> {
           currentSourceId={this.state.textSourceId}
         />
         {_.isUndefined(this.state.textSourceId) ? null : (
-        <div className="App">
-          <h3>Choose words to check meaning:</h3>
+          <div className="App">
+            <h3>Choose words to check meaning:</h3>
 
-          <TextEditor
-            tabIndex={0}
-            emptyText="Loading text..."
-            clickStrategy={this.state.textClickStrategy}
-            className={this.state.isSelectingContext ? "selectContext" : ""}
-          />
+            <TextEditor
+              tabIndex={0}
+              emptyText="Loading text..."
+              clickStrategy={this.state.textClickStrategy}
+              className={this.state.isSelectingContext ? "selectContext" : ""}
+            />
 
-          <h3>Marked unknown:</h3>
-          <UnknownWordsList.View words={this.state.marked} tabIndex={0} />
+            <h3>Marked unknown:</h3>
+            <UnknownWordsList.View words={this.state.marked} tabIndex={0} />
 
-          <CardEditor
-            usedHints={this.props.editedMarked}
-            contextString={contextString}
-            provideWordSelectControls={this.provideWordSelectControls}
-            provideContextSelectControls={this.provideContextSelectControls}
-            isSelectingContext={this.state.isSelectingContext}
-            switchToNextChunk={this.switchToNextChunk.bind(
-              this,
-              this.state.textSourceId
-            )}
-            words={this.state.marked}
-            onSave={this.props.onCardSave}
-            chunkId={this.props.textSourcePositions[this.state.textSourceId]}
-            dictionary={Dictionary}
-          />
-          <>{JSON.stringify(this.props.savedWords)}</>
-          <>{JSON.stringify(this.props.savedChunks)}</>
+            <CardEditor
+              usedHints={this.props.editedMarked}
+              contextString={contextString}
+              provideWordSelectControls={this.provideWordSelectControls}
+              provideContextSelectControls={this.provideContextSelectControls}
+              isSelectingContext={this.state.isSelectingContext}
+              switchToNextChunk={this.switchToNextChunk.bind(
+                this,
+                this.state.textSourceId
+              )}
+              words={this.state.marked}
+              onSave={this.props.onCardSave}
+              chunkId={this.props.textSourcePositions[this.state.textSourceId]}
+              dictionary={Dictionary}
+            />
+            <>{JSON.stringify(this.props.savedWords)}</>
+            <>{JSON.stringify(this.props.savedChunks)}</>
 
-          <button className="anchor block" onClick={this.generateCsvFile}>
-            Generate a <kbd>csv</kbd> file for anki
-          </button>
-        </div>
+            <button className="anchor block" onClick={this.generateCsvFile}>
+              Generate a <kbd>csv</kbd> file for anki
+            </button>
+          </div>
         )}
       </>
     );

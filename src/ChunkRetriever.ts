@@ -60,15 +60,14 @@ export default class ChunkRetriever {
   }
 
   positionBySource = (textSourceId: string, newValue?: number) => {
-    if (_.isUndefined(newValue))
-      return this.cachedPositions[textSourceId];
+    if (_.isUndefined(newValue)) return this.cachedPositions[textSourceId];
     return (this.cachedPositions[textSourceId] = newValue);
   };
 
-  getNextChunk(
-    textSourceId: string,
-    chunkId = this.positionBySource(textSourceId) + 1
-  ): MyPr {
+  getNextChunk(textSourceId: string, chunkId?: number): MyPr {
+    if (_.isUndefined(chunkId) && textSourceId in this.cachedPositions)
+      chunkId = this.cachedPositions[textSourceId] + 1;
+
     this.positionBySource(textSourceId, chunkId);
     return this.sourses[textSourceId].fetch(chunkId);
   }
