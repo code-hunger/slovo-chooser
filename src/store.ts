@@ -160,7 +160,9 @@ function chunkIdReducer(
   switch (action.type) {
     case "SET_TEXT":
       return update(savedPositions, {
-        [action.textSourceId]: action.chunkId
+        [action.textSourceId]: {
+          $set: action.chunkId
+        }
       });
 
     default:
