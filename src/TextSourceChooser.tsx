@@ -1,30 +1,29 @@
 import * as React from "react";
-import reactbind from "react-bind-decorator";
 
-type TextSourceId = string;
-
-interface TextSource {
-  id: TextSourceId;
+interface TextSource<IdType> {
+  id: IdType;
   description: string;
 }
 
-interface Props {
-  textSources: TextSource[];
-  setTextSource: (id: TextSourceId) => void;
-  currentSourceId?: TextSourceId;
+interface Props<IdType> {
+  textSources: TextSource<IdType>[];
+  setTextSource: (id: IdType) => void;
+  currentSourceId?: IdType;
 }
 
 interface State {}
 
-@reactbind()
-export default class TextSourceChooser extends React.PureComponent<Props, State> {
+export default class TextSourceChooser<IdType> extends React.PureComponent<
+  Props<IdType>,
+  State
+> {
   render() {
     return (
       <>
         Choose a text source:
         <ul>
           {this.props.textSources.map(x => (
-            <li key={x.id}>
+            <li key={x.id.toString()}>
               <button
                 disabled={x.id === this.props.currentSourceId}
                 className="anchor"
