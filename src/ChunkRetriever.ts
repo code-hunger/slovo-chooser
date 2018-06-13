@@ -8,7 +8,7 @@ interface Source {
   description: string;
 }
 
-interface CachedPositions {
+export interface CachedPositions {
   [id: string]: number;
 }
 
@@ -53,20 +53,20 @@ export default class ChunkRetriever {
   }
 
   getOptions() {
-    return this.sourses.map((source, index) => ({
-      id: index,
+    return this.sourses.map(source => ({
+      id: source.id,
       description: source.description
     }));
   }
 
-  positionBySource = (textSourceId: number, newValue?: number) => {
+  positionBySource = (textSourceId: string, newValue?: number) => {
     if (_.isUndefined(newValue))
-      return this.cachedPositions[this.sourses[textSourceId].id];
-    return (this.cachedPositions[this.sourses[textSourceId].id] = newValue);
+      return this.cachedPositions[textSourceId];
+    return (this.cachedPositions[textSourceId] = newValue);
   };
 
   getNextChunk(
-    textSourceId: number,
+    textSourceId: string,
     chunkId = this.positionBySource(textSourceId) + 1
   ): MyPr {
     this.positionBySource(textSourceId, chunkId);

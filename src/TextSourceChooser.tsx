@@ -1,15 +1,17 @@
 import * as React from "react";
 import reactbind from "react-bind-decorator";
 
+type TextSourceId = string;
+
 interface TextSource {
-  id: number;
+  id: TextSourceId;
   description: string;
 }
 
 interface Props {
   textSources: TextSource[];
-  setTextSource: (id: number) => void;
-  currentSourceId?: number;
+  setTextSource: (id: TextSourceId) => void;
+  currentSourceId?: TextSourceId;
 }
 
 interface State {}

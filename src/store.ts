@@ -1,15 +1,16 @@
 import { createStore, combineReducers } from "redux";
 import update from "immutability-helper";
 import { NumberedWord } from "./Word";
+import { CachedPositions } from "./ChunkRetriever";
 import * as _ from "lodash";
 
 const emptyStrArr: string[] = [];
 const emptyNumArr: number[] = [];
 
 export type WordAction =
-  | { type: "SET_TEXT"; text: string; chunkId: number }
+  | { type: "SET_TEXT"; text: string; chunkId: number; textSourceId: string }
   | { type: "WORD_CLICKED"; word: number }
-  | { type: "SAVE_WORD"; obj: SavedWord }
+  | { type: "SAVE_WORD"; obj: SavedWord; chunkId: number; textSourceId: string }
   | { type: "WORD_NUMBER_SET"; number: number }
   | { type: "WORD_NUMBER_TYPED_RESET" }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
@@ -152,36 +153,45 @@ function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   }
 }
 
-function chunkIdReducer(chunkId: number | undefined, action: WordAction) {
-  if (_.isUndefined(chunkId)) {
-    chunkId = parseInt(localStorage.getItem("chunkId") || "0", 10);
-  }
+function chunkIdReducer(
+  savedPositions: CachedPositions = {},
+  action: WordAction
+): CachedPositions {
   switch (action.type) {
     case "SET_TEXT":
-      return action.chunkId;
+      return update(savedPositions, {
+        [action.textSourceId]: action.chunkId
+      });
 
     default:
-      return chunkId;
+      return savedPositions;
   }
 }
 
-function savedChunksReducer(
-  savedChunks: SavedChunks,
-  action: WordAction,
-  chunkId: number = 0
-) {
+function savedChunksReducer(savedChunks: SavedChunks = {}, action: WordAction) {
   switch (action.type) {
     case "SAVE_WORD":
-      if (!_.isArray(savedChunks[chunkId])) {
+      const sourceId = action.textSourceId,
+        chunkId = action.chunkId;
+      if (_.isUndefined(savedChunks[sourceId])) {
         savedChunks = update(savedChunks, {
           $merge: {
-            [chunkId]: []
+            [sourceId]: { [chunkId]: [] }
           }
         });
-      }
+      } else if (_.isUndefined(savedChunks[sourceId][chunkId]))
+        savedChunks = update(savedChunks, {
+          [sourceId]: {
+            $merge: {
+              [chunkId]: []
+            }
+          }
+        });
       savedChunks = update(savedChunks, {
-        [chunkId]: {
-          $push: [action.obj]
+        [sourceId]: {
+          [chunkId]: {
+            $push: [action.obj]
+          }
         }
       });
       localStorage.setItem("savedChunks", JSON.stringify(savedChunks));
@@ -203,7 +213,7 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
         JSON.parse(localStorage.getItem("savedChunks") || "{}"),
         action
       ),
-      chunkId: chunkIdReducer(undefined, action),
+      textSourcePositions: chunkIdReducer(undefined, action),
 
       savedWords: savedWordsReducer(
         JSON.parse(localStorage.getItem("savedWords") || "[]"),
@@ -223,12 +233,8 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
       action
     ),
     savedWords: savedWordsReducer(wordState.savedWords, action),
-    chunkId: chunkIdReducer(wordState.chunkId, action),
-    savedChunks: savedChunksReducer(
-      wordState.savedChunks,
-      action,
-      wordState.chunkId
-    )
+    textSourcePositions: chunkIdReducer(wordState.textSourcePositions, action),
+    savedChunks: savedChunksReducer(wordState.savedChunks, action)
   };
 }
 
@@ -246,7 +252,9 @@ export interface SavedWord {
 export type SavedWords = SavedWord[];
 
 export interface SavedChunks {
-  [chunkId: number]: SavedWord[];
+  [textSourceId: string]: {
+    [chunkId: number]: SavedWord[];
+  };
 }
 
 interface WordState {
@@ -256,7 +264,7 @@ interface WordState {
   readonly contextBoundaries: ContextBoundaries;
   readonly savedWords: string[];
 
-  readonly chunkId: number;
+  readonly textSourcePositions: CachedPositions;
   readonly savedChunks: SavedChunks;
 }
 

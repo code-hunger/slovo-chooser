@@ -15,7 +15,7 @@ import {
 
 import exportToCsv from "./exportToCSV";
 
-import ChunkRetriever from "./ChunkRetriever";
+import ChunkRetriever, { CachedPositions } from "./ChunkRetriever";
 
 import store, {
   State,
@@ -34,8 +34,8 @@ type AppProps = AppStateProps & AppDispatchProps;
 interface AppState {
   textClickStrategy: TextClickStrategy;
   isSelectingContext: boolean;
-  textSourceId?: number;
-  sources: { id: number; description: string }[];
+  textSourceId?: string;
+  sources: { id: string; description: string }[];
 
   marked: NumberedWord[];
 }
@@ -83,8 +83,8 @@ class AppClass extends React.Component<AppProps, AppState> {
   }
 
   switchToNextChunk(
-    textSourceId: number,
-    chunkId: number = 1 + this.props.chunkId
+    textSourceId: string,
+    chunkId: number = 1 + this.props.textSourcePositions[textSourceId]
   ) {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
@@ -119,7 +119,7 @@ class AppClass extends React.Component<AppProps, AppState> {
     });
   }
 
-  setTextSource(id: number) {
+  setTextSource(id: string) {
     if (
       !_.isUndefined(this.state.textSourceId) &&
       this.state.textSourceId === id
@@ -127,7 +127,7 @@ class AppClass extends React.Component<AppProps, AppState> {
       return;
 
     this.setState({ textSourceId: id }, () =>
-      this.switchToNextChunk(id, this.props.chunkId)
+      this.switchToNextChunk(id, this.props.textSourcePositions[id])
     );
   }
 
@@ -148,6 +148,7 @@ class AppClass extends React.Component<AppProps, AppState> {
           setTextSource={this.setTextSource}
           currentSourceId={this.state.textSourceId}
         />
+        {_.isUndefined(this.state.textSourceId) ? null : (
         <div className="App">
           <h3>Choose words to check meaning:</h3>
 
@@ -173,7 +174,7 @@ class AppClass extends React.Component<AppProps, AppState> {
             )}
             words={this.state.marked}
             onSave={this.props.onCardSave}
-            chunkId={this.props.chunkId}
+            chunkId={this.props.textSourcePositions[this.state.textSourceId]}
             dictionary={Dictionary}
           />
           <>{JSON.stringify(this.props.savedWords)}</>
@@ -183,6 +184,7 @@ class AppClass extends React.Component<AppProps, AppState> {
             Generate a <kbd>csv</kbd> file for anki
           </button>
         </div>
+        )}
       </>
     );
   }
@@ -196,7 +198,7 @@ interface AppStateProps {
   editedMarked: number[];
   contextBoundaries: ContextBoundaries;
 
-  chunkId: number;
+  textSourcePositions: CachedPositions;
 }
 
 interface AppDispatchProps {
@@ -211,7 +213,7 @@ const mapStateToProps = ({
     marked,
     editedMarked,
     contextBoundaries,
-    chunkId,
+    textSourcePositions,
     savedChunks
   }
 }: State): AppStateProps => ({
@@ -220,7 +222,7 @@ const mapStateToProps = ({
   marked,
   editedMarked,
   contextBoundaries,
-  chunkId,
+  textSourcePositions,
   savedChunks
 });
 
