@@ -9,13 +9,14 @@ import store, { WordAction, SavedWord } from "./store";
 
 interface Props {
   readonly usedHints: number[];
-  readonly onSave: (obj: SavedWord) => void;
+  readonly onSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
   readonly words: NumberedWord[];
   readonly contextString: string;
 
   readonly switchToNextChunk: () => void;
-  readonly chunkId: number;
   readonly dictionary: React.ComponentClass<{ word: string }>;
+  readonly chunkId: number;
+  readonly textSourceId: string;
 
   isSelectingContext: boolean;
   provideWordSelectControls: () => void;
@@ -94,7 +95,7 @@ export class CardEditor extends React.Component<Props, State> {
       word: this.state.unknownField,
       meaning: this.state.unknownFieldMeaning,
       context: this.props.contextString
-    });
+    }, this.props.chunkId, this.props.textSourceId);
     this.resetState();
   }
 

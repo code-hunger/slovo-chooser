@@ -19,6 +19,7 @@ import ChunkRetriever, { CachedPositions } from "./ChunkRetriever";
 
 import store, {
   State,
+  WordAction,
   ContextBoundaries,
   SavedChunks,
   SavedWords,
@@ -89,7 +90,7 @@ class AppClass extends React.Component<AppProps, AppState> {
     this.chunkRetriever
       .getNextChunk(textSourceId, chunkId)
       .then(
-        chunk => this.props.setText(chunk.text, chunk.newId),
+        chunk => this.props.setText(chunk.text, chunk.newId, textSourceId),
         fail => alert("Error fetching chunk from server: " + fail)
       );
   }
@@ -172,6 +173,7 @@ class AppClass extends React.Component<AppProps, AppState> {
               words={this.state.marked}
               onSave={this.props.onCardSave}
               chunkId={this.props.textSourcePositions[this.state.textSourceId]}
+              textSourceId={ this.state.textSourceId }
               dictionary={Dictionary}
             />
             <>{JSON.stringify(this.props.savedWords)}</>
@@ -199,8 +201,8 @@ interface AppStateProps {
 }
 
 interface AppDispatchProps {
-  onCardSave: (obj: SavedWord) => void;
-  setText: (text: string, chunkId: number) => void;
+  onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
+  setText: (text: string, chunkId: number, textSourceId: string) => void;
 }
 
 const mapStateToProps = ({
@@ -217,12 +219,14 @@ const mapStateToProps = ({
   savedChunks
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<State>): AppDispatchProps => ({
-  onCardSave(obj: SavedWord) {
-    dispatch({ type: "SAVE_WORD", obj });
+const mapDispatchToProps = (
+  dispatch: Dispatch<WordAction>
+): AppDispatchProps => ({
+  onCardSave(obj: SavedWord, chunkId: number, textSourceId: string) {
+    dispatch({ type: "SAVE_WORD", obj, chunkId, textSourceId });
   },
-  setText(text: string, chunkId: number) {
-    dispatch({ type: "SET_TEXT", text, chunkId });
+  setText(text: string, chunkId: number, textSourceId: string) {
+    dispatch({ type: "SET_TEXT", text, chunkId, textSourceId });
     localStorage.setItem("chunkId", chunkId.toString());
   }
 });
