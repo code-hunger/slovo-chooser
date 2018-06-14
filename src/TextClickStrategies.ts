@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import { Dispatch } from "react-redux";
-import { State, WordAction } from "./store";
+import { WordAction } from "./store";
 import reactbind from "react-bind-decorator";
 
 export interface TextClickStrategy {
@@ -8,9 +8,9 @@ export interface TextClickStrategy {
   onContextMenu(wordId: number): void;
 }
 
-export const UnknownWordSelector = (dispatch: Dispatch<State>) => ({
+export const UnknownWordSelector = (dispatch: Dispatch<WordAction>) => ({
   onWordClick(wordId: number) {
-    dispatch({ type: "WORD_CLICKED", word: wordId } as WordAction);
+    dispatch({ type: "WORD_CLICKED", word: wordId });
   },
   onContextMenu(wordId: number) {
     return;
@@ -21,9 +21,9 @@ export const UnknownWordSelector = (dispatch: Dispatch<State>) => ({
 export class ContextSelector implements TextClickStrategy {
   private start = 0;
   private length: number;
-  private dispatch: Dispatch<State>;
+  private dispatch: Dispatch<WordAction>;
 
-  constructor(dispatch: Dispatch<State>, wordCount: number) {
+  constructor(dispatch: Dispatch<WordAction>, wordCount: number) {
     this.length = wordCount;
     this.dispatch = dispatch;
   }
@@ -54,7 +54,7 @@ export class ContextSelector implements TextClickStrategy {
       type: "CONTEXT_SELECT_WORD_BOUNDARY",
       start: this.start,
       length: this.length
-    } as WordAction);
+    });
   }
 
   onContextMenu(wordId: number) {
