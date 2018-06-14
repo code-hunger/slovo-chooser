@@ -2,10 +2,12 @@ import axios from "axios";
 import * as _ from "lodash";
 
 type MyPr = Promise<{ text: string; newId: number }>;
-interface Source {
-  id: string;
-  fetch: (chunkId: number) => MyPr;
-  description: string;
+
+export interface Sources {
+  [id: string]: {
+    fetch: (chunkId: number) => MyPr;
+    description: string;
+  };
 }
 
 export interface CachedPositions {
@@ -14,7 +16,7 @@ export interface CachedPositions {
 
 export default class ChunkRetriever {
   private cachedPositions: CachedPositions;
-  private sourses: Source[] = [];
+  private sources: Sources = {};
 
   constructor(cachedPositions: CachedPositions = {}) {
     this.cachedPositions = cachedPositions;
@@ -23,11 +25,10 @@ export default class ChunkRetriever {
   getOptionsFromServer = () =>
     axios.get("/status", { responseType: "json" }).then(({ data }) => {
       _.forOwn(data, (_, file) => {
-        this.sourses.push({
-          id: file,
+        this.sources[file] = {
           description: file,
           fetch: this.chunkFromLocalServer.bind(this, file)
-        });
+        };
       });
       return this.getOptions();
     });
@@ -40,7 +41,7 @@ export default class ChunkRetriever {
       })
       .then(
         ({ data }) => {
-          this.cachedPositions[file] = data.newChunkId;
+          this.cachedPositions[file] = data.chunkId;
           return { text: data.text, newId: data.chunkId };
         },
         error => {
@@ -53,9 +54,9 @@ export default class ChunkRetriever {
   }
 
   getOptions() {
-    return this.sourses.map(source => ({
-      id: source.id,
-      description: source.description
+    return _.keys(this.sources).map((key) => ({
+      id: key,
+      description: this.sources[key].description
     }));
   }
 
@@ -65,10 +66,13 @@ export default class ChunkRetriever {
   };
 
   getNextChunk(textSourceId: string, chunkId?: number): MyPr {
-    if (_.isUndefined(chunkId) && textSourceId in this.cachedPositions)
-      chunkId = this.cachedPositions[textSourceId] + 1;
+    if (_.isUndefined(chunkId)) {
+      if (textSourceId in this.cachedPositions)
+        chunkId = this.cachedPositions[textSourceId] + 1;
+      else chunkId = 1;
+    }
 
     this.positionBySource(textSourceId, chunkId);
-    return this.sourses[textSourceId].fetch(chunkId);
+    return this.sources[textSourceId].fetch(chunkId);
   }
 }
