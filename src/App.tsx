@@ -36,7 +36,7 @@ interface AppState {
   textClickStrategy: TextClickStrategy;
   isSelectingContext: boolean;
   textSourceId?: string;
-  sources: { id: string; description: string }[];
+  sources: { id: string; description: string; chunkId: number }[];
 
   marked: NumberedWord[];
 }
@@ -87,12 +87,13 @@ class AppClass extends React.Component<AppProps, AppState> {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
 
-    this.chunkRetriever
-      .getNextChunk(textSourceId, chunkId)
-      .then(
-        chunk => this.props.setText(chunk.text, chunk.newId, textSourceId),
-        fail => alert("Error fetching chunk from server: " + fail)
-      );
+    this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
+      chunk => {
+        this.props.setText(chunk.text, chunk.newId, textSourceId);
+        this.setState({ sources: this.chunkRetriever.getOptions() });
+      },
+      fail => alert("Error fetching chunk from server: " + fail)
+    );
   }
 
   generateCsvFile() {
@@ -172,7 +173,7 @@ class AppClass extends React.Component<AppProps, AppState> {
               words={this.state.marked}
               onSave={this.props.onCardSave}
               chunkId={this.props.textSourcePositions[this.state.textSourceId]}
-              textSourceId={ this.state.textSourceId }
+              textSourceId={this.state.textSourceId}
               dictionary={Dictionary}
             />
             <>{JSON.stringify(this.props.savedWords)}</>
@@ -226,7 +227,6 @@ const mapDispatchToProps = (
   },
   setText(text: string, chunkId: number, textSourceId: string) {
     dispatch({ type: "SET_TEXT", text, chunkId, textSourceId });
-    localStorage.setItem("chunkId", chunkId.toString());
   }
 });
 

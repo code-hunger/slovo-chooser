@@ -3,6 +3,7 @@ import * as React from "react";
 interface TextSource<IdType> {
   id: IdType;
   description: string;
+  chunkId?: number;
 }
 
 interface Props<IdType> {
@@ -31,6 +32,7 @@ export default class TextSourceChooser<IdType> extends React.PureComponent<
               >
                 {x.description}
               </button>
+              {" "}{x.chunkId}
             </li>
           ))}
         </ul>

@@ -56,7 +56,8 @@ export default class ChunkRetriever {
   getOptions() {
     return _.keys(this.sources).map((key) => ({
       id: key,
-      description: this.sources[key].description
+      description: this.sources[key].description,
+      chunkId: this.cachedPositions[key]
     }));
   }
 
