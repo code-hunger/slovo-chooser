@@ -66,11 +66,11 @@ get '/text' => sub {
     my $line;
     my $i = 0;
     while (<$fh>) {
+        chomp( $line = $_ );
+        next if $line eq "";
         ++$i;
-        if ( $. >= $lineWanted ) {
-            chomp( $line = $_ );
-            next if $line eq "";
 
+        if ( $i >= $lineWanted ) {
             return JSON->new->utf8(0)->encode( { text => $line, chunkId => $i } );
         }
     }
