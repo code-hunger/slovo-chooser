@@ -33,6 +33,21 @@ export default class ChunkRetriever {
       return this.getOptions();
     });
 
+  addTextSource(id: string, text: string) {
+    const lines = text.split("\n").filter(line => line !== "");
+    this.sources[id] = {
+      fetch: (chunkId: number) => {
+        return new Promise((resolve, failure) => {
+          if(chunkId > lines.length)
+            failure("Out of bounds" );
+          else
+            resolve({text: lines[chunkId - 1], newId: chunkId});
+        })
+      },
+      description: id
+    }
+  }
+
   chunkFromLocalServer(file: string, chunkId: number): MyPr {
     return axios
       .get("/text", {

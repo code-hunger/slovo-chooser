@@ -1,4 +1,5 @@
 import * as React from "react";
+import { TextAdder } from "./TextAdder";
 
 interface TextSource<IdType> {
   id: IdType;
@@ -9,6 +10,7 @@ interface TextSource<IdType> {
 interface Props<IdType> {
   textSources: TextSource<IdType>[];
   setTextSource: (id: IdType) => void;
+  addTextSource?: (id: string, text: string) => void;
   currentSourceId?: IdType;
 }
 
@@ -23,6 +25,11 @@ export default class TextSourceChooser<IdType> extends React.PureComponent<
       <>
         Choose a text source:
         <ul>
+          <li>
+            {this.props.addTextSource ? (
+              <TextAdder onDone={this.props.addTextSource} />
+            ) : null}
+          </li>
           {this.props.textSources.map(x => (
             <li key={x.id.toString()}>
               <button
@@ -31,8 +38,8 @@ export default class TextSourceChooser<IdType> extends React.PureComponent<
                 onClick={() => this.props.setTextSource(x.id)}
               >
                 {x.description}
-              </button>
-              {" "}{x.chunkId}
+              </button>{" "}
+              {x.chunkId}
             </li>
           ))}
         </ul>

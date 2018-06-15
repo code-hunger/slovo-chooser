@@ -129,6 +129,14 @@ class AppClass extends React.Component<AppProps, AppState> {
     this.switchToNextChunk(id, this.props.textSourcePositions[id]);
   }
 
+  addTextSource(id: string, text: string) {
+    this.chunkRetriever.addTextSource(id, text);
+    this.setState({
+      sources: this.chunkRetriever.getOptions(),
+      textSourceId: id
+    });
+  }
+
   render() {
     const contextString =
       this.props.contextBoundaries &&
@@ -145,6 +153,7 @@ class AppClass extends React.Component<AppProps, AppState> {
           textSources={this.state.sources}
           setTextSource={this.setTextSource}
           currentSourceId={this.state.textSourceId}
+          addTextSource={this.addTextSource}
         />
         {_.isUndefined(this.state.textSourceId) ? null : (
           <div className="App">
