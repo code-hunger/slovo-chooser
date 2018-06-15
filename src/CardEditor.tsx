@@ -5,22 +5,32 @@ import UnknownField from "./UnknownFieldInput";
 
 import * as _ from "lodash";
 import reactbind from "react-bind-decorator";
-import store, { WordAction, SavedWord } from "./store";
+import store, { WordAction, SavedWord, State as StoreState } from "./store";
+import { connect } from "react-redux";
 
-interface Props {
-  readonly usedHints: number[];
-  readonly onSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
+type Props = StateProps & OutsideProps;
+
+interface OutsideProps {
+  readonly onSave: (
+    obj: SavedWord,
+    chunkId: number,
+    textSourceId: string
+  ) => void;
   readonly words: NumberedWord[];
   readonly contextString: string;
 
   readonly switchToNextChunk: () => void;
   readonly dictionary: React.ComponentClass<{ word: string }>;
-  readonly chunkId: number;
   readonly textSourceId: string;
 
   isSelectingContext: boolean;
   provideWordSelectControls: () => void;
   provideContextSelectControls: () => void;
+}
+
+interface StateProps {
+  readonly usedHints: number[];
+  readonly chunkId: number;
 }
 
 interface State {
@@ -30,7 +40,7 @@ interface State {
 }
 
 @reactbind()
-export class CardEditor extends React.Component<Props, State> {
+class CardEditor extends React.Component<Props, State> {
   static MIN_WORD_LENGTH = 3;
 
   state = {
@@ -194,3 +204,12 @@ export class CardEditor extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = (state: StoreState, ownProps: Props): StateProps => ({
+  chunkId: state.textSourcePositions[ownProps.textSourceId],
+  usedHints: state.wordState.editedMarked
+});
+
+export default connect<StateProps, void, OutsideProps, StoreState>(
+  mapStateToProps
+)(CardEditor);

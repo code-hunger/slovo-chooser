@@ -3,7 +3,7 @@ import "./App.css";
 
 import TextSourceChooser from "./TextSourceChooser";
 import TextEditor from "./TextEditor";
-import { CardEditor } from "./CardEditor";
+import CardEditor from "./CardEditor";
 import * as UnknownWordsList from "./UnknownWordsList";
 import Dictionary from "./Dictionary";
 import { NumberedWord } from "./Word";
@@ -83,9 +83,13 @@ class AppClass extends React.Component<AppProps, AppState> {
       });
   }
 
-  switchToNextChunk(textSourceId: string, chunkId?: number) {
+  switchToNextChunk(chunkId?: number) {
     if (!this.props.marked.length && this.props.words.length)
       if (!confirm("Nothing saved from this chunk!")) return;
+
+    const textSourceId = this.state.textSourceId;
+
+    if (_.isUndefined(textSourceId)) throw "No text source";
 
     this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
       chunk => {
@@ -125,8 +129,9 @@ class AppClass extends React.Component<AppProps, AppState> {
     )
       return;
 
-    this.setState({ textSourceId: id });
-    this.switchToNextChunk(id, this.props.textSourcePositions[id]);
+    this.setState({ textSourceId: id }, () =>
+      this.switchToNextChunk(this.props.textSourcePositions[id])
+    );
   }
 
   addTextSource(id: string, text: string) {
@@ -139,13 +144,14 @@ class AppClass extends React.Component<AppProps, AppState> {
 
   render() {
     const contextString =
-      this.props.contextBoundaries.length < 1 ? "" :
-      (({ start, length }) =>
-        this.props.words
-          .slice(start, start + length + 1)
-          .reduce((str, { word }) => str + " " + word, ""))(
-        this.props.contextBoundaries
-      );
+      this.props.contextBoundaries.length < 1
+        ? ""
+        : (({ start, length }) =>
+            this.props.words
+              .slice(start, start + length + 1)
+              .reduce((str, { word }) => str + " " + word, ""))(
+            this.props.contextBoundaries
+          );
 
     return (
       <>
@@ -170,18 +176,13 @@ class AppClass extends React.Component<AppProps, AppState> {
             <UnknownWordsList.View words={this.state.marked} tabIndex={0} />
 
             <CardEditor
-              usedHints={this.props.editedMarked}
               contextString={contextString}
               provideWordSelectControls={this.provideWordSelectControls}
               provideContextSelectControls={this.provideContextSelectControls}
               isSelectingContext={this.state.isSelectingContext}
-              switchToNextChunk={this.switchToNextChunk.bind(
-                this,
-                this.state.textSourceId
-              )}
+              switchToNextChunk={this.switchToNextChunk}
               words={this.state.marked}
               onSave={this.props.onCardSave}
-              chunkId={this.props.textSourcePositions[this.state.textSourceId]}
               textSourceId={this.state.textSourceId}
               dictionary={Dictionary}
             />
@@ -203,7 +204,6 @@ interface AppStateProps {
   savedWords: string[];
   savedChunks: SavedChunks;
   marked: number[];
-  editedMarked: number[];
   contextBoundaries: ContextBoundaries;
 
   textSourcePositions: CachedPositions;
@@ -215,7 +215,7 @@ interface AppDispatchProps {
 }
 
 const mapStateToProps = ({
-  wordState: { marked, editedMarked },
+  wordState: { marked },
   words,
   textSourcePositions,
   contextBoundaries,
@@ -225,7 +225,6 @@ const mapStateToProps = ({
   words,
   savedWords,
   marked,
-  editedMarked,
   contextBoundaries,
   textSourcePositions,
   savedChunks
