@@ -37,22 +37,6 @@ interface AppState {
   isSelectingContext: boolean;
   textSourceId?: string;
   sources: { id: string; description: string; chunkId: number }[];
-
-  marked: NumberedWord[];
-}
-
-function markedIdsToWords({
-  marked,
-  words
-}: {
-  marked: number[];
-  words: NumberedWord[];
-}) {
-  return marked.map((id, index) => ({
-    word: words[id].word,
-    index,
-    classNames: words[id].classNames
-  }));
 }
 
 @reactbind()
@@ -71,22 +55,11 @@ class AppClass extends React.Component<AppProps, AppState> {
       textClickStrategy: UnknownWordSelector(store.dispatch),
       isSelectingContext: false,
       textSourceId: undefined,
-      marked: markedIdsToWords(props),
       sources: this.chunkRetriever.getOptions()
     };
   }
 
-  componentWillReceiveProps(newProps: AppProps) {
-    if (newProps.marked !== this.props.marked)
-      this.setState({
-        marked: markedIdsToWords(newProps)
-      });
-  }
-
   switchToNextChunk(chunkId?: number) {
-    if (!this.props.marked.length && this.props.words.length)
-      if (!confirm("Nothing saved from this chunk!")) return;
-
     const textSourceId = this.state.textSourceId;
 
     if (_.isUndefined(textSourceId)) throw "No text source";
@@ -173,7 +146,7 @@ class AppClass extends React.Component<AppProps, AppState> {
             />
 
             <h3>Marked unknown:</h3>
-            <UnknownWordsList.View words={this.state.marked} tabIndex={0} />
+            <UnknownWordsList.View words={[]} tabIndex={0} />
 
             <CardEditor
               contextString={contextString}
@@ -181,7 +154,6 @@ class AppClass extends React.Component<AppProps, AppState> {
               provideContextSelectControls={this.provideContextSelectControls}
               isSelectingContext={this.state.isSelectingContext}
               switchToNextChunk={this.switchToNextChunk}
-              words={this.state.marked}
               onSave={this.props.onCardSave}
               textSourceId={this.state.textSourceId}
               dictionary={Dictionary}
@@ -203,7 +175,6 @@ interface AppStateProps {
   words: NumberedWord[];
   savedWords: string[];
   savedChunks: SavedChunks;
-  marked: number[];
   contextBoundaries: ContextBoundaries;
 
   textSourcePositions: CachedPositions;
@@ -214,21 +185,14 @@ interface AppDispatchProps {
   setText: (text: string, chunkId: number, textSourceId: string) => void;
 }
 
-const mapStateToProps = ({
-  wordState: { marked },
-  words,
-  textSourcePositions,
-  contextBoundaries,
-  savedWords,
-  savedChunks
-}: State): AppStateProps => ({
-  words,
-  savedWords,
-  marked,
-  contextBoundaries,
-  textSourcePositions,
-  savedChunks
-});
+const mapStateToProps = (state: State): AppStateProps =>
+  _.pick(state, [
+    "words",
+    "savedWords",
+    "contextBoundaries",
+    "textSourcePositions",
+    "savedChunks"
+  ]);
 
 const mapDispatchToProps = (
   dispatch: Dispatch<WordAction>

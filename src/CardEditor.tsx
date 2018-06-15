@@ -16,7 +16,6 @@ interface OutsideProps {
     chunkId: number,
     textSourceId: string
   ) => void;
-  readonly words: NumberedWord[];
   readonly contextString: string;
 
   readonly switchToNextChunk: () => void;
@@ -31,23 +30,48 @@ interface OutsideProps {
 interface StateProps {
   readonly usedHints: number[];
   readonly chunkId: number;
+
+  readonly marked: number[];
+  readonly words: NumberedWord[];
 }
 
 interface State {
+  readonly marked: NumberedWord[];
+
   readonly unknownField: string;
   readonly unknownFieldMeaning: string;
   readonly dictionarySearch: string;
+}
+
+function markedIdsToWords({
+  marked,
+  words
+}: {
+  marked: number[];
+  words: NumberedWord[];
+}) {
+  return marked.map((id, index) => ({
+    word: words[id].word,
+    index,
+    classNames: words[id].classNames
+  }));
 }
 
 @reactbind()
 class CardEditor extends React.Component<Props, State> {
   static MIN_WORD_LENGTH = 3;
 
-  state = {
-    unknownField: "",
-    unknownFieldMeaning: "",
-    dictionarySearch: ""
-  };
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      marked: markedIdsToWords(props),
+
+      unknownField: "",
+      unknownFieldMeaning: "",
+      dictionarySearch: ""
+    };
+  }
 
   shouldComponentUpdate(nextProps: Props, newState: State) {
     return !(
@@ -73,6 +97,11 @@ class CardEditor extends React.Component<Props, State> {
       // New text chunk; reset state
       this.resetState();
     }
+
+    if (nextProps.marked !== this.props.marked)
+      this.setState({
+        marked: markedIdsToWords(nextProps)
+      });
   }
 
   onchange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -101,11 +130,15 @@ class CardEditor extends React.Component<Props, State> {
   }
 
   onSave() {
-    this.props.onSave({
-      word: this.state.unknownField,
-      meaning: this.state.unknownFieldMeaning,
-      context: this.props.contextString
-    }, this.props.chunkId, this.props.textSourceId);
+    this.props.onSave(
+      {
+        word: this.state.unknownField,
+        meaning: this.state.unknownFieldMeaning,
+        context: this.props.contextString
+      },
+      this.props.chunkId,
+      this.props.textSourceId
+    );
     this.resetState();
   }
 
@@ -207,7 +240,9 @@ class CardEditor extends React.Component<Props, State> {
 
 const mapStateToProps = (state: StoreState, ownProps: Props): StateProps => ({
   chunkId: state.textSourcePositions[ownProps.textSourceId],
-  usedHints: state.wordState.editedMarked
+  usedHints: state.wordState.editedMarked,
+  marked: state.wordState.marked,
+  words: state.words
 });
 
 export default connect<StateProps, void, OutsideProps, StoreState>(
