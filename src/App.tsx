@@ -62,7 +62,7 @@ class AppClass extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
 
-    this.chunkRetriever = new ChunkRetriever();
+    this.chunkRetriever = new ChunkRetriever(this.props.textSourcePositions);
     this.chunkRetriever
       .getOptionsFromServer()
       .then(sources => this.setState({ sources }));

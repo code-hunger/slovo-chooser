@@ -3,6 +3,7 @@ import update from "immutability-helper";
 import { NumberedWord } from "./Word";
 import { CachedPositions } from "./ChunkRetriever";
 import * as _ from "lodash";
+import { loadState, persistState } from "./localStorage";
 
 const emptyStrArr: string[] = [];
 const emptyNumArr: number[] = [];
@@ -45,14 +46,6 @@ function textWordsReducer(
               : classes.concat("unknown")
         }
       });
-    /*case "CONTEXT_SELECT_WORD_BOUNDARY":
-      return update(words, {
-        [action.start]: {
-          classNames: (classes: ReadonlyArray<string>) => {
-            return classes.concat("boundary");
-          }
-        }
-      });*/
     default:
       return words;
   }
@@ -142,12 +135,9 @@ function contextBoundaryReducer(
 function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   switch (action.type) {
     case "SAVE_WORD":
-      const updated = update(savedWords, {
+      return update(savedWords, {
         $push: [action.obj.word]
       });
-
-      localStorage.setItem("savedWords", JSON.stringify(updated));
-      return updated;
     default:
       return savedWords;
   }
@@ -189,15 +179,13 @@ function savedChunksReducer(savedChunks: SavedChunks = {}, action: WordAction) {
             }
           }
         });
-      savedChunks = update(savedChunks, {
+      return update(savedChunks, {
         [sourceId]: {
           [chunkId]: {
             $push: [action.obj]
           }
         }
       });
-      localStorage.setItem("savedChunks", JSON.stringify(savedChunks));
-      return savedChunks;
     default:
       return savedChunks;
   }
@@ -210,11 +198,7 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
       words: textWordsReducer(undefined, action),
       marked: markedWordsReducer(undefined, action),
       editedMarked: editedMarkedReducer(undefined, action),
-      // @TODO fix style
-      savedWords: savedWordsReducer(
-        JSON.parse(localStorage.getItem("savedWords") || "[]"),
-        action
-      )
+      savedWords: savedWordsReducer(undefined, action)
     };
   return <WordState>{
     words: textWordsReducer(wordState.words, action),
@@ -274,4 +258,8 @@ const reducers = combineReducers({
   })
 });
 
-export default createStore(reducers);
+const store = createStore(reducers, loadState());
+
+store.subscribe(_.throttle(() => persistState(store.getState()), 2000));
+
+export default store;
