@@ -63,7 +63,7 @@ get '/text' => sub {
     open my $fh, '<:encoding(UTF-8)', $filePath
       or return to_json( { text => "$filePath: $!" } );
 
-    my ($line, $found);
+    my $line;
     my $i = 0;
     while (<$fh>) {
         ++$i;
@@ -71,16 +71,12 @@ get '/text' => sub {
             chomp( $line = $_ );
             next if $line eq "";
 
-            $found = true;
-            last;
+            return JSON->new->utf8(0)->encode( { text => $line, chunkId => $i } );
         }
     }
 
-    if(!$found) {
-        status 'not_found';
-        return to_json( { error => "The wanted line is past the end of the file." } )
-    }
-    return JSON->new->utf8(0)->encode( { text => $line, chunkId => $i } );
+    status 'not_found';
+    return to_json( { error => "The wanted line is past the end of the file." } )
 };
 
 start;
