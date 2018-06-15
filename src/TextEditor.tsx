@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { State } from "./store";
+import { pick } from "lodash";
 
 import { NumberedWord } from "./Word";
 import TextWord from "./EnhancedTextWord";
@@ -32,13 +33,6 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
   }
 }
 
-const mapStateToProps = ({
-  wordState: { words, contextBoundaries }
-}: State) => ({
-  words,
-  contextBoundaries
-});
-
 interface PropsFromState {
   readonly words: NumberedWord[];
   readonly contextBoundaries: { start: number; length: number };
@@ -52,6 +46,6 @@ interface PropsFromOutside {
   clickStrategy: TextClickStrategy;
 }
 
-export default connect<PropsFromState, void, PropsFromOutside>(mapStateToProps)(
-  TextEditor
-);
+export default connect<PropsFromState, void, PropsFromOutside, State>(state =>
+  pick(state, ["words", "contextBoundaries"])
+)(TextEditor);

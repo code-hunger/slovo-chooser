@@ -16,7 +16,7 @@ function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
 }
 
 const mapStateToTextWordProps = (
-  { wordState: { words, contextBoundaries, savedWords } }: State,
+  { words, savedWords, contextBoundaries }: State,
   { index }: NumberedWord
 ): Word => ({
   word: words[index].word,
@@ -29,6 +29,6 @@ const mapStateToTextWordProps = (
   ]
 });
 
-export default connect<Word, null, { index: number }>(
-  mapStateToTextWordProps
-)(NumberedWordView);
+export default connect<Word, null, { index: number }>(mapStateToTextWordProps)(
+  NumberedWordView
+);

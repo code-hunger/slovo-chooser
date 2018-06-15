@@ -13,13 +13,13 @@ interface Props {
 }
 
 const markedWordStateToProps = (
-  { wordState }: State,
+  { wordState: { marked, editedMarked }, words, savedWords }: State,
   ownProps: NumberedWord
 ): Word => ({
-  word: wordState.words[wordState.marked[ownProps.index]].word,
+  word: words[marked[ownProps.index]].word,
   classNames:
-    wordState.editedMarked.indexOf(ownProps.index) > -1 ||
-    wordState.savedWords.indexOf(ownProps.word) > -1
+    editedMarked.indexOf(ownProps.index) > -1 ||
+    savedWords.indexOf(ownProps.word) > -1
       ? ownProps.classNames.concat("fade-word")
       : ownProps.classNames
 });

@@ -118,7 +118,7 @@ function wordNumberTypedReducer(
 }
 
 function contextBoundaryReducer(
-  context: { start: number; length: number },
+  context: ContextBoundaries = { start: 0, length: 0},
   action: WordAction
 ) {
   switch (action.type) {
@@ -195,24 +195,16 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
   // Ugly function. @TODO make it beautiful.
   if (_.isUndefined(wordState))
     return <WordState>{
-      words: textWordsReducer(undefined, action),
       marked: markedWordsReducer(undefined, action),
-      editedMarked: editedMarkedReducer(undefined, action),
-      savedWords: savedWordsReducer(undefined, action)
+      editedMarked: editedMarkedReducer(undefined, action)
     };
   return <WordState>{
-    words: textWordsReducer(wordState.words, action),
     marked: markedWordsReducer(wordState.marked, action),
     editedMarked: editedMarkedReducer(
       wordState.editedMarked,
       action,
       wordState.marked
-    ),
-    contextBoundaries: contextBoundaryReducer(
-      wordState.contextBoundaries,
-      action
-    ),
-    savedWords: savedWordsReducer(wordState.savedWords, action)
+    )
   };
 }
 
@@ -236,26 +228,33 @@ export interface SavedChunks {
 }
 
 interface WordState {
-  readonly words: NumberedWord[];
   readonly marked: number[];
   readonly editedMarked: number[];
-  readonly contextBoundaries: ContextBoundaries;
-  readonly savedWords: string[];
 }
 
 export interface State {
   readonly wordState: WordState;
+  readonly words: NumberedWord[];
+
+  readonly contextBoundaries: ContextBoundaries;
   readonly textSourcePositions: CachedPositions;
+
   readonly savedChunks: SavedChunks;
+  readonly savedWords: string[];
 }
 
 const reducers = combineReducers({
   wordState: wordStateReducer,
-  textSourcePositions: chunkIdReducer,
+  words: textWordsReducer,
+
   savedChunks: savedChunksReducer,
+  savedWords: savedWordsReducer,
+
+  contextBoundaries: contextBoundaryReducer,
   keyboardControl: combineReducers({
     wordNumberTyped: wordNumberTypedReducer
-  })
+  }),
+  textSourcePositions: chunkIdReducer
 });
 
 const store = createStore(reducers, loadState());

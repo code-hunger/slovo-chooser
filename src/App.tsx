@@ -139,7 +139,7 @@ class AppClass extends React.Component<AppProps, AppState> {
 
   render() {
     const contextString =
-      this.props.contextBoundaries &&
+      this.props.contextBoundaries.length < 1 ? "" :
       (({ start, length }) =>
         this.props.words
           .slice(start, start + length + 1)
@@ -215,8 +215,11 @@ interface AppDispatchProps {
 }
 
 const mapStateToProps = ({
-  wordState: { words, savedWords, marked, editedMarked, contextBoundaries },
+  wordState: { marked, editedMarked },
+  words,
   textSourcePositions,
+  contextBoundaries,
+  savedWords,
   savedChunks
 }: State): AppStateProps => ({
   words,
