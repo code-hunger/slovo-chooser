@@ -35,7 +35,6 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
 
 interface PropsFromState {
   readonly words: NumberedWord[];
-  readonly contextBoundaries: { start: number; length: number };
 }
 
 interface PropsFromOutside {
@@ -46,6 +45,6 @@ interface PropsFromOutside {
   clickStrategy: TextClickStrategy;
 }
 
-export default connect<PropsFromState, void, PropsFromOutside, State>(state =>
-  pick(state, ["words", "contextBoundaries"])
+export default connect<PropsFromState, void, PropsFromOutside, State>(
+  state => ({ words: state.words })
 )(TextEditor);
