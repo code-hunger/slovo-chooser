@@ -5,8 +5,7 @@ import store, {
   State,
   ContextBoundaries,
   SavedChunks,
-  SavedWord,
-  SavedWords
+  SavedWord
 } from "./store";
 
 function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
@@ -16,7 +15,7 @@ function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
 }
 
 const mapStateToTextWordProps = (
-  { words, savedWords, contextBoundaries }: State,
+  { words, savedWords, cardState: { contextBoundaries } }: State,
   { index }: NumberedWord
 ): Word => ({
   word: words[index].word,

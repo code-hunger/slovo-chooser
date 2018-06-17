@@ -254,14 +254,14 @@ class CardEditor extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (
-  state: StoreState,
+  { cardState, words, textSourcePositions }: StoreState,
   ownProps: Props
 ): PropsFromState => ({
-  chunkId: state.textSourcePositions[ownProps.textSourceId],
-  usedHints: state.wordState.editedMarked,
-  marked: state.wordState.marked,
-  words: state.words,
-  contextBoundaries: state.contextBoundaries
+  chunkId: textSourcePositions[ownProps.textSourceId],
+  usedHints: cardState.words.editedMarked,
+  marked:cardState.words.marked,
+  words: words,
+  contextBoundaries: cardState.contextBoundaries
 });
 
 export default connect<PropsFromState, void, OutsideProps, StoreState>(

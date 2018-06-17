@@ -43,9 +43,9 @@ const ConnectedUnknownWordList = connect<
   void,
   { tabIndex?: number },
   State
->(state => ({
-  words: state.wordState.marked.map((wordId, i) => ({
-    ...state.words[wordId],
+>(({ cardState, words }) => ({
+  words: cardState.words.marked.map((wordId, i) => ({
+    ...words[wordId],
     index: i
   }))
 }))(UnknownWordsList.View);
@@ -185,12 +185,7 @@ interface AppDispatchProps {
 }
 
 const mapStateToProps = (state: State): AppStateProps =>
-  _.pick(state, [
-    "words",
-    "savedWords",
-    "textSourcePositions",
-    "savedChunks"
-  ]);
+  _.pick(state, ["words", "savedWords", "textSourcePositions", "savedChunks"]);
 
 const mapDispatchToProps = (
   dispatch: Dispatch<WordAction>

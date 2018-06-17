@@ -13,7 +13,7 @@ interface Props {
 }
 
 const markedWordStateToProps = (
-  { wordState: { marked, editedMarked }, words, savedWords }: State,
+  { cardState: { words: { marked, editedMarked } }, words, savedWords }: State,
   ownProps: NumberedWord
 ): Word => ({
   word: words[marked[ownProps.index]].word,

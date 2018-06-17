@@ -19,7 +19,7 @@ export type WordAction =
   | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number };
 
 function textWordsReducer(
-  words: ReadonlyArray<NumberedWord> = [],
+  words: NumberedWord[] = [],
   action: WordAction
 ) {
   switch (action.type) {
@@ -52,7 +52,7 @@ function textWordsReducer(
 }
 
 function markedWordsReducer(
-  state: ReadonlyArray<number> = emptyNumArr,
+  state: number[] = emptyNumArr,
   action: WordAction
 ) {
   switch (action.type) {
@@ -67,9 +67,9 @@ function markedWordsReducer(
 }
 
 function editedMarkedReducer(
-  editedMarked: ReadonlyArray<number> = emptyNumArr,
+  editedMarked: number[] = emptyNumArr,
   action: WordAction,
-  marked: ReadonlyArray<number> = emptyNumArr
+  marked: number[] = emptyNumArr
 ) {
   switch (action.type) {
     case "TOGGLE_EDITED_UNKNOWN_WORD":
@@ -97,23 +97,6 @@ function editedMarkedReducer(
       return emptyNumArr;
     default:
       return editedMarked;
-  }
-}
-
-function wordNumberTypedReducer(
-  currentNumberTyped: number = 0,
-  action: WordAction
-) {
-  switch (action.type) {
-    case "WORD_NUMBER_SET":
-      return action.number;
-    case "WORD_NUMBER_TYPED_RESET":
-    case "WORD_CLICKED":
-    case "SET_TEXT":
-    case "SAVE_WORD":
-      return 0;
-    default:
-      return currentNumberTyped;
   }
 }
 
@@ -194,11 +177,12 @@ function savedChunksReducer(savedChunks: SavedChunks = {}, action: WordAction) {
 function wordStateReducer(wordState: WordState, action: WordAction): WordState {
   // Ugly function. @TODO make it beautiful.
   if (_.isUndefined(wordState))
-    return <WordState>{
+    return {
       marked: markedWordsReducer(undefined, action),
       editedMarked: editedMarkedReducer(undefined, action)
     };
-  return <WordState>{
+
+  return {
     marked: markedWordsReducer(wordState.marked, action),
     editedMarked: editedMarkedReducer(
       wordState.editedMarked,
@@ -219,8 +203,6 @@ export interface SavedWord {
   readonly context: string;
 }
 
-export type SavedWords = SavedWord[];
-
 export interface SavedChunks {
   [textSourceId: string]: {
     [chunkId: number]: SavedWord[];
@@ -228,33 +210,38 @@ export interface SavedChunks {
 }
 
 interface WordState {
-  readonly marked: number[];
-  readonly editedMarked: number[];
+  marked: number[];
+  editedMarked: number[];
+}
+
+interface CardState {
+  readonly words: WordState;
+  readonly contextBoundaries: ContextBoundaries;
 }
 
 export interface State {
-  readonly wordState: WordState;
   readonly words: NumberedWord[];
-
-  readonly contextBoundaries: ContextBoundaries;
-  readonly textSourcePositions: CachedPositions;
 
   readonly savedChunks: SavedChunks;
   readonly savedWords: string[];
+
+  readonly textSourcePositions: CachedPositions;
+
+  readonly cardState: CardState;
 }
 
 const reducers = combineReducers({
-  wordState: wordStateReducer,
   words: textWordsReducer,
 
   savedChunks: savedChunksReducer,
   savedWords: savedWordsReducer,
 
-  contextBoundaries: contextBoundaryReducer,
-  keyboardControl: combineReducers({
-    wordNumberTyped: wordNumberTypedReducer
-  }),
-  textSourcePositions: chunkIdReducer
+  textSourcePositions: chunkIdReducer,
+
+  cardState: combineReducers<CardState>({
+    words: wordStateReducer,
+    contextBoundaries: contextBoundaryReducer
+  })
 });
 
 const store = createStore(reducers, loadState());
@@ -262,11 +249,13 @@ const store = createStore(reducers, loadState());
 store.subscribe(
   _.throttle(
     () =>
-      persistState(_.pick(store.getState(), [
-        "savedChunks",
-        "savedWords",
-        "textSourcePositions"
-      ])),
+      persistState(
+        _.pick(store.getState(), [
+          "savedChunks",
+          "savedWords",
+          "textSourcePositions"
+        ])
+      ),
     2000
   )
 );
