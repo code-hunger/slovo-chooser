@@ -8,7 +8,7 @@ import reactbind from "react-bind-decorator";
 import store, { WordAction, SavedWord, State as StoreState } from "./store";
 import { connect } from "react-redux";
 
-type Props = StateProps & OutsideProps;
+type Props = PropsFromState & OutsideProps;
 
 interface OutsideProps {
   readonly onSave: (
@@ -27,7 +27,7 @@ interface OutsideProps {
   provideContextSelectControls: () => void;
 }
 
-interface StateProps {
+interface PropsFromState {
   readonly usedHints: number[];
   readonly chunkId: number;
 
@@ -238,13 +238,13 @@ class CardEditor extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: StoreState, ownProps: Props): StateProps => ({
+const mapStateToProps = (state: StoreState, ownProps: Props): PropsFromState => ({
   chunkId: state.textSourcePositions[ownProps.textSourceId],
   usedHints: state.wordState.editedMarked,
   marked: state.wordState.marked,
   words: state.words
 });
 
-export default connect<StateProps, void, OutsideProps, StoreState>(
+export default connect<PropsFromState, void, OutsideProps, StoreState>(
   mapStateToProps
 )(CardEditor);

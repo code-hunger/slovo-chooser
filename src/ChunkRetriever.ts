@@ -38,14 +38,12 @@ export default class ChunkRetriever {
     this.sources[id] = {
       fetch: (chunkId: number) => {
         return new Promise((resolve, failure) => {
-          if(chunkId > lines.length)
-            failure("Out of bounds" );
-          else
-            resolve({text: lines[chunkId - 1], newId: chunkId});
-        })
+          if (chunkId > lines.length) failure("Out of bounds");
+          else resolve({ text: lines[chunkId - 1], newId: chunkId });
+        });
       },
       description: id
-    }
+    };
   }
 
   chunkFromLocalServer(file: string, chunkId: number): MyPr {
@@ -69,7 +67,7 @@ export default class ChunkRetriever {
   }
 
   getOptions() {
-    return _.keys(this.sources).map((key) => ({
+    return _.keys(this.sources).map(key => ({
       id: key,
       description: this.sources[key].description,
       chunkId: this.cachedPositions[key]
