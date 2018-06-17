@@ -118,7 +118,7 @@ function wordNumberTypedReducer(
 }
 
 function contextBoundaryReducer(
-  context: ContextBoundaries = { start: 0, length: 0},
+  context: ContextBoundaries = { start: 0, length: 0 },
   action: WordAction
 ) {
   switch (action.type) {
@@ -259,6 +259,16 @@ const reducers = combineReducers({
 
 const store = createStore(reducers, loadState());
 
-store.subscribe(_.throttle(() => persistState(store.getState()), 2000));
+store.subscribe(
+  _.throttle(
+    () =>
+      persistState(_.pick(store.getState(), [
+        "savedChunks",
+        "savedWords",
+        "textSourcePositions"
+      ])),
+    2000
+  )
+);
 
 export default store;
