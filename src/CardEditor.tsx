@@ -5,7 +5,12 @@ import UnknownField from "./UnknownFieldInput";
 
 import * as _ from "lodash";
 import reactbind from "react-bind-decorator";
-import store, { WordAction, SavedWord, State as StoreState } from "./store";
+import store, {
+  WordAction,
+  SavedWord,
+  State as StoreState,
+  ContextBoundaries
+} from "./store";
 import { connect } from "react-redux";
 
 type Props = PropsFromState & OutsideProps;
@@ -16,8 +21,6 @@ interface OutsideProps {
     chunkId: number,
     textSourceId: string
   ) => void;
-  readonly contextString: string;
-
   readonly switchToNextChunk: () => void;
   readonly dictionary: React.ComponentClass<{ word: string }>;
   readonly textSourceId: string;
@@ -33,6 +36,7 @@ interface PropsFromState {
 
   readonly marked: number[];
   readonly words: NumberedWord[];
+  readonly contextBoundaries: ContextBoundaries;
 }
 
 interface State {
@@ -79,7 +83,7 @@ class CardEditor extends React.Component<Props, State> {
       this.state.unknownField === newState.unknownField &&
       this.state.unknownFieldMeaning === newState.unknownFieldMeaning &&
       this.state.dictionarySearch === newState.dictionarySearch &&
-      this.props.contextString === nextProps.contextString &&
+      this.props.contextBoundaries === nextProps.contextBoundaries &&
       this.props.isSelectingContext === nextProps.isSelectingContext
     );
   }
@@ -134,7 +138,7 @@ class CardEditor extends React.Component<Props, State> {
       {
         word: this.state.unknownField,
         meaning: this.state.unknownFieldMeaning,
-        context: this.props.contextString
+        context: this.contextString()
       },
       this.props.chunkId,
       this.props.textSourceId
@@ -149,8 +153,20 @@ class CardEditor extends React.Component<Props, State> {
       removed
     } as WordAction);
 
+  contextString() {
+    if (this.props.contextBoundaries.length < 1) return "";
+
+    return (({ start, length }) =>
+      this.props.words
+        .slice(start, start + length + 1)
+        .reduce((str, { word }) => str + " " + word, ""))(
+      this.props.contextBoundaries
+    );
+  }
+
   render() {
-    const dictionarySearch = this.state.dictionarySearch;
+    const dictionarySearch = this.state.dictionarySearch,
+      contextString = this.contextString();
     // @TODO: Improve nested conditional rendering.
     // E.g., remove conditional rendering and render everything while setting className='hidden'
     return (
@@ -197,9 +213,8 @@ class CardEditor extends React.Component<Props, State> {
                       <>
                         Choose context sentence for <em>{dictionarySearch}</em>:
                         <p id="contextStringParagraph">
-                          {this.props.contextString || "No context selected"}
-                          {!this.props.isSelectingContext ||
-                          !this.props.contextString ? (
+                          {contextString || "No context selected"}
+                          {!this.props.isSelectingContext || !contextString ? (
                             <button
                               onClick={this.props.provideContextSelectControls}
                             >
@@ -214,7 +229,7 @@ class CardEditor extends React.Component<Props, State> {
                           )}
                         </p>
                       </>,
-                      this.props.contextString || 1 ? (
+                      contextString || 1 ? (
                         <button onClick={this.onSave}>SAVE</button>
                       ) : null
                     ]
@@ -238,11 +253,15 @@ class CardEditor extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: StoreState, ownProps: Props): PropsFromState => ({
+const mapStateToProps = (
+  state: StoreState,
+  ownProps: Props
+): PropsFromState => ({
   chunkId: state.textSourcePositions[ownProps.textSourceId],
   usedHints: state.wordState.editedMarked,
   marked: state.wordState.marked,
-  words: state.words
+  words: state.words,
+  contextBoundaries: state.contextBoundaries
 });
 
 export default connect<PropsFromState, void, OutsideProps, StoreState>(

@@ -22,7 +22,6 @@ import store, {
   WordAction,
   ContextBoundaries,
   SavedChunks,
-  SavedWords,
   SavedWord
 } from "./store";
 
@@ -128,16 +127,6 @@ class AppClass extends React.Component<AppProps, AppState> {
   }
 
   render() {
-    const contextString =
-      this.props.contextBoundaries.length < 1
-        ? ""
-        : (({ start, length }) =>
-            this.props.words
-              .slice(start, start + length + 1)
-              .reduce((str, { word }) => str + " " + word, ""))(
-            this.props.contextBoundaries
-          );
-
     return (
       <>
         <TextSourceChooser
@@ -161,7 +150,6 @@ class AppClass extends React.Component<AppProps, AppState> {
             <ConnectedUnknownWordList tabIndex={0} />
 
             <CardEditor
-              contextString={contextString}
               provideWordSelectControls={this.provideWordSelectControls}
               provideContextSelectControls={this.provideContextSelectControls}
               isSelectingContext={this.state.isSelectingContext}
@@ -187,7 +175,6 @@ interface AppStateProps {
   words: NumberedWord[];
   savedWords: string[];
   savedChunks: SavedChunks;
-  contextBoundaries: ContextBoundaries;
 
   textSourcePositions: CachedPositions;
 }
@@ -201,7 +188,6 @@ const mapStateToProps = (state: State): AppStateProps =>
   _.pick(state, [
     "words",
     "savedWords",
-    "contextBoundaries",
     "textSourcePositions",
     "savedChunks"
   ]);
