@@ -39,6 +39,18 @@ interface AppState {
   sources: { id: string; description: string; chunkId: number }[];
 }
 
+const ConnectedUnknownWordList = connect<
+  { words: NumberedWord[] },
+  void,
+  { tabIndex?: number },
+  State
+>(state => ({
+  words: state.wordState.marked.map((wordId, i) => ({
+    ...state.words[wordId],
+    index: i
+  }))
+}))(UnknownWordsList.View);
+
 @reactbind()
 class AppClass extends React.Component<AppProps, AppState> {
   private chunkRetriever: ChunkRetriever;
@@ -146,7 +158,7 @@ class AppClass extends React.Component<AppProps, AppState> {
             />
 
             <h3>Marked unknown:</h3>
-            <UnknownWordsList.View words={[]} tabIndex={0} />
+            <ConnectedUnknownWordList tabIndex={0} />
 
             <CardEditor
               contextString={contextString}
