@@ -173,7 +173,7 @@ class CardEditor extends React.Component<Props, State> {
       <div className="cardEditor">
         {[
           <UnknownField
-            words={this.props.words}
+            words={this.state.marked}
             usedHints={this.props.usedHints}
             minLength={CardEditor.MIN_WORD_LENGTH}
             toggleHints={this.toggleHints}
