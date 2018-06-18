@@ -2,24 +2,6 @@ body {
   overflow-x: hidden;
 }
 
-.App {
-  position: relative;
-  border: 1px solid black;
-  margin: 0 0.5em;
-}
-
-#root {
-  padding: 3ex;
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: flex-start;*/
-}
-
-/*#main > div:first {
-  max-width: 30vw;
-  overflow: scroll;
-}*/
-
 .wordCollector {
   padding-top: 1ex;
   margin-top: 0.7em;

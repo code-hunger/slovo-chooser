@@ -14,6 +14,10 @@ import {
 } from "./TextClickStrategies";
 
 import Grid from "@material-ui/core/Grid";
+import { withStyles } from "@material-ui/core/styles";
+import * as PropTypes from "prop-types";
+import Paper from "@material-ui/core/Paper";
+import { WithStyles, Theme } from "@material-ui/core";
 
 import exportToCsv from "./exportToCSV";
 
@@ -31,7 +35,7 @@ import reactbind from "react-bind-decorator";
 import { connect, Dispatch } from "react-redux";
 import * as _ from "lodash";
 
-type AppProps = AppStateProps & AppDispatchProps;
+type AppProps = AppStateProps & AppDispatchProps & WithStyles<typeof styles>;
 
 interface AppState {
   textClickStrategy: TextClickStrategy;
@@ -129,21 +133,24 @@ class AppClass extends React.Component<AppProps, AppState> {
   }
 
   render() {
+    const classes = this.props.classes;
     return (
-      <Grid container spacing={24}>
-        <Grid item sm={4}>
-          <TextSourceChooser
-            textSources={this.state.sources}
-            setTextSource={this.setTextSource}
-            currentSourceId={this.state.textSourceId}
-            addTextSource={this.addTextSource}
-          />
+      <Grid container spacing={16} className={classes.root} justify='space-around'>
+        <Grid item md={4} xs={12}>
+          <Paper className={classes.paper}>
+            <TextSourceChooser
+              textSources={this.state.sources}
+              setTextSource={this.setTextSource}
+              currentSourceId={this.state.textSourceId}
+              addTextSource={this.addTextSource}
+            />
+          </Paper>
         </Grid>
-        <Grid item sm={8}>
+        <Grid item md={8} xs={12}>
           {_.isUndefined(this.state.textSourceId) ? (
-            "Choose a text source"
+            "Text source not chosen"
           ) : (
-            <div className="App">
+            <Paper className={classes.paper}>
               <h3>Choose words to check meaning:</h3>
 
               <TextEditor
@@ -171,7 +178,7 @@ class AppClass extends React.Component<AppProps, AppState> {
               <button className="anchor block" onClick={this.generateCsvFile}>
                 Generate a <kbd>csv</kbd> file for anki
               </button>
-            </div>
+            </Paper>
           )}
         </Grid>
       </Grid>
@@ -205,9 +212,19 @@ const mapDispatchToProps = (
     dispatch({ type: "SET_TEXT", text, chunkId, textSourceId });
   }
 });
+const styles = (theme: Theme) => ({
+  root: {
+    flexGrow: 1,
+    padding: theme.spacing.unit
+  },
+  paper: {
+    padding: theme.spacing.unit * 2
+  }
+});
+const styled = withStyles(styles)(AppClass);
 
 const App = connect<AppStateProps, AppDispatchProps, void>(
   mapStateToProps,
   mapDispatchToProps
-)(AppClass);
+)(styled);
 export default App;
