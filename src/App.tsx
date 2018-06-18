@@ -13,6 +13,8 @@ import {
   TextClickStrategy
 } from "./TextClickStrategies";
 
+import Grid from "@material-ui/core/Grid";
+
 import exportToCsv from "./exportToCSV";
 
 import ChunkRetriever, { CachedPositions } from "./ChunkRetriever";
@@ -128,45 +130,51 @@ class AppClass extends React.Component<AppProps, AppState> {
 
   render() {
     return (
-      <>
-        <TextSourceChooser
-          textSources={this.state.sources}
-          setTextSource={this.setTextSource}
-          currentSourceId={this.state.textSourceId}
-          addTextSource={this.addTextSource}
-        />
-        {_.isUndefined(this.state.textSourceId) ? null : (
-          <div className="App">
-            <h3>Choose words to check meaning:</h3>
+      <Grid container spacing={24}>
+        <Grid item sm={4}>
+          <TextSourceChooser
+            textSources={this.state.sources}
+            setTextSource={this.setTextSource}
+            currentSourceId={this.state.textSourceId}
+            addTextSource={this.addTextSource}
+          />
+        </Grid>
+        <Grid item sm={8}>
+          {_.isUndefined(this.state.textSourceId) ? (
+            "Choose a text source"
+          ) : (
+            <div className="App">
+              <h3>Choose words to check meaning:</h3>
 
-            <TextEditor
-              tabIndex={0}
-              emptyText="Loading text..."
-              clickStrategy={this.state.textClickStrategy}
-              className={this.state.isSelectingContext ? "selectContext" : ""}
-            />
+              <TextEditor
+                tabIndex={0}
+                emptyText="Loading text..."
+                clickStrategy={this.state.textClickStrategy}
+                className={this.state.isSelectingContext ? "selectContext" : ""}
+              />
 
-            <h3>Marked unknown:</h3>
-            <ConnectedUnknownWordList tabIndex={0} />
+              <h3>Marked unknown:</h3>
+              <ConnectedUnknownWordList tabIndex={0} />
 
-            <CardEditor
-              provideWordSelectControls={this.provideWordSelectControls}
-              provideContextSelectControls={this.provideContextSelectControls}
-              isSelectingContext={this.state.isSelectingContext}
-              switchToNextChunk={this.switchToNextChunk}
-              onSave={this.props.onCardSave}
-              textSourceId={this.state.textSourceId}
-              dictionary={Dictionary}
-            />
-            <>{JSON.stringify(this.props.savedWords)}</>
-            <>{JSON.stringify(this.props.savedChunks)}</>
+              <CardEditor
+                provideWordSelectControls={this.provideWordSelectControls}
+                provideContextSelectControls={this.provideContextSelectControls}
+                isSelectingContext={this.state.isSelectingContext}
+                switchToNextChunk={this.switchToNextChunk}
+                onSave={this.props.onCardSave}
+                textSourceId={this.state.textSourceId}
+                dictionary={Dictionary}
+              />
+              <>{JSON.stringify(this.props.savedWords)}</>
+              <>{JSON.stringify(this.props.savedChunks)}</>
 
-            <button className="anchor block" onClick={this.generateCsvFile}>
-              Generate a <kbd>csv</kbd> file for anki
-            </button>
-          </div>
-        )}
-      </>
+              <button className="anchor block" onClick={this.generateCsvFile}>
+                Generate a <kbd>csv</kbd> file for anki
+              </button>
+            </div>
+          )}
+        </Grid>
+      </Grid>
     );
   }
 }
