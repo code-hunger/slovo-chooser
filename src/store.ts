@@ -4,6 +4,7 @@ import { NumberedWord } from "./Word";
 import { CachedPositions } from "./ChunkRetriever";
 import * as _ from "lodash";
 import { loadState, persistState } from "./localStorage";
+import { TextSource } from "./TextSourceChooser"
 
 const emptyStrArr: string[] = [];
 const emptyNumArr: number[] = [];
@@ -17,7 +18,8 @@ export type WordAction =
   | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORDS"; added: number[]; removed: number[] }
   | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
-  | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" };
+  | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" }
+  | { type: "ADD_LOCAL_TEXT_SOURCE", source: LocalTextSource };
 
 function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {
@@ -200,6 +202,23 @@ function isSelectingContextReducer(
   }
 }
 
+function localTextSourcesReducer(sources: LocalTextSource[] = [], action: WordAction) {
+  switch (action.type) {
+    case 'ADD_LOCAL_TEXT_SOURCE':
+      return update(sources, {
+        $push: [action.source]
+      })
+      break;
+    
+    default:
+      return sources;
+  }
+}
+
+export interface LocalTextSource extends TextSource<string> {
+  text: string;
+}
+
 export interface ContextBoundaries {
   start: number;
   length: number;
@@ -234,6 +253,7 @@ export interface State {
   readonly savedChunks: SavedChunks;
   readonly savedWords: string[];
 
+  readonly localTextSources: LocalTextSource[];
   readonly textSourcePositions: CachedPositions;
 
   readonly cardState: CardState;
@@ -246,6 +266,7 @@ const reducers = combineReducers({
   savedWords: savedWordsReducer,
 
   textSourcePositions: chunkIdReducer,
+  localTextSources: localTextSourcesReducer,
 
   cardState: combineReducers<CardState>({
     words: wordStateReducer,
@@ -263,6 +284,7 @@ store.subscribe(
         _.pick(store.getState(), [
           "savedChunks",
           "savedWords",
+          "localTextSources",
           "textSourcePositions"
         ])
       ),
