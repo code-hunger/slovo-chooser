@@ -14,9 +14,9 @@ import store, {
 import ContextStringField, {
   generateContextString
 } from "./ContextStringField";
-import { connect } from "react-redux";
+import { connect, Dispatch } from "react-redux";
 
-type Props = PropsFromState & OutsideProps;
+type Props = PropsFromState & OutsideProps & PropsFromDispatch;
 
 interface OutsideProps {
   readonly onSave: (
@@ -38,6 +38,11 @@ interface PropsFromState {
   readonly marked: number[];
   readonly words: NumberedWord[];
   readonly contextBoundaries: ContextBoundaries;
+}
+
+interface PropsFromDispatch {
+  readonly toggleHints: (added: number[], removed: number[]) => void;
+  readonly toggleSelectingContext: () => void;
 }
 
 interface State {
@@ -121,10 +126,6 @@ class CardEditor extends React.Component<Props, State> {
     this.setState({ dictionarySearch: value, unknownField: value });
   }
 
-  onContextWordSelect(wordId: number) {
-    return;
-  }
-
   trySwitchToNextChunk() {
     if (
       this.state.unknownField.length <= 1 ||
@@ -150,12 +151,6 @@ class CardEditor extends React.Component<Props, State> {
     this.resetState();
   }
 
-  toggleHints = (added: number[], removed: number[]) =>
-    store.dispatch({
-      type: "TOGGLE_EDITED_UNKNOWN_WORDS",
-      added,
-      removed
-    } as WordAction);
   render() {
     const dictionarySearch = this.state.dictionarySearch;
     // @TODO: Improve nested conditional rendering.
@@ -167,7 +162,7 @@ class CardEditor extends React.Component<Props, State> {
             words={this.state.marked}
             usedHints={this.props.usedHints}
             minLength={CardEditor.MIN_WORD_LENGTH}
-            toggleHints={this.toggleHints}
+            toggleHints={this.props.toggleHints}
             key="unknownField"
             onReady={this.loadDictionary}
           />,
@@ -205,18 +200,9 @@ class CardEditor extends React.Component<Props, State> {
                         <ContextStringField
                           unknownWord={dictionarySearch}
                           isSelectingContext={this.props.isSelectingContext}
-                          onReady={() =>
-                            store.dispatch({
-                              type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
-                            })
-                          }
+                          onReady={this.props.toggleSelectingContext}
                         />
-                        <button
-                          onClick={() =>
-                            store.dispatch({
-                              type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
-                            })}
-                        >
+                        <button onClick={this.props.toggleSelectingContext}>
                           Select context words
                         </button>
                       </>,
@@ -257,6 +243,26 @@ const mapStateToProps = (
   contextBoundaries: cardState.contextBoundaries
 });
 
-export default connect<PropsFromState, void, OutsideProps, StoreState>(
-  mapStateToProps
-)(CardEditor);
+const mapDispatchToProps = (
+  dispatch: Dispatch<WordAction>
+): PropsFromDispatch => ({
+  toggleHints(added: number[], removed: number[]) {
+    dispatch({
+      type: "TOGGLE_EDITED_UNKNOWN_WORDS",
+      added,
+      removed
+    } as WordAction);
+  },
+  toggleSelectingContext() {
+    dispatch({
+      type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
+    });
+  }
+});
+
+export default connect<
+  PropsFromState,
+  PropsFromDispatch,
+  OutsideProps,
+  StoreState
+>(mapStateToProps, mapDispatchToProps)(CardEditor);
