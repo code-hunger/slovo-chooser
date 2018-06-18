@@ -26,7 +26,7 @@ export default class ChunkRetriever {
     axios.get("/status", { responseType: "json" }).then(({ data }) => {
       _.forOwn(data, (_, file) => {
         this.sources[file] = {
-          description: file,
+          description: file.replace(/_/g, " "),
           fetch: this.chunkFromLocalServer.bind(this, file)
         };
       });
