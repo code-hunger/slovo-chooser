@@ -7,6 +7,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { createStyles, WithStyles, Theme } from "@material-ui/core";
 import Badge from "@material-ui/core/Badge";
+import reactbind from "react-bind-decorator";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -32,33 +33,34 @@ type PropsWithStyles<T> = Props<T> & WithStyles<typeof styles>;
 
 interface State {}
 
+@reactbind()
 class TextSourceChooser<IdType> extends React.PureComponent<
   PropsWithStyles<IdType>,
   State
 > {
-  render() {
+  renderTextSourceItem(x: TextSource<IdType>) {
     const classes = this.props.classes;
+    return (
+      <ListItem
+        button
+        key={x.id.toString()}
+        onClick={() => this.props.setTextSource(x.id)}
+        className={
+          x.id === this.props.currentSourceId ? classes.selected : undefined
+        }
+      >
+        <Badge color="primary" badgeContent={x.chunkId}>
+          {x.description}
+        </Badge>
+      </ListItem>
+    );
+  }
+
+  render() {
     return (
       <>
         Choose a text source:
-        <List>
-          {this.props.textSources.map(x => (
-            <ListItem
-              button
-              key={x.id.toString()}
-              onClick={() => this.props.setTextSource(x.id)}
-              className={
-                x.id === this.props.currentSourceId
-                  ? classes.selected
-                  : undefined
-              }
-            >
-              <Badge color="primary" badgeContent={x.chunkId}>
-                {x.description}
-              </Badge>
-            </ListItem>
-          ))}
-        </List>
+        <List>{this.props.textSources.map(this.renderTextSourceItem)}</List>
         {this.props.addTextSource ? (
           <TextAdder onDone={this.props.addTextSource} />
         ) : null}
