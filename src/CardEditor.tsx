@@ -11,6 +11,9 @@ import store, {
   State as StoreState,
   ContextBoundaries
 } from "./store";
+import ContextStringField, {
+  generateContextString
+} from "./ContextStringField";
 import { connect } from "react-redux";
 
 type Props = PropsFromState & OutsideProps;
@@ -138,7 +141,10 @@ class CardEditor extends React.Component<Props, State> {
       {
         word: this.state.unknownField,
         meaning: this.state.unknownFieldMeaning,
-        context: this.contextString()
+        context: generateContextString(
+          this.props.contextBoundaries,
+          this.props.words
+        )
       },
       this.props.chunkId,
       this.props.textSourceId
@@ -152,21 +158,8 @@ class CardEditor extends React.Component<Props, State> {
       added,
       removed
     } as WordAction);
-
-  contextString() {
-    if (this.props.contextBoundaries.length < 1) return "";
-
-    return (({ start, length }) =>
-      this.props.words
-        .slice(start, start + length + 1)
-        .reduce((str, { word }) => str + " " + word, ""))(
-      this.props.contextBoundaries
-    );
-  }
-
   render() {
-    const dictionarySearch = this.state.dictionarySearch,
-      contextString = this.contextString();
+    const dictionarySearch = this.state.dictionarySearch;
     // @TODO: Improve nested conditional rendering.
     // E.g., remove conditional rendering and render everything while setting className='hidden'
     return (
@@ -211,27 +204,22 @@ class CardEditor extends React.Component<Props, State> {
                 ...(this.state.unknownFieldMeaning.length > 2
                   ? [
                       <>
-                        Choose context sentence for <em>{dictionarySearch}</em>:
-                        <p id="contextStringParagraph">
-                          {contextString || "No context selected"}
-                          {!this.props.isSelectingContext || !contextString ? (
-                            <button
-                              onClick={this.props.provideContextSelectControls}
-                            >
-                              Select context words
-                            </button>
-                          ) : (
-                            <button
-                              onClick={this.props.provideWordSelectControls}
-                            >
-                              Done
-                            </button>
-                          )}
-                        </p>
+                        <ContextStringField
+                          unknownWord={dictionarySearch}
+                          isSelectingContext={this.props.isSelectingContext}
+                          onReady={this.props.provideWordSelectControls}
+                        />
+                        <button
+                          onClick={this.props.provideContextSelectControls}
+                        >
+                          Select context words
+                        </button>
                       </>,
-                      contextString || 1 ? (
+                      this.props.contextBoundaries.length ? (
                         <button onClick={this.onSave}>SAVE</button>
-                      ) : null
+                      ) : (
+                        "Choose context!"
+                      )
                     ]
                   : [])
               ]
@@ -259,7 +247,7 @@ const mapStateToProps = (
 ): PropsFromState => ({
   chunkId: textSourcePositions[ownProps.textSourceId],
   usedHints: cardState.words.editedMarked,
-  marked:cardState.words.marked,
+  marked: cardState.words.marked,
   words: words,
   contextBoundaries: cardState.contextBoundaries
 });
