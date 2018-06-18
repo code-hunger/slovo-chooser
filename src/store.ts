@@ -16,12 +16,10 @@ export type WordAction =
   | { type: "WORD_NUMBER_TYPED_RESET" }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORDS"; added: number[]; removed: number[] }
-  | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number };
+  | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
+  | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" };
 
-function textWordsReducer(
-  words: NumberedWord[] = [],
-  action: WordAction
-) {
+function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {
     case "SET_TEXT":
       let text: string = action.text;
@@ -51,10 +49,7 @@ function textWordsReducer(
   }
 }
 
-function markedWordsReducer(
-  state: number[] = emptyNumArr,
-  action: WordAction
-) {
+function markedWordsReducer(state: number[] = emptyNumArr, action: WordAction) {
   switch (action.type) {
     case "WORD_CLICKED":
       if (state.indexOf(action.word) > -1) return _.without(state, action.word);
@@ -192,6 +187,19 @@ function wordStateReducer(wordState: WordState, action: WordAction): WordState {
   };
 }
 
+function isSelectingContextReducer(
+  isSelectingContext: boolean = false,
+  action: WordAction
+): boolean {
+  switch (action.type) {
+    case "TOGGLE_SELECTING_CONTEXT_BOUNDARIES":
+      return !isSelectingContext;
+      break;
+    default:
+      return isSelectingContext;
+  }
+}
+
 export interface ContextBoundaries {
   start: number;
   length: number;
@@ -217,6 +225,7 @@ interface WordState {
 interface CardState {
   readonly words: WordState;
   readonly contextBoundaries: ContextBoundaries;
+  readonly isSelectingContext: boolean;
 }
 
 export interface State {
@@ -240,7 +249,8 @@ const reducers = combineReducers({
 
   cardState: combineReducers<CardState>({
     words: wordStateReducer,
-    contextBoundaries: contextBoundaryReducer
+    contextBoundaries: contextBoundaryReducer,
+    isSelectingContext: isSelectingContextReducer
   })
 });
 

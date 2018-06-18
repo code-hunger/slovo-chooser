@@ -29,8 +29,6 @@ interface OutsideProps {
   readonly textSourceId: string;
 
   isSelectingContext: boolean;
-  provideWordSelectControls: () => void;
-  provideContextSelectControls: () => void;
 }
 
 interface PropsFromState {
@@ -207,10 +205,17 @@ class CardEditor extends React.Component<Props, State> {
                         <ContextStringField
                           unknownWord={dictionarySearch}
                           isSelectingContext={this.props.isSelectingContext}
-                          onReady={this.props.provideWordSelectControls}
+                          onReady={() =>
+                            store.dispatch({
+                              type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
+                            })
+                          }
                         />
                         <button
-                          onClick={this.props.provideContextSelectControls}
+                          onClick={() =>
+                            store.dispatch({
+                              type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
+                            })}
                         >
                           Select context words
                         </button>

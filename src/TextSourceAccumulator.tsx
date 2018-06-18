@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { flatMap, values } from "lodash";
+import reactbind from "react-bind-decorator";
 
 import TextEditor from "./TextEditor";
 import CardEditor from "./CardEditor";
@@ -37,15 +38,23 @@ interface PropsFromOutside {
 interface PropsFromState {
   words: NumberedWord[];
   savedChunks: SavedChunks;
+  textClickStrategy: TextClickStrategy;
+  isSelectingContext: boolean;
 }
 
 interface PropsFromDispatch {
   onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
 }
 
-const mapStateToProps = ({ words, savedChunks }: State): PropsFromState => ({
+const mapStateToProps = ({ words, savedChunks, cardState: { isSelectingContext } }: State): PropsFromState => ({
   words,
-  savedChunks
+  savedChunks,
+  isSelectingContext,
+  textClickStrategy: isSelectingContext? new ContextSelector(
+        store.dispatch,
+        words.length
+      )  : UnknownWordSelector(store.dispatch)
+
 });
 
 const mapDispatchToProps = (
@@ -56,34 +65,10 @@ const mapDispatchToProps = (
   }
 });
 
-interface MyState {
-  textClickStrategy: TextClickStrategy;
-  isSelectingContext: boolean;
-}
+interface MyState {}
 
+@reactbind()
 class TextSourceAccumulator extends React.Component<Props, MyState> {
-  state = {
-    textClickStrategy: UnknownWordSelector(store.dispatch),
-    isSelectingContext: false
-  };
-
-  provideWordSelectControls() {
-    this.setState({
-      textClickStrategy: UnknownWordSelector(store.dispatch),
-      isSelectingContext: false
-    });
-  }
-
-  provideContextSelectControls() {
-    this.setState({
-      textClickStrategy: new ContextSelector(
-        store.dispatch,
-        this.props.words.length
-      ),
-      isSelectingContext: true
-    });
-  }
-
   generateCsvFile() {
     const csvArray = flatMap(this.props.savedChunks).map(values);
     exportToCsv("anki_export.csv", csvArray);
@@ -96,15 +81,13 @@ class TextSourceAccumulator extends React.Component<Props, MyState> {
         <TextEditor
           tabIndex={0}
           emptyText="Loading text..."
-          clickStrategy={this.state.textClickStrategy}
-          className={this.state.isSelectingContext ? "selectContext" : ""}
+          clickStrategy={this.props.textClickStrategy}
+          className={this.props.isSelectingContext ? "selectContext" : ""}
         />
         <h3>Marked unknown:</h3>
         <ConnectedUnknownWordList tabIndex={0} />
         <CardEditor
-          provideWordSelectControls={this.provideWordSelectControls}
-          provideContextSelectControls={this.provideContextSelectControls}
-          isSelectingContext={this.state.isSelectingContext}
+          isSelectingContext={this.props.isSelectingContext}
           switchToNextChunk={this.props.onReady}
           onSave={this.props.onCardSave}
           textSourceId={this.props.textSourceId}
