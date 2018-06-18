@@ -38,14 +38,14 @@ class TextSourceChooser<IdType> extends React.PureComponent<
 > {
   renderTextSourceItem(x: TextSource<IdType>) {
     const classes = this.props.classes;
+    const isCurrent = x.id === this.props.currentSourceId;
     return (
       <ListItem
         button
         key={x.id.toString()}
         onClick={() => this.props.setTextSource(x.id)}
-        className={
-          x.id === this.props.currentSourceId ? classes.selected : undefined
-        }
+        disabled={isCurrent}
+        className={isCurrent ? classes.selected : undefined}
       >
         <Badge color="primary" badgeContent={x.chunkId}>
           {x.description}
