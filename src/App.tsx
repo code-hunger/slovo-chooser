@@ -60,15 +60,19 @@ class AppClass extends React.Component<AppProps, AppState> {
     }
   }
 
-  switchToNextChunk(chunkId?: number) {
-    const textSourceId = this.state.textSourceId;
-
+  switchToNextChunk(
+    chunkId?: number,
+    textSourceId: string | undefined = this.state.textSourceId
+  ) {
     if (isUndefined(textSourceId)) throw "No text source";
 
-    this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
+    return this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
       chunk => {
         this.props.setText(chunk.text, chunk.newId, textSourceId);
-        this.setState({ sources: this.chunkRetriever.getOptions() });
+        this.setState({
+          sources: this.chunkRetriever.getOptions(),
+          textSourceId
+        });
       },
       fail => alert("Error fetching chunk from server: " + fail)
     );
@@ -77,9 +81,7 @@ class AppClass extends React.Component<AppProps, AppState> {
   setTextSource(id: string) {
     if (this.state.textSourceId === id) return;
 
-    this.setState({ textSourceId: id }, () =>
-      this.switchToNextChunk(this.props.textSourcePositions[id])
-    );
+    this.switchToNextChunk(this.props.textSourcePositions[id], id);
   }
 
   render() {

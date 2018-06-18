@@ -88,7 +88,9 @@ export default class ChunkRetriever {
       else chunkId = 1;
     }
 
-    this.positionBySource(textSourceId, chunkId);
-    return this.sources[textSourceId].fetch(chunkId);
+    return this.sources[textSourceId].fetch(chunkId).then(response => {
+      this.positionBySource(textSourceId, chunkId);
+      return response;
+    });
   }
 }
