@@ -4,6 +4,7 @@ import "./App.css";
 import TextSourceAccumulator from "./TextSourceAccumulator";
 import TextSourceChooser from "./TextSourceChooser";
 import { NumberedWord } from "./Word";
+import TextAdder from "./TextAdder";
 
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
@@ -66,17 +67,9 @@ class AppClass extends React.Component<AppProps, AppState> {
     );
   }
 
-  addTextSource(id: string, text: string) {
-    this.chunkRetriever.addTextSource(id, text);
-    this.setState({
-      sources: this.chunkRetriever.getOptions(),
-      textSourceId: id
-    });
-  }
-
   render() {
     const classes = this.props.classes;
-    const textSourceId = this.state.textSourceId
+    const textSourceId = this.state.textSourceId;
     const hasTextSource = !isUndefined(textSourceId);
     return (
       <Grid
@@ -91,8 +84,8 @@ class AppClass extends React.Component<AppProps, AppState> {
               textSources={this.state.sources}
               setTextSource={this.setTextSource}
               currentSourceId={textSourceId}
-              addTextSource={this.addTextSource}
             />
+            <TextAdder />
           </Paper>
         </Grid>
         {isUndefined(textSourceId) ? null : (

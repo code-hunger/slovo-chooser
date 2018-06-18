@@ -1,5 +1,4 @@
 import * as React from "react";
-import { TextAdder } from "./TextAdder";
 import { withStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -16,7 +15,7 @@ const styles = (theme: Theme) =>
     }
   });
 
-interface TextSource<IdType> {
+export interface TextSource<IdType> {
   id: IdType;
   description: string;
   chunkId?: number;
@@ -25,7 +24,6 @@ interface TextSource<IdType> {
 interface Props<IdType> {
   textSources: TextSource<IdType>[];
   setTextSource: (id: IdType) => void;
-  addTextSource?: (id: string, text: string) => void;
   currentSourceId?: IdType;
 }
 
@@ -61,9 +59,6 @@ class TextSourceChooser<IdType> extends React.PureComponent<
       <>
         Choose a text source:
         <List>{this.props.textSources.map(this.renderTextSourceItem)}</List>
-        {this.props.addTextSource ? (
-          <TextAdder onDone={this.props.addTextSource} />
-        ) : null}
       </>
     );
   }

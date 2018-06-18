@@ -1,7 +1,11 @@
 import * as React from "react";
 import reactbind from "react-bind-decorator";
+import store, { State as ReduxStore, WordAction, SavedWord } from "./store";
+import { connect, Dispatch } from "react-redux";
 
-interface Props {
+type Props = PropsFromDispatch;
+
+interface PropsFromDispatch {
   onDone: (id: string, text: string) => void;
 }
 
@@ -11,7 +15,7 @@ interface State {
 }
 
 @reactbind()
-export class TextAdder extends React.PureComponent<Props, State> {
+class TextAdder extends React.PureComponent<Props, State> {
   state = { id: "", value: "" };
 
   onChange(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
@@ -47,3 +51,23 @@ export class TextAdder extends React.PureComponent<Props, State> {
     );
   }
 }
+
+const mapDispatchToProps = (
+  dispatch: Dispatch<WordAction>
+): PropsFromDispatch => ({
+  onDone(id: string, text: string) {
+    dispatch({
+      type: "ADD_LOCAL_TEXT_SOURCE",
+      source: {
+        id,
+        description: id,
+        text
+      }
+    });
+  }
+});
+
+export default connect<void, PropsFromDispatch, void, ReduxStore>(
+  undefined,
+  mapDispatchToProps
+)(TextAdder);
