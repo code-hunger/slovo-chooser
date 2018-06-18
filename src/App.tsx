@@ -14,11 +14,11 @@ import { WithStyles, Theme } from "@material-ui/core";
 
 import ChunkRetriever, { CachedPositions } from "./ChunkRetriever";
 
-import store, { State, WordAction, SavedWord } from "./store";
+import store, { State, WordAction, SavedWord, LocalTextSource } from "./store";
 
 import reactbind from "react-bind-decorator";
 import { connect, Dispatch } from "react-redux";
-import { pick, isUndefined }  from "lodash";
+import { pick, isUndefined } from "lodash";
 
 type AppProps = AppStateProps & AppDispatchProps & WithStyles<typeof styles>;
 
@@ -34,15 +34,30 @@ class AppClass extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
 
-    this.chunkRetriever = new ChunkRetriever(this.props.textSourcePositions);
+    this.chunkRetriever = new ChunkRetriever(props.textSourcePositions);
     this.chunkRetriever
       .getOptionsFromServer()
       .then(sources => this.setState({ sources }));
+
+    this.importLocalSources(props.localTextSources);
 
     this.state = {
       textSourceId: undefined,
       sources: this.chunkRetriever.getOptions()
     };
+  }
+
+  importLocalSources(localTextSources: LocalTextSource[]) {
+    localTextSources.forEach(textSource =>
+      this.chunkRetriever.addTextSource(textSource.id, textSource.text)
+    );
+  }
+
+  componentWillReceiveProps(nextProps: AppProps) {
+    if (nextProps.localTextSources !== this.props.localTextSources) {
+      this.importLocalSources(nextProps.localTextSources);
+      this.setState({ sources: this.chunkRetriever.getOptions() });
+    }
   }
 
   switchToNextChunk(chunkId?: number) {
@@ -78,7 +93,13 @@ class AppClass extends React.Component<AppProps, AppState> {
         className={classes.root}
         justify="space-around"
       >
-        <Grid item lg={4} md={hasTextSource ? 4 : 6} sm={hasTextSource ? 4 : 8} xs={12}>
+        <Grid
+          item
+          lg={4}
+          md={hasTextSource ? 4 : 6}
+          sm={hasTextSource ? 12 : 8}
+          xs={12}
+        >
           <Paper className={classes.paper}>
             <TextSourceChooser
               textSources={this.state.sources}
@@ -105,6 +126,7 @@ class AppClass extends React.Component<AppProps, AppState> {
 
 interface AppStateProps {
   textSourcePositions: CachedPositions;
+  localTextSources: LocalTextSource[];
 }
 
 interface AppDispatchProps {
@@ -112,7 +134,7 @@ interface AppDispatchProps {
 }
 
 const mapStateToProps = (state: State): AppStateProps =>
-  pick(state, ["textSourcePositions"]);
+  pick(state, ["textSourcePositions", "localTextSources"]);
 
 const mapDispatchToProps = (
   dispatch: Dispatch<WordAction>
