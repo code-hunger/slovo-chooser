@@ -17,7 +17,7 @@ import store, { State, WordAction, SavedWord } from "./store";
 
 import reactbind from "react-bind-decorator";
 import { connect, Dispatch } from "react-redux";
-import * as _ from "lodash";
+import { pick, isUndefined }  from "lodash";
 
 type AppProps = AppStateProps & AppDispatchProps & WithStyles<typeof styles>;
 
@@ -47,7 +47,7 @@ class AppClass extends React.Component<AppProps, AppState> {
   switchToNextChunk(chunkId?: number) {
     const textSourceId = this.state.textSourceId;
 
-    if (_.isUndefined(textSourceId)) throw "No text source";
+    if (isUndefined(textSourceId)) throw "No text source";
 
     this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
       chunk => {
@@ -76,6 +76,8 @@ class AppClass extends React.Component<AppProps, AppState> {
 
   render() {
     const classes = this.props.classes;
+    const textSourceId = this.state.textSourceId
+    const hasTextSource = !isUndefined(textSourceId);
     return (
       <Grid
         container
@@ -83,28 +85,26 @@ class AppClass extends React.Component<AppProps, AppState> {
         className={classes.root}
         justify="space-around"
       >
-        <Grid item md={4} xs={12}>
+        <Grid item lg={4} md={hasTextSource ? 4 : 6} sm={hasTextSource ? 4 : 8} xs={12}>
           <Paper className={classes.paper}>
             <TextSourceChooser
               textSources={this.state.sources}
               setTextSource={this.setTextSource}
-              currentSourceId={this.state.textSourceId}
+              currentSourceId={textSourceId}
               addTextSource={this.addTextSource}
             />
           </Paper>
         </Grid>
-        <Grid item md={8} xs={12}>
-          {_.isUndefined(this.state.textSourceId) ? (
-            "Text source not chosen"
-          ) : (
+        {isUndefined(textSourceId) ? null : (
+          <Grid item md={8} xs={12}>
             <Paper className={classes.paper}>
               <TextSourceAccumulator
                 onReady={this.switchToNextChunk}
-                textSourceId={this.state.textSourceId}
+                textSourceId={textSourceId}
               />
             </Paper>
-          )}
-        </Grid>
+          </Grid>
+        )}
       </Grid>
     );
   }
@@ -119,7 +119,7 @@ interface AppDispatchProps {
 }
 
 const mapStateToProps = (state: State): AppStateProps =>
-  _.pick(state, ["textSourcePositions"]);
+  pick(state, ["textSourcePositions"]);
 
 const mapDispatchToProps = (
   dispatch: Dispatch<WordAction>
