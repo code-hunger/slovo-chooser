@@ -5,7 +5,7 @@ import reactbind from "react-bind-decorator";
 
 import TextEditor from "./TextEditor";
 import CardEditor from "./CardEditor";
-import * as UnknownWordsList from "./UnknownWordsList";
+import UnknownWordList from "./UnknownWordsList";
 import { NumberedWord } from "./Word";
 import Dictionary from "./Dictionary";
 import store, { State, WordAction, SavedChunks, SavedWord } from "./store";
@@ -15,18 +15,6 @@ import {
   TextClickStrategy
 } from "./TextClickStrategies";
 import exportToCsv from "./exportToCSV";
-
-const ConnectedUnknownWordList = connect<
-  { words: NumberedWord[] },
-  void,
-  { tabIndex?: number },
-  State
->(({ cardState, words }) => ({
-  words: cardState.words.marked.map((wordId, i) => ({
-    ...words[wordId],
-    index: i
-  }))
-}))(UnknownWordsList.View);
 
 type Props = PropsFromState & PropsFromDispatch & PropsFromOutside;
 
@@ -85,7 +73,7 @@ class TextSourceAccumulator extends React.Component<Props, MyState> {
           className={this.props.isSelectingContext ? "selectContext" : ""}
         />
         <h3>Marked unknown:</h3>
-        <ConnectedUnknownWordList tabIndex={0} />
+        <UnknownWordList tabIndex={0} />
         <CardEditor
           isSelectingContext={this.props.isSelectingContext}
           switchToNextChunk={this.props.onReady}

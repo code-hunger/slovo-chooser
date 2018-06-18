@@ -28,7 +28,7 @@ const MarkedWord = connect<Word, null, { index: number }>(
   markedWordStateToProps
 )(NumberedWordView);
 
-export class View extends React.PureComponent<Props> {
+export class UnknownWordList extends React.PureComponent<Props> {
   private clickStrategy: TextClickStrategy;
 
   constructor(props: Props) {
@@ -67,3 +67,16 @@ export class View extends React.PureComponent<Props> {
     );
   }
 }
+
+export default connect<
+  { words: NumberedWord[] },
+  void,
+  { tabIndex?: number },
+  State
+>(({ cardState, words }) => ({
+  words: cardState.words.marked.map((wordId, i) => ({
+    ...words[wordId],
+    index: i
+  }))
+}))(UnknownWordList);
+
