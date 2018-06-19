@@ -18,7 +18,7 @@ import store, { State, WordAction, SavedWord, LocalTextSource } from "./store";
 
 import reactbind from "react-bind-decorator";
 import { connect, Dispatch } from "react-redux";
-import { pick, isUndefined } from "lodash";
+import { pick, find, findIndex, isUndefined } from "lodash";
 
 type AppProps = AppStateProps & AppDispatchProps & WithStyles<typeof styles>;
 
@@ -84,6 +84,17 @@ class AppClass extends React.Component<AppProps, AppState> {
     this.switchToNextChunk(this.props.textSourcePositions[id], id);
   }
 
+  removeTextSource(id: string) {
+    // The text source string id needs to be converted to the numeric id of the source in props.localSources
+    const localTextSourceId = find(this.props.localTextSources, [
+      "id",
+      id
+    ]);
+    return isUndefined(localTextSourceId)
+      ? false
+      : this.props.textSourceRemover(localTextSourceId);
+  }
+
   render() {
     const classes = this.props.classes;
     const textSourceId = this.state.textSourceId;
@@ -107,6 +118,7 @@ class AppClass extends React.Component<AppProps, AppState> {
               textSources={this.state.sources}
               setTextSource={this.setTextSource}
               currentSourceId={textSourceId}
+              removeTextSource={this.removeTextSource}
             />
             <TextAdder />
           </Paper>
@@ -133,6 +145,7 @@ interface AppStateProps {
 
 interface AppDispatchProps {
   setText: (text: string, chunkId: number, textSourceId: string) => void;
+  textSourceRemover: (source: LocalTextSource) => () => void;
 }
 
 const mapStateToProps = (state: State): AppStateProps =>
@@ -143,8 +156,12 @@ const mapDispatchToProps = (
 ): AppDispatchProps => ({
   setText(text: string, chunkId: number, textSourceId: string) {
     dispatch({ type: "SET_TEXT", text, chunkId, textSourceId });
+  },
+  textSourceRemover(sourceIndex: LocalTextSource) {
+    return () => dispatch({ type: "REMOVE_LOCAL_TEXT_SOURCE", sourceIndex });
   }
 });
+
 const styles = (theme: Theme) => ({
   root: {
     flexGrow: 1,

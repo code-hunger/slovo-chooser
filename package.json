@@ -5,6 +5,7 @@
   "proxy": "http://localhost:3001/",
   "dependencies": {
     "@material-ui/core": "^1.2.1",
+    "@material-ui/icons": "^1.1.0",
     "@types/lodash": "^4.14.109",
     "@types/prop-types": "^15.5.3",
     "axios": "^0.18.0",
