@@ -39,8 +39,11 @@ class TextAdder extends React.PureComponent<Props, State> {
   }
 
   onDone() {
-    this.props.onDone(this.state.id, this.state.value);
-    this.setState({ id: "", value: "" });
+    if (this.isValid()) {
+      this.props.onDone(this.state.id, this.state.value);
+      this.setState({ id: "", value: "" });
+    }
+    this.handleClose();
   }
 
   handleClickOpen() {
@@ -51,15 +54,20 @@ class TextAdder extends React.PureComponent<Props, State> {
     this.setState({ isOpen: false });
   }
 
-  addTextSource() {
-    this.handleClose();
-    this.props.onDone(this.state.id, this.state.value);
+  isValid() {
+    return this.state.id.length > 1 && this.state.value.length > 10;
   }
 
   render() {
     return (
       <>
-        <Button onClick={this.handleClickOpen}>Add a new text source</Button>
+        <Button
+          onClick={this.handleClickOpen}
+          variant="outlined"
+          color="primary"
+        >
+          Add a new text source
+        </Button>
         <Dialog
           open={this.state.isOpen}
           onClose={this.handleClose}
@@ -90,7 +98,11 @@ class TextAdder extends React.PureComponent<Props, State> {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.onDone} color="primary">
+            <Button
+              onClick={this.onDone}
+              color="primary"
+              disabled={!this.isValid()}
+            >
               Add text source
             </Button>
             <Button onClick={this.handleClose} color="secondary">
