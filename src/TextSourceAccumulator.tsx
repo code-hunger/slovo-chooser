@@ -25,7 +25,7 @@ interface PropsFromOutside {
 
 interface PropsFromState {
   words: NumberedWord[];
-  savedChunks: SavedChunks;
+  savedChunks: { [chunkId: number]: SavedWord[] };
   textClickStrategy: TextClickStrategy;
   isSelectingContext: boolean;
 }
@@ -34,15 +34,16 @@ interface PropsFromDispatch {
   onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
 }
 
-const mapStateToProps = ({ words, savedChunks, cardState: { isSelectingContext } }: State): PropsFromState => ({
+const mapStateToProps = (
+  { words, savedChunks, cardState: { isSelectingContext } }: State,
+  { textSourceId }: Props
+): PropsFromState => ({
   words,
-  savedChunks,
+  savedChunks: savedChunks[textSourceId],
   isSelectingContext,
-  textClickStrategy: isSelectingContext? new ContextSelector(
-        store.dispatch,
-        words.length
-      )  : UnknownWordSelector(store.dispatch)
-
+  textClickStrategy: isSelectingContext
+    ? new ContextSelector(store.dispatch, words.length)
+    : UnknownWordSelector(store.dispatch)
 });
 
 const mapDispatchToProps = (
@@ -81,9 +82,11 @@ class TextSourceAccumulator extends React.Component<Props, MyState> {
           textSourceId={this.props.textSourceId}
           dictionary={Dictionary}
         />
-        <button className="anchor block" onClick={this.generateCsvFile}>
-          Generate a <kbd>csv</kbd> file for anki
-        </button>
+        {this.props.savedChunks ? (
+          <button className="anchor block" onClick={this.generateCsvFile}>
+            Generate a <kbd>csv</kbd> file for anki
+          </button>
+        ) : null}
       </>
     );
   }
