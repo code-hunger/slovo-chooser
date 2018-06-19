@@ -3,6 +3,14 @@ import reactbind from "react-bind-decorator";
 import store, { State as ReduxStore, WordAction, SavedWord } from "./store";
 import { connect, Dispatch } from "react-redux";
 
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
 type Props = PropsFromDispatch;
 
 interface PropsFromDispatch {
@@ -12,11 +20,12 @@ interface PropsFromDispatch {
 interface State {
   id: string;
   value: string;
+  isOpen: boolean;
 }
 
 @reactbind()
 class TextAdder extends React.PureComponent<Props, State> {
-  state = { id: "", value: "" };
+  state = { id: "", value: "", isOpen: false };
 
   onChange(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
     switch (e.target.name) {
@@ -34,19 +43,61 @@ class TextAdder extends React.PureComponent<Props, State> {
     this.setState({ id: "", value: "" });
   }
 
+  handleClickOpen() {
+    this.setState({ isOpen: true });
+  }
+
+  handleClose() {
+    this.setState({ isOpen: false });
+  }
+
+  addTextSource() {
+    this.handleClose();
+    this.props.onDone(this.state.id, this.state.value);
+  }
+
   render() {
     return (
       <>
-        Text source name:
-        <input onChange={this.onChange} name="textId" value={this.state.id} />
-        <br />
-        Paste text here:
-        <textarea
-          onChange={this.onChange}
-          name="text"
-          value={this.state.value}
-        />
-        <button onClick={this.onDone}>Done</button>
+        <Button onClick={this.handleClickOpen}>Add a new text source</Button>
+        <Dialog
+          open={this.state.isOpen}
+          onClose={this.handleClose}
+          aria-labelledby="form-dialog-title"
+          fullWidth
+        >
+          <DialogTitle id="form-dialog-title">
+            Add a new text source
+          </DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Text source name"
+              type="text"
+              onChange={this.onChange}
+              name="textId"
+              value={this.state.id}
+            />
+            <TextField
+              onChange={this.onChange}
+              name="text"
+              value={this.state.value}
+              label="Enter text source content here"
+              multiline
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.onDone} color="primary">
+              Add text source
+            </Button>
+            <Button onClick={this.handleClose} color="secondary">
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
       </>
     );
   }
