@@ -34,7 +34,7 @@ export default class ChunkRetriever {
     });
 
   addTextSource(id: string, text: string) {
-    if(this.sources[id]) return false;
+    if (this.sources[id]) return false;
     const lines = text.split("\n").filter(line => line !== "");
     this.sources[id] = {
       fetch: (chunkId: number) => {
@@ -46,6 +46,10 @@ export default class ChunkRetriever {
       description: id
     };
     return true;
+  }
+
+  removeTextSource(id: string) {
+    delete this.sources[id];
   }
 
   chunkFromLocalServer(file: string, chunkId: number): MyPr {

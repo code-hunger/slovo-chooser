@@ -86,13 +86,14 @@ class AppClass extends React.Component<AppProps, AppState> {
 
   removeTextSource(id: string) {
     // The text source string id needs to be converted to the numeric id of the source in props.localSources
-    const localTextSourceId = find(this.props.localTextSources, [
-      "id",
-      id
-    ]);
+    const localTextSourceId = find(this.props.localTextSources, ["id", id]);
     return isUndefined(localTextSourceId)
       ? false
-      : this.props.textSourceRemover(localTextSourceId);
+      : () => {
+          this.chunkRetriever.removeTextSource(id);
+          this.setState({ sources: this.chunkRetriever.getOptions() });
+          this.props.textSourceRemover(localTextSourceId);
+        };
   }
 
   render() {
@@ -145,7 +146,7 @@ interface AppStateProps {
 
 interface AppDispatchProps {
   setText: (text: string, chunkId: number, textSourceId: string) => void;
-  textSourceRemover: (source: LocalTextSource) => () => void;
+  textSourceRemover: (source: LocalTextSource) => void;
 }
 
 const mapStateToProps = (state: State): AppStateProps =>
@@ -158,7 +159,7 @@ const mapDispatchToProps = (
     dispatch({ type: "SET_TEXT", text, chunkId, textSourceId });
   },
   textSourceRemover(sourceIndex: LocalTextSource) {
-    return () => dispatch({ type: "REMOVE_LOCAL_TEXT_SOURCE", sourceIndex });
+    dispatch({ type: "REMOVE_LOCAL_TEXT_SOURCE", sourceIndex });
   }
 });
 
