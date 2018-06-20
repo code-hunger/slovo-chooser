@@ -111,27 +111,6 @@ body {
   color: #111;
 }
 
-.cardEditor {
-  /*margin-top: 1em;*/
-  padding: 2ex;
-  border: 2px dotted red;
-}
-
-.cardEditor > .cardEditorRow {
-  border-bottom: 2px dotted green;
-  padding: 1ex 0;
-}
-
-#contextStringParagraph {
-  font-style: italic;
-  display: table;
-}
-
-#contextStringParagraph button {
-  margin-left: 1em;
-  float: right;
-}
-
 .anchor {
   align-items: normal;
   background-color: rgba(0, 0, 0, 0);

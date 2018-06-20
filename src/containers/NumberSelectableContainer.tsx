@@ -1,6 +1,5 @@
 import * as React from "react";
 import TextEditorKeyboardHandler from "../KeyboardOperations";
-import * as _ from "lodash";
 
 interface Props {
   elementCount: number;

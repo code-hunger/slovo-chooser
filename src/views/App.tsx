@@ -4,7 +4,7 @@ import reactbind from "react-bind-decorator";
 import "../App.css";
 
 import Grid from "@material-ui/core/Grid";
-import { withStyles } from "@material-ui/core/styles";
+import withStyles from "@material-ui/core/styles/withStyles";
 import * as PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import { WithStyles, Theme } from "@material-ui/core";

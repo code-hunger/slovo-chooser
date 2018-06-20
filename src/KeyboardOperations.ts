@@ -1,5 +1,4 @@
 import { KeyboardEvent } from "react";
-import { WordAction } from "./store";
 
 export default function TextEditorKeyboardHandler(
   wordNumberTyped: number,
