@@ -1,22 +1,9 @@
 import * as React from "react";
-import { Word, NumberedWord, NumberedWordView } from "../views/Word";
-import { WordCollector } from "../views/WordCollector";
-import UnknownField from "./UnknownFieldInput";
+import { NumberedWord } from "../views/Word";
+import CardEditor from "../views/CardEditor";
 
-import * as _ from "lodash";
-import reactbind from "react-bind-decorator";
-import store, {
-  WordAction,
-  SavedWord,
-  State as StoreState,
-  ContextBoundaries
-} from "../store";
-import ContextStringField, {
-  generateContextString
-} from "./ContextStringField";
-import { connect, Dispatch } from "react-redux";
-
-type Props = PropsFromState & OutsideProps & PropsFromDispatch;
+import store, { SavedWord, State, ContextBoundaries } from "../store";
+import { connect } from "react-redux";
 
 interface OutsideProps {
   readonly onSave: (
@@ -45,224 +32,26 @@ interface PropsFromDispatch {
   readonly toggleSelectingContext: () => void;
 }
 
-interface State {
-  readonly marked: NumberedWord[];
-
-  readonly unknownField: string;
-  readonly unknownFieldMeaning: string;
-  readonly dictionarySearch: string;
-}
-
-function markedIdsToWords({
-  marked,
-  words
-}: {
-  marked: number[];
-  words: NumberedWord[];
-}) {
-  return marked.map((id, index) => ({
-    word: words[id].word,
-    index,
-    classNames: words[id].classNames
-  }));
-}
-
-@reactbind()
-class CardEditor extends React.Component<Props, State> {
-  static MIN_WORD_LENGTH = 3;
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      marked: markedIdsToWords(props),
-
-      unknownField: "",
-      unknownFieldMeaning: "",
-      dictionarySearch: ""
-    };
-  }
-
-  shouldComponentUpdate(nextProps: Props, newState: State) {
-    return !(
-      _.isEqual(this.props.usedHints, nextProps.usedHints) &&
-      this.state.unknownField === newState.unknownField &&
-      this.state.unknownFieldMeaning === newState.unknownFieldMeaning &&
-      this.state.dictionarySearch === newState.dictionarySearch &&
-      this.props.contextBoundaries === nextProps.contextBoundaries &&
-      this.props.isSelectingContext === nextProps.isSelectingContext
-    );
-  }
-
-  resetState() {
-    this.setState({
-      unknownField: "",
-      unknownFieldMeaning: "",
-      dictionarySearch: ""
-    });
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.chunkId !== this.props.chunkId) {
-      // New text chunk; reset state
-      this.resetState();
-    }
-
-    if (nextProps.marked !== this.props.marked)
-      this.setState({
-        marked: markedIdsToWords(nextProps)
+export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
+  ({ cardState, words, textSourcePositions }, ownProps) => ({
+    chunkId: textSourcePositions[ownProps.textSourceId],
+    usedHints: cardState.words.editedMarked,
+    marked: cardState.words.marked,
+    words: words,
+    contextBoundaries: cardState.contextBoundaries
+  }),
+  dispatch => ({
+    toggleHints(added: number[], removed: number[]) {
+      dispatch({
+        type: "TOGGLE_EDITED_UNKNOWN_WORDS",
+        added,
+        removed
       });
-  }
-
-  onchange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    switch (e.target.name) {
-      case "unknownFieldMeaning":
-        const unknownFieldMeaning = e.target.value;
-        this.setState({ unknownFieldMeaning });
+    },
+    toggleSelectingContext() {
+      dispatch({
+        type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
+      });
     }
-  }
-
-  loadDictionary(value: string) {
-    this.setState({ dictionarySearch: value, unknownField: value });
-  }
-
-  trySwitchToNextChunk() {
-    if (
-      this.state.unknownField.length <= 1 ||
-      confirm("Are you sure?") ||
-      this.props.usedHints.length
-    )
-      this.props.switchToNextChunk();
-  }
-
-  onSave() {
-    this.props.onSave(
-      {
-        word: this.state.unknownField,
-        meaning: this.state.unknownFieldMeaning,
-        context: generateContextString(
-          this.props.contextBoundaries,
-          this.props.words
-        )
-      },
-      this.props.chunkId,
-      this.props.textSourceId
-    );
-    this.resetState();
-  }
-
-  render() {
-    const dictionarySearch = this.state.dictionarySearch;
-    // @TODO: Improve nested conditional rendering.
-    // E.g., remove conditional rendering and render everything while setting className='hidden'
-    return (
-      <div className="cardEditor">
-        {[
-          <UnknownField
-            words={this.state.marked}
-            usedHints={this.props.usedHints}
-            minLength={CardEditor.MIN_WORD_LENGTH}
-            toggleHints={this.props.toggleHints}
-            key="unknownField"
-            onReady={this.loadDictionary}
-          />,
-          ...(dictionarySearch.length > CardEditor.MIN_WORD_LENGTH
-            ? [
-                <>
-                  Dictionary results for <strong>{dictionarySearch}</strong>:
-                  <this.props.dictionary
-                    word={dictionarySearch}
-                    key="dictionary"
-                  />
-                </>,
-                <>
-                  Choose meaning from the dictionaries:
-                  {0 && this.state.unknownFieldMeaning.length < 30 ? (
-                    <input
-                      name="unknownFieldMeaning"
-                      value={this.state.unknownFieldMeaning}
-                      onChange={this.onchange}
-                    />
-                  ) : (
-                    <textarea
-                      name="unknownFieldMeaning"
-                      value={this.state.unknownFieldMeaning}
-                      onChange={this.onchange}
-                      rows={4}
-                      cols={50}
-                      className="block"
-                    />
-                  )}
-                </>,
-                ...(this.state.unknownFieldMeaning.length > 2
-                  ? [
-                      <>
-                        <ContextStringField
-                          unknownWord={dictionarySearch}
-                          isSelectingContext={this.props.isSelectingContext}
-                          onReady={this.props.toggleSelectingContext}
-                        />
-                        <button onClick={this.props.toggleSelectingContext}>
-                          Select context words
-                        </button>
-                      </>,
-                      this.props.contextBoundaries.length ? (
-                        <button onClick={this.onSave}>SAVE</button>
-                      ) : (
-                        "Choose context!"
-                      )
-                    ]
-                  : [])
-              ]
-            : []),
-          <button
-            key="nextChunkButton"
-            onClick={this.trySwitchToNextChunk}
-            className="anchor"
-          >
-            To next chunk
-          </button>
-        ].map((element, i) => (
-          <div className="cardEditorRow" key={i}>
-            {element}
-          </div>
-        ))}
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (
-  { cardState, words, textSourcePositions }: StoreState,
-  ownProps: Props
-): PropsFromState => ({
-  chunkId: textSourcePositions[ownProps.textSourceId],
-  usedHints: cardState.words.editedMarked,
-  marked: cardState.words.marked,
-  words: words,
-  contextBoundaries: cardState.contextBoundaries
-});
-
-const mapDispatchToProps = (
-  dispatch: Dispatch<WordAction>
-): PropsFromDispatch => ({
-  toggleHints(added: number[], removed: number[]) {
-    dispatch({
-      type: "TOGGLE_EDITED_UNKNOWN_WORDS",
-      added,
-      removed
-    } as WordAction);
-  },
-  toggleSelectingContext() {
-    dispatch({
-      type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
-    });
-  }
-});
-
-export default connect<
-  PropsFromState,
-  PropsFromDispatch,
-  OutsideProps,
-  StoreState
->(mapStateToProps, mapDispatchToProps)(CardEditor);
+  })
+)(CardEditor);
