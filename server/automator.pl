@@ -66,17 +66,22 @@ get '/text' => sub {
     my $line;
     my $i = 0;
     while (<$fh>) {
+        s/^\x{FEFF}//;
+        s/\r//;
         chomp( $line = $_ );
-        next if $line eq "";
+
+        next if ( $line eq "" or $line =~ m/^=+$/ );
         ++$i;
 
         if ( $i >= $lineWanted ) {
-            return JSON->new->utf8(0)->encode( { text => $line, chunkId => $i } );
+            return JSON->new->utf8(0)
+              ->encode( { text => $line, chunkId => $i } );
         }
     }
 
     status 'not_found';
-    return to_json( { error => "The wanted line is past the end of the file." } )
+    return to_json(
+        { error => "The wanted line is past the end of the file." } );
 };
 
 start;
