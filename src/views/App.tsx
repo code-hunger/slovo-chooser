@@ -15,6 +15,7 @@ import TextAdder from "../containers/TextAdder";
 import TextSourceChooser from "../views/TextSourceChooser";
 import { NumberedWord } from "../views/Word";
 import TextSourceAccumulator from "../containers/TextSourceAccumulator";
+import SavedWordsContainer from '../containers/SavedWordsContainer';
 
 import { LocalTextSource } from "../store";
 
@@ -111,12 +112,12 @@ class AppClass extends React.Component<Props, State> {
         container
         spacing={16}
         className={classes.root}
-        justify="space-around"
+        justify="center"
       >
         <Grid
           item
-          lg={4}
-          md={hasTextSource ? 4 : 6}
+          lg={hasTextSource ? 3 : 4}
+          md={hasTextSource ? 3 : 6}
           sm={hasTextSource ? 12 : 8}
           xs={12}
         >
@@ -131,7 +132,7 @@ class AppClass extends React.Component<Props, State> {
           </Paper>
         </Grid>
         {isUndefined(textSourceId) ? null : (
-          <Grid item md={8} xs={12}>
+          <Grid item md={6} xs={12}>
             <Paper className={classes.paper}>
               <TextSourceAccumulator
                 onReady={this.switchToNextChunk}
@@ -140,6 +141,11 @@ class AppClass extends React.Component<Props, State> {
             </Paper>
           </Grid>
         )}
+      <Grid item md={3} xs={12}>
+        <Paper className={classes.paper}>
+          <SavedWordsContainer />
+        </Paper>
+      </Grid>
       </Grid>
     );
   }
