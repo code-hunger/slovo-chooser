@@ -1,12 +1,8 @@
-import { Word, NumberedWordView, NumberedWord, Clickable } from "../views/Word";
+import { Word, NumberedWordView, NumberedWord } from "../views/Word";
 
-import { connect, Dispatch } from "react-redux";
-import store, {
-  State,
-  ContextBoundaries,
-  SavedChunks,
-  SavedWord
-} from "../store";
+import { connect } from "react-redux";
+import store, { State, ContextBoundaries } from "../store";
+import { trim } from "lodash";
 
 function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
   let start = contextBoundaries.start,
@@ -24,7 +20,7 @@ const mapStateToTextWordProps = (
     ...(contextBoundaries && insideBoundaries(contextBoundaries, index)
       ? ["boundary"]
       : []),
-    ...(savedWords.indexOf(words[index].word) > -1 ? ["fade-word"] : [])
+    ...(savedWords.indexOf(trim(words[index].word, "\"\',.")) > -1 ? ["fade-word"] : [])
   ]
 });
 

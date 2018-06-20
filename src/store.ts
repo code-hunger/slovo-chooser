@@ -117,7 +117,7 @@ function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   switch (action.type) {
     case "SAVE_WORD":
       return update(savedWords, {
-        $push: [action.obj.word]
+        $push: [_.trim(action.obj.word, "\"\',.")]
       });
     default:
       return savedWords;

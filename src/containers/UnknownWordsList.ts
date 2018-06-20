@@ -4,6 +4,7 @@ import store, { State, WordAction } from "../store";
 import { Word, NumberedWord, NumberedWordView } from "../views/Word";
 import { Dispatch, connect } from "react-redux";
 import UnknownWordList from "../views/UnknownWordList";
+import { trim } from "lodash";
 
 interface PropsFromState {
   words: NumberedWord[];
@@ -21,7 +22,7 @@ const markedWordStateToProps = (
   word: words[marked[ownProps.index]].word,
   classNames:
     editedMarked.indexOf(ownProps.index) > -1 ||
-    savedWords.indexOf(ownProps.word) > -1
+    savedWords.indexOf(trim(ownProps.word, "\"\',.")) > -1
       ? ownProps.classNames.concat("fade-word")
       : ownProps.classNames
 });

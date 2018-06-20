@@ -54,7 +54,7 @@ export default class UnknownField extends React.PureComponent<
     this.setState({ value });
 
     const hasWord = (word: number) =>
-      value.includes(this.props.words[word].word);
+      value.includes(_.trim(this.props.words[word].word, "\"\',."));
     const removedHints = usedHints.filter(_.negate(hasWord));
     const addedHints = unusedHints.filter(hasWord);
 
