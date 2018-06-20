@@ -1,7 +1,5 @@
 import * as React from "react";
 import reactbind from "react-bind-decorator";
-import store, { State as ReduxStore, WordAction, SavedWord } from "../store";
-import { connect, Dispatch } from "react-redux";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -11,9 +9,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-type Props = PropsFromDispatch;
-
-interface PropsFromDispatch {
+interface Props {
   onDone: (id: string, text: string) => void;
 }
 
@@ -24,7 +20,7 @@ interface State {
 }
 
 @reactbind()
-class TextAdder extends React.PureComponent<Props, State> {
+export default class TextAdder extends React.PureComponent<Props, State> {
   state = { id: "", value: "", isOpen: false };
 
   onChange(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
@@ -114,23 +110,3 @@ class TextAdder extends React.PureComponent<Props, State> {
     );
   }
 }
-
-const mapDispatchToProps = (
-  dispatch: Dispatch<WordAction>
-): PropsFromDispatch => ({
-  onDone(id: string, text: string) {
-    dispatch({
-      type: "ADD_LOCAL_TEXT_SOURCE",
-      source: {
-        id,
-        description: id,
-        text
-      }
-    });
-  }
-});
-
-export default connect<void, PropsFromDispatch, void, ReduxStore>(
-  undefined,
-  mapDispatchToProps
-)(TextAdder);
