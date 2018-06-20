@@ -1,10 +1,10 @@
 import { createStore, combineReducers } from "redux";
 import update from "immutability-helper";
-import { NumberedWord } from "./Word";
+import { NumberedWord } from "./views/Word";
 import { CachedPositions } from "./ChunkRetriever";
 import * as _ from "lodash";
 import { loadState, persistState } from "./localStorage";
-import { TextSource } from "./TextSourceChooser";
+import { TextSource } from "./views/TextSourceChooser";
 
 const emptyStrArr: string[] = [];
 const emptyNumArr: number[] = [];

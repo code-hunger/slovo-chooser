@@ -1,11 +1,11 @@
 import * as React from "react";
-import { WordCollector } from "./WordCollector";
-import store, { State } from "./store";
-import { Word, NumberedWord, NumberedWordView } from "./Word";
+import { WordCollector } from "../views/WordCollector";
+import store, { State } from "../store";
+import { Word, NumberedWord, NumberedWordView } from "../views/Word";
 import { connect } from "react-redux";
 import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
 import * as _ from "lodash";
-import { TextClickStrategy } from "./TextClickStrategies";
+import { TextClickStrategy } from "../TextClickStrategies";
 
 interface Props {
   words: NumberedWord[];

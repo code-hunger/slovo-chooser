@@ -1,6 +1,6 @@
 import * as React from "react";
-import { NumberedWord } from "./Word";
-import { TextClickStrategy } from "./TextClickStrategies";
+import { NumberedWord } from "../views/Word";
+import { TextClickStrategy } from "../TextClickStrategies";
 import * as _ from "lodash";
 
 export interface WordCollectorProps {

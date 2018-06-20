@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Word, NumberedWord, NumberedWordView } from "./Word";
-import { WordCollector } from "./WordCollector";
+import { Word, NumberedWord, NumberedWordView } from "../views/Word";
+import { WordCollector } from "../views/WordCollector";
 import UnknownField from "./UnknownFieldInput";
 
 import * as _ from "lodash";
@@ -10,7 +10,7 @@ import store, {
   SavedWord,
   State as StoreState,
   ContextBoundaries
-} from "./store";
+} from "../store";
 import ContextStringField, {
   generateContextString
 } from "./ContextStringField";

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
-import { Word, NumberedWord } from "./Word";
+import { Word, NumberedWord } from "../views/Word";
 import reactbind from "react-bind-decorator";
 
 interface UnknownFieldProps {

@@ -6,15 +6,15 @@ import reactbind from "react-bind-decorator";
 import TextEditor from "./TextEditor";
 import CardEditor from "./CardEditor";
 import UnknownWordList from "./UnknownWordsList";
-import { NumberedWord } from "./Word";
+import { NumberedWord } from "../views/Word";
 import Dictionary from "./Dictionary";
-import store, { State, WordAction, SavedChunks, SavedWord } from "./store";
+import store, { State, WordAction, SavedChunks, SavedWord } from "../store";
 import {
   ContextSelector,
   UnknownWordSelector,
   TextClickStrategy
-} from "./TextClickStrategies";
-import exportToCsv from "./exportToCSV";
+} from "../TextClickStrategies";
+import exportToCsv from "../exportToCSV";
 
 type Props = PropsFromState & PropsFromDispatch & PropsFromOutside;
 

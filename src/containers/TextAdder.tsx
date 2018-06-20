@@ -1,6 +1,6 @@
 import * as React from "react";
 import reactbind from "react-bind-decorator";
-import store, { State as ReduxStore, WordAction, SavedWord } from "./store";
+import store, { State as ReduxStore, WordAction, SavedWord } from "../store";
 import { connect, Dispatch } from "react-redux";
 
 import Button from "@material-ui/core/Button";

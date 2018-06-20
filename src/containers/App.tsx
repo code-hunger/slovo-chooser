@@ -1,9 +1,9 @@
 import * as React from "react";
-import "./App.css";
+import "../App.css";
 
 import TextSourceAccumulator from "./TextSourceAccumulator";
-import TextSourceChooser from "./TextSourceChooser";
-import { NumberedWord } from "./Word";
+import TextSourceChooser from "../views/TextSourceChooser";
+import { NumberedWord } from "../views/Word";
 import TextAdder from "./TextAdder";
 
 import Grid from "@material-ui/core/Grid";
@@ -12,9 +12,9 @@ import * as PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import { WithStyles, Theme } from "@material-ui/core";
 
-import ChunkRetriever, { CachedPositions } from "./ChunkRetriever";
+import ChunkRetriever, { CachedPositions } from "../ChunkRetriever";
 
-import store, { State, WordAction, SavedWord, LocalTextSource } from "./store";
+import store, { State, WordAction, SavedWord, LocalTextSource } from "../store";
 
 import reactbind from "react-bind-decorator";
 import { connect, Dispatch } from "react-redux";

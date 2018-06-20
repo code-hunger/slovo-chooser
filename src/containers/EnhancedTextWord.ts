@@ -1,4 +1,4 @@
-import { Word, NumberedWordView, NumberedWord, Clickable } from "./Word";
+import { Word, NumberedWordView, NumberedWord, Clickable } from "../views/Word";
 
 import { connect, Dispatch } from "react-redux";
 import store, {
@@ -6,7 +6,7 @@ import store, {
   ContextBoundaries,
   SavedChunks,
   SavedWord
-} from "./store";
+} from "../store";
 
 function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
   let start = contextBoundaries.start,
