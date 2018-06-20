@@ -1,10 +1,7 @@
 import * as React from "react";
+import { find, isUndefined } from "lodash";
+import reactbind from "react-bind-decorator";
 import "../App.css";
-
-import TextSourceAccumulator from "./TextSourceAccumulator";
-import TextSourceChooser from "../views/TextSourceChooser";
-import { NumberedWord } from "../views/Word";
-import TextAdder from "./TextAdder";
 
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
@@ -14,24 +11,33 @@ import { WithStyles, Theme } from "@material-ui/core";
 
 import ChunkRetriever, { CachedPositions } from "../ChunkRetriever";
 
-import store, { State, WordAction, SavedWord, LocalTextSource } from "../store";
+import TextAdder from "../containers/TextAdder";
+import TextSourceChooser from "../views/TextSourceChooser";
+import { NumberedWord } from "../views/Word";
+import TextSourceAccumulator from "../containers/TextSourceAccumulator";
 
-import reactbind from "react-bind-decorator";
-import { connect, Dispatch } from "react-redux";
-import { pick, find, findIndex, isUndefined } from "lodash";
+import { LocalTextSource } from "../store";
 
-type AppProps = AppStateProps & AppDispatchProps & WithStyles<typeof styles>;
+type Props = AppProps & WithStyles<typeof styles>;
 
-interface AppState {
+interface AppProps {
+  textSourcePositions: CachedPositions;
+  localTextSources: LocalTextSource[];
+
+  setText: (text: string, chunkId: number, textSourceId: string) => void;
+  textSourceRemover: (source: LocalTextSource) => void;
+}
+
+interface State {
   textSourceId?: string;
   sources: { id: string; description: string; chunkId: number }[];
 }
 
 @reactbind()
-class AppClass extends React.Component<AppProps, AppState> {
+class AppClass extends React.Component<Props, State> {
   private chunkRetriever: ChunkRetriever;
 
-  constructor(props: AppProps) {
+  constructor(props: Props) {
     super(props);
 
     this.chunkRetriever = new ChunkRetriever(props.textSourcePositions);
@@ -139,30 +145,6 @@ class AppClass extends React.Component<AppProps, AppState> {
   }
 }
 
-interface AppStateProps {
-  textSourcePositions: CachedPositions;
-  localTextSources: LocalTextSource[];
-}
-
-interface AppDispatchProps {
-  setText: (text: string, chunkId: number, textSourceId: string) => void;
-  textSourceRemover: (source: LocalTextSource) => void;
-}
-
-const mapStateToProps = (state: State): AppStateProps =>
-  pick(state, ["textSourcePositions", "localTextSources"]);
-
-const mapDispatchToProps = (
-  dispatch: Dispatch<WordAction>
-): AppDispatchProps => ({
-  setText(text: string, chunkId: number, textSourceId: string) {
-    dispatch({ type: "SET_TEXT", text, chunkId, textSourceId });
-  },
-  textSourceRemover(sourceIndex: LocalTextSource) {
-    dispatch({ type: "REMOVE_LOCAL_TEXT_SOURCE", sourceIndex });
-  }
-});
-
 const styles = (theme: Theme) => ({
   root: {
     flexGrow: 1,
@@ -172,10 +154,5 @@ const styles = (theme: Theme) => ({
     padding: theme.spacing.unit * 2
   }
 });
-const styled = withStyles(styles)(AppClass);
 
-const App = connect<AppStateProps, AppDispatchProps, void>(
-  mapStateToProps,
-  mapDispatchToProps
-)(styled);
-export default App;
+export default withStyles(styles)(AppClass);
