@@ -1,63 +1,31 @@
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
 import { flatMap, values } from "lodash";
 import reactbind from "react-bind-decorator";
 
-import TextEditor from "./TextEditor";
-import CardEditor from "./CardEditor";
-import UnknownWordList from "./UnknownWordsList";
+import TextEditor from "../containers/TextEditor";
+import CardEditor from "../containers/CardEditor";
+import UnknownWordList from "../containers/UnknownWordsList";
 import { NumberedWord } from "../views/Word";
-import Dictionary from "./Dictionary";
-import store, { State, WordAction, SavedChunks, SavedWord } from "../store";
-import {
-  ContextSelector,
-  UnknownWordSelector,
-  TextClickStrategy
-} from "../TextClickStrategies";
+import Dictionary from "../containers/Dictionary";
+import { SavedChunks, SavedWord } from "../store";
+
+import { TextClickStrategy } from "../TextClickStrategies";
 import exportToCsv from "../exportToCSV";
 
-type Props = PropsFromState & PropsFromDispatch & PropsFromOutside;
-
-interface PropsFromOutside {
+interface Props {
   textSourceId: string;
   onReady: () => void;
-}
 
-interface PropsFromState {
   words: NumberedWord[];
   savedChunks: { [chunkId: number]: SavedWord[] };
   textClickStrategy: TextClickStrategy;
   isSelectingContext: boolean;
-}
 
-interface PropsFromDispatch {
   onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
 }
 
-const mapStateToProps = (
-  { words, savedChunks, cardState: { isSelectingContext } }: State,
-  { textSourceId }: Props
-): PropsFromState => ({
-  words,
-  savedChunks: savedChunks[textSourceId],
-  isSelectingContext,
-  textClickStrategy: isSelectingContext
-    ? new ContextSelector(store.dispatch, words.length)
-    : UnknownWordSelector(store.dispatch)
-});
-
-const mapDispatchToProps = (
-  dispatch: Dispatch<WordAction>
-): PropsFromDispatch => ({
-  onCardSave(obj: SavedWord, chunkId: number, textSourceId: string) {
-    dispatch({ type: "SAVE_WORD", obj, chunkId, textSourceId });
-  }
-});
-
-interface MyState {}
-
 @reactbind()
-class TextSourceAccumulator extends React.Component<Props, MyState> {
+export default class TextSourceAccumulator extends React.Component<Props> {
   generateCsvFile() {
     const csvArray = flatMap(this.props.savedChunks).map(values);
     exportToCsv("anki_export.csv", csvArray);
@@ -91,10 +59,3 @@ class TextSourceAccumulator extends React.Component<Props, MyState> {
     );
   }
 }
-
-export default connect<
-  PropsFromState,
-  PropsFromDispatch,
-  PropsFromOutside,
-  State
->(mapStateToProps, mapDispatchToProps)(TextSourceAccumulator);
