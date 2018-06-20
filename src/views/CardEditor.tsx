@@ -1,4 +1,7 @@
 import * as React from "react";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+
 import { Word, NumberedWord, NumberedWordView } from "../views/Word";
 import { WordCollector } from "../views/WordCollector";
 import UnknownField from "../containers/UnknownFieldInput";
@@ -163,25 +166,15 @@ export default class CardEditor extends React.Component<Props, State> {
                     key="dictionary"
                   />
                 </>,
-                <>
-                  Choose meaning from the dictionaries:
-                  {0 && this.state.unknownFieldMeaning.length < 30 ? (
-                    <input
-                      name="unknownFieldMeaning"
-                      value={this.state.unknownFieldMeaning}
-                      onChange={this.onchange}
-                    />
-                  ) : (
-                    <textarea
-                      name="unknownFieldMeaning"
-                      value={this.state.unknownFieldMeaning}
-                      onChange={this.onchange}
-                      rows={4}
-                      cols={50}
-                      className="block"
-                    />
-                  )}
-                </>,
+                <TextField
+                  label="Choose meaning from the dictionaries:"
+                  name="unknownFieldMeaning"
+                  multiline
+                  value={this.state.unknownFieldMeaning}
+                  onChange={this.onchange}
+                  margin="dense"
+                  fullWidth
+                />,
                 ...(this.state.unknownFieldMeaning.length > 2
                   ? [
                       <>
