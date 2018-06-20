@@ -1,15 +1,23 @@
 import * as React from "react";
 import { WordCollector } from "../views/WordCollector";
-import store, { State } from "../store";
+import store, { State, WordAction } from "../store";
 import { Word, NumberedWord, NumberedWordView } from "../views/Word";
-import { connect } from "react-redux";
+import { Dispatch, connect } from "react-redux";
 import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
 import * as _ from "lodash";
 import { TextClickStrategy } from "../TextClickStrategies";
 
-interface Props {
+type Props = PropsFromState &
+  PropsFromDispatch & {
+    tabIndex?: number;
+  };
+
+interface PropsFromState {
   words: NumberedWord[];
-  tabIndex?: number;
+}
+
+interface PropsFromDispatch {
+  onWordClick: (id: number) => void;
 }
 
 const markedWordStateToProps = (
@@ -41,13 +49,12 @@ export class UnknownWordList extends React.PureComponent<Props> {
     this.clickStrategy.onWordClick.bind(this.clickStrategy);
     this.clickStrategy.onContextMenu.bind(this.clickStrategy);
   }
+
   onWordClick(wordId: number) {
-    store.dispatch({
-      type: "TOGGLE_EDITED_UNKNOWN_WORD",
-      word: this.props.words[wordId].index
-    });
+    this.props.onWordClick(this.props.words[wordId].index);
     return true;
   }
+
   render() {
     return this.props.words.length ? (
       <KeyboardSelectableContainer
@@ -69,14 +76,24 @@ export class UnknownWordList extends React.PureComponent<Props> {
 }
 
 export default connect<
-  { words: NumberedWord[] },
-  void,
+  PropsFromState,
+  PropsFromDispatch,
   { tabIndex?: number },
   State
->(({ cardState, words }) => ({
-  words: cardState.words.marked.map((wordId, i) => ({
-    ...words[wordId],
-    index: i
-  }))
-}))(UnknownWordList);
-
+>(
+  ({ cardState, words }) => ({
+    words: cardState.words.marked.map((wordId, i) => ({
+      ...words[wordId],
+      index: i
+    }))
+  }),
+  (dispatch: Dispatch<WordAction>) => ({
+    onWordClick(index: number) {
+      dispatch({
+        type: "TOGGLE_EDITED_UNKNOWN_WORD",
+        word: index
+      });
+      return true;
+    }
+  })
+)(UnknownWordList);
