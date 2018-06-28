@@ -122,8 +122,10 @@ export default class CardEditor extends React.Component<Props, State> {
       this.state.unknownField.length <= 1 ||
       confirm("Are you sure?") ||
       this.props.usedHints.length
-    )
+    ) {
+      this.resetState();
       this.props.switchToNextChunk();
+    }
   }
 
   onSave() {
