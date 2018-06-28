@@ -3,6 +3,9 @@ import * as _ from "lodash";
 import { Word, NumberedWord } from "../views/Word";
 import reactbind from "react-bind-decorator";
 
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+
 interface UnknownFieldProps {
   words: NumberedWord[];
   usedHints: number[];
@@ -54,7 +57,7 @@ export default class UnknownField extends React.PureComponent<
     this.setState({ value });
 
     const hasWord = (word: number) =>
-      value.includes(_.trim(this.props.words[word].word, "\"\',."));
+      value.includes(_.trim(this.props.words[word].word, "\"',."));
     const removedHints = usedHints.filter(_.negate(hasWord));
     const addedHints = unusedHints.filter(hasWord);
 
@@ -85,22 +88,25 @@ export default class UnknownField extends React.PureComponent<
     this.props.onReady(this.state.value);
   }
 
-  onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  onKeyDown(e: React.KeyboardEvent<HTMLElement>) {
     if (e.keyCode === 13) this.onReady();
   }
 
   render() {
     return (
       <>
-        <input
+        <TextField
           key="unknownField"
-          name="unknownField"
+          label="Unknown word to search here"
           value={this.state.value}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
+          fullWidth
         />
         {this.state.value.length >= this.props.minLength ? (
-          <button onClick={this.onReady}>Find in dictionary</button>
+          <Button variant="outlined" onClick={this.onReady}>
+            Find in dictionary
+          </Button>
         ) : null}
       </>
     );
