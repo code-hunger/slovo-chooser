@@ -143,7 +143,7 @@ class AppClass extends React.Component<Props, State> {
         )}
       <Grid item md={3} xs={12}>
         <Paper className={classes.paper}>
-          <SavedWordsContainer />
+          <SavedWordsContainer textSourceId={textSourceId} />
         </Paper>
       </Grid>
       </Grid>

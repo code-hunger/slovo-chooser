@@ -20,6 +20,7 @@ import * as _ from "lodash";
 
 interface Props {
   words: SavedWord[];
+  textSourceId?: string;
 }
 
 @reactbind()
@@ -39,11 +40,18 @@ class SavedWordsContainer extends React.Component<Props> {
   }
 }
 
-export default connect<Props, void, void, State>(
-  state =>
+export default connect<
+  { words: SavedWord[] },
+  void,
+  { textSourceId?: string },
+  State
+>(
+  (state, ownProps) =>
     ({
       words: _.reverse(
-        _.flattenDeep(_.flatMap(state.savedChunks).map(_.values))
+        _.isUndefined(ownProps.textSourceId)
+          ? _.flattenDeep(_.flatMap(state.savedChunks).map(_.values))
+          : _.flatMap(state.savedChunks[ownProps.textSourceId])
       )
     } as Props)
 )(SavedWordsContainer);
