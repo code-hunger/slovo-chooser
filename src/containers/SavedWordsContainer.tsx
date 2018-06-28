@@ -12,10 +12,13 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { createStyles, WithStyles, Theme } from "@material-ui/core";
-import Badge from "@material-ui/core/Badge";
-import Typography from "@material-ui/core/Typography";
-import reactbind from "react-bind-decorator";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 
+import reactbind from "react-bind-decorator";
 import * as _ from "lodash";
 
 interface Props {
@@ -27,16 +30,30 @@ interface Props {
 class SavedWordsContainer extends React.Component<Props> {
   renderSavedWord(word: SavedWord) {
     return (
-      <ListItem key={word.word}>
-        <ListItemText>
+      <TableRow key={word.word}>
+        <TableCell
+          component="th"
+          scope="row"
+          padding="dense"
+        >
           {word.word}
-          {word.meaning}
-        </ListItemText>
-      </ListItem>
+        </TableCell>
+        <TableCell>{word.meaning}</TableCell>
+      </TableRow>
     );
   }
   render() {
-    return <List>{this.props.words.map(this.renderSavedWord)}</List>;
+    return (
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell padding="dense">Word</TableCell>
+            <TableCell>Meaning</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>{this.props.words.map(this.renderSavedWord)}</TableBody>
+      </Table>
+    );
   }
 }
 
