@@ -26,18 +26,22 @@ interface Props {
   textSourceId?: string;
 }
 
+const wordCellStyles = createStyles({
+  root: {
+    paddingRight: 0,
+    textAlign: "center",
+    fontSize: "1.1em"
+  }
+});
+
+type StyledProps = Props & WithStyles<typeof wordCellStyles>;
+
 @reactbind()
-class SavedWordsContainer extends React.Component<Props> {
+class SavedWordsContainer extends React.Component<StyledProps> {
   renderSavedWord(word: SavedWord) {
     return (
       <TableRow key={word.word}>
-        <TableCell
-          component="th"
-          scope="row"
-          padding="dense"
-        >
-          {word.word}
-        </TableCell>
+        <TableCell classes={this.props.classes}>{word.word}</TableCell>
         <TableCell>{word.meaning}</TableCell>
       </TableRow>
     );
@@ -62,13 +66,10 @@ export default connect<
   void,
   { textSourceId?: string },
   State
->(
-  (state, ownProps) =>
-    ({
-      words: _.reverse(
-        _.isUndefined(ownProps.textSourceId)
-          ? _.flattenDeep(_.flatMap(state.savedChunks).map(_.values))
-          : _.flatMap(state.savedChunks[ownProps.textSourceId])
-      )
-    } as Props)
-)(SavedWordsContainer);
+>((state, ownProps) => ({
+  words: _.reverse(
+    _.isUndefined(ownProps.textSourceId)
+      ? _.flattenDeep(_.flatMap(state.savedChunks).map(_.values))
+      : _.flatMap(state.savedChunks[ownProps.textSourceId])
+  ).slice(0, 10)
+}))(withStyles(wordCellStyles)(SavedWordsContainer));
