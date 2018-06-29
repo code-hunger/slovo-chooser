@@ -113,7 +113,7 @@ class AppClass extends React.Component<Props, State> {
         <Grid
           item
           lg={hasTextSource ? 3 : 4}
-          md={hasTextSource ? 3 : 6}
+          md={hasTextSource ? 4 : 6}
           sm={hasTextSource ? 12 : 8}
           xs={12}
         >
@@ -128,14 +128,14 @@ class AppClass extends React.Component<Props, State> {
           </Paper>
         </Grid>
         {isUndefined(textSourceId) ? null : (
-          <Grid item md={6} xs={12}>
+          <Grid item lg={6} md={8} xs={12}>
             <TextSourceAccumulator
               onReady={this.switchToNextChunk}
               textSourceId={textSourceId}
             />
           </Grid>
         )}
-        <Grid item md={3} xs={12}>
+        <Grid item lg={3} xs={12}>
           <Paper className={classes.paper}>
             <SavedWordsContainer textSourceId={textSourceId} />
           </Paper>
