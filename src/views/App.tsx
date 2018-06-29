@@ -15,7 +15,7 @@ import TextAdder from "../containers/TextAdder";
 import TextSourceChooser from "../views/TextSourceChooser";
 import { NumberedWord } from "../views/Word";
 import TextSourceAccumulator from "../containers/TextSourceAccumulator";
-import SavedWordsContainer from '../containers/SavedWordsContainer';
+import SavedWordsContainer from "../containers/SavedWordsContainer";
 
 import { LocalTextSource } from "../store";
 
@@ -42,9 +42,10 @@ class AppClass extends React.Component<Props, State> {
     super(props);
 
     this.chunkRetriever = new ChunkRetriever(props.textSourcePositions);
-    this.chunkRetriever
-      .getOptionsFromServer()
-      .then(sources => this.setState({ sources }));
+    this.chunkRetriever.getOptionsFromServer().then(sources => {
+      this.setState({ sources });
+      this.setTextSource(sources[0].id);
+    });
 
     this.importLocalSources(props.localTextSources);
 
@@ -108,12 +109,7 @@ class AppClass extends React.Component<Props, State> {
     const textSourceId = this.state.textSourceId;
     const hasTextSource = !isUndefined(textSourceId);
     return (
-      <Grid
-        container
-        spacing={16}
-        className={classes.root}
-        justify="center"
-      >
+      <Grid container spacing={16} className={classes.root} justify="center">
         <Grid
           item
           lg={hasTextSource ? 3 : 4}
@@ -133,19 +129,17 @@ class AppClass extends React.Component<Props, State> {
         </Grid>
         {isUndefined(textSourceId) ? null : (
           <Grid item md={6} xs={12}>
-            <Paper className={classes.paper}>
-              <TextSourceAccumulator
-                onReady={this.switchToNextChunk}
-                textSourceId={textSourceId}
-              />
-            </Paper>
+            <TextSourceAccumulator
+              onReady={this.switchToNextChunk}
+              textSourceId={textSourceId}
+            />
           </Grid>
         )}
-      <Grid item md={3} xs={12}>
-        <Paper className={classes.paper}>
-          <SavedWordsContainer textSourceId={textSourceId} />
-        </Paper>
-      </Grid>
+        <Grid item md={3} xs={12}>
+          <Paper className={classes.paper}>
+            <SavedWordsContainer textSourceId={textSourceId} />
+          </Paper>
+        </Grid>
       </Grid>
     );
   }
