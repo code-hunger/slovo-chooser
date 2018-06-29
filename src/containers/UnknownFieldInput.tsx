@@ -12,12 +12,14 @@ interface UnknownFieldProps {
 
   onReady: (value: string) => void;
   toggleHints: (added: number[], removed: number[]) => void;
+  isDuplicate: (value: string) => boolean;
 
   minLength: number;
 }
 
 interface UnknownFieldState {
   value: string;
+  isDuplicate: boolean;
 }
 
 function cleanOldWords(unknownField: string, oldWords: string[]) {
@@ -44,7 +46,13 @@ export default class UnknownField extends React.PureComponent<
   UnknownFieldProps,
   UnknownFieldState
 > {
-  state = { value: "" };
+  state = { value: "", isDuplicate: false };
+
+  updateDuplicateState = _.throttle(() => {
+    this.setState(state => ({
+      isDuplicate: this.props.isDuplicate(state.value)
+    }));
+  }, 500);
 
   onChange(e: React.ChangeEvent<HTMLInputElement>) {
     const usedHints = this.props.usedHints,
@@ -64,6 +72,8 @@ export default class UnknownField extends React.PureComponent<
     if (removedHints.length || addedHints.length) {
       this.props.toggleHints(addedHints, removedHints);
     }
+
+    this.updateDuplicateState()
   }
 
   componentWillReceiveProps(nextProps: UnknownFieldProps) {
@@ -103,6 +113,7 @@ export default class UnknownField extends React.PureComponent<
           onKeyDown={this.onKeyDown}
           fullWidth
         />
+        {this.state.isDuplicate ? "It is a duplicate!" : null}
         {this.state.value.length >= this.props.minLength ? (
           <Button variant="outlined" onClick={this.onReady}>
             Find in dictionary

@@ -34,6 +34,7 @@ interface Props {
 
   readonly toggleHints: (added: number[], removed: number[]) => void;
   readonly toggleSelectingContext: () => void;
+  readonly isDuplicate: (value: string) => boolean;
 }
 
 interface State {
@@ -158,6 +159,7 @@ export default class CardEditor extends React.Component<Props, State> {
             toggleHints={this.props.toggleHints}
             key="unknownField"
             onReady={this.loadDictionary}
+            isDuplicate={this.props.isDuplicate}
           />,
           ...(dictionarySearch.length > CardEditor.MIN_WORD_LENGTH
             ? [
