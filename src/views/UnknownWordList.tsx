@@ -6,6 +6,8 @@ import { Word, NumberedWord, NumberedWordView } from "./Word";
 import { WordCollector } from "./WordCollector";
 import { KeyboardSelectableContainer } from "../containers/NumberSelectableContainer";
 
+import Typography from "@material-ui/core/Typography";
+
 type Props = {
   tabIndex?: number;
   words: NumberedWord[];
@@ -47,7 +49,7 @@ export default class UnknownWordList extends React.PureComponent<Props> {
         />
       </KeyboardSelectableContainer>
     ) : (
-      "No marked words"
+      <Typography variant="subheading">No marked words</Typography>
     );
   }
 }

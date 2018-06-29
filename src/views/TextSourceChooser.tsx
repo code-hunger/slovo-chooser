@@ -74,7 +74,7 @@ class TextSourceChooser<IdType> extends React.PureComponent<
   render() {
     return (
       <>
-        <Typography variant="display1">Choose a text source</Typography>
+        <Typography variant="headline">Choose a text source</Typography>
         <List>{this.props.textSources.map(this.renderTextSourceItem)}</List>
       </>
     );
