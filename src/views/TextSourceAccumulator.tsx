@@ -4,6 +4,9 @@ import reactbind from "react-bind-decorator";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import * as PropTypes from "prop-types";
+import { WithStyles, Theme } from "@material-ui/core";
+import withStyles from "@material-ui/core/styles/withStyles";
 
 import TextEditor from "../containers/TextEditor";
 import CardEditor from "../containers/CardEditor";
@@ -27,8 +30,19 @@ interface Props {
   onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
 }
 
+const styles = (theme: Theme) => ({
+  paper: {
+    padding: theme.spacing.unit,
+    marginBottom: theme.spacing.unit
+  }
+});
+
+type StyledProps = Props & WithStyles<typeof styles>;
+
 @reactbind()
-export default class TextSourceAccumulator extends React.Component<Props> {
+class TextSourceAccumulator extends React.Component<
+  StyledProps
+> {
   generateCsvFile() {
     const csvArray = flatMap(this.props.savedChunks).map(values);
     exportToCsv("anki_export.csv", csvArray);
@@ -37,7 +51,7 @@ export default class TextSourceAccumulator extends React.Component<Props> {
   render() {
     return (
       <>
-        <Paper>
+        <Paper className={this.props.classes.paper}>
           <Typography variant="headline">
             Choose words to check meaning:
           </Typography>
@@ -48,11 +62,11 @@ export default class TextSourceAccumulator extends React.Component<Props> {
             className={this.props.isSelectingContext ? "selectContext" : ""}
           />
         </Paper>
-        <Paper>
+        <Paper className={this.props.classes.paper}>
           <Typography variant="headline">Marked unknown:</Typography>
           <UnknownWordList tabIndex={0} />
         </Paper>
-        <Paper>
+        <Paper className={this.props.classes.paper}>
           <CardEditor
             isSelectingContext={this.props.isSelectingContext}
             switchToNextChunk={this.props.onReady}
@@ -74,3 +88,5 @@ export default class TextSourceAccumulator extends React.Component<Props> {
     );
   }
 }
+
+export default withStyles(styles)(TextSourceAccumulator);
