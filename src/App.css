@@ -5,7 +5,6 @@ body {
 .wordCollector {
   padding-top: 1ex;
   margin-top: 0.7em;
-  margin-bottom: -1.5ex;
 
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -136,4 +135,8 @@ body {
 .anchor[disabled] {
     color: #999;
     text-decoration: none;
+}
+
+iframe {
+    height: 500px;
 }
