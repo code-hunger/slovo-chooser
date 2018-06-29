@@ -1,6 +1,8 @@
 import * as React from "react";
 import { flatMap, values } from "lodash";
 import reactbind from "react-bind-decorator";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 import TextEditor from "../containers/TextEditor";
 import CardEditor from "../containers/CardEditor";
@@ -34,14 +36,14 @@ export default class TextSourceAccumulator extends React.Component<Props> {
   render() {
     return (
       <>
-        <h3>Choose words to check meaning:</h3>
+        <Typography variant="headline">Choose words to check meaning:</Typography>
         <TextEditor
           tabIndex={0}
           emptyText="Loading text..."
           clickStrategy={this.props.textClickStrategy}
           className={this.props.isSelectingContext ? "selectContext" : ""}
         />
-        <h3>Marked unknown:</h3>
+        <Typography variant="headline">Marked unknown:</Typography>
         <UnknownWordList tabIndex={0} />
         <CardEditor
           isSelectingContext={this.props.isSelectingContext}
@@ -51,9 +53,9 @@ export default class TextSourceAccumulator extends React.Component<Props> {
           dictionary={Dictionary}
         />
         {this.props.savedChunks ? (
-          <button className="anchor block" onClick={this.generateCsvFile}>
+          <Button variant="contained" className="anchor block" onClick={this.generateCsvFile}>
             Generate a <kbd>csv</kbd> file for anki
-          </button>
+          </Button>
         ) : null}
       </>
     );
