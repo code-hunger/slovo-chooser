@@ -5,6 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import { Word, NumberedWord, NumberedWordView } from "../views/Word";
 import { WordCollector } from "../views/WordCollector";
 import UnknownField from "../containers/UnknownFieldInput";
+import Button from "@material-ui/core/Button";
 
 import { isEqual } from "lodash";
 import reactbind from "react-bind-decorator";
@@ -187,12 +188,18 @@ export default class CardEditor extends React.Component<Props, State> {
                           isSelectingContext={this.props.isSelectingContext}
                           onReady={this.props.toggleSelectingContext}
                         />
-                        <button onClick={this.props.toggleSelectingContext}>
+                        <Button size="small" onClick={this.props.toggleSelectingContext}>
                           Select context words
-                        </button>
+                        </Button>
                       </>,
                       this.props.contextBoundaries.length ? (
-                        <button onClick={this.onSave}>SAVE</button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={this.onSave}
+                        >
+                          SAVE
+                        </Button>
                       ) : (
                         "Choose context!"
                       )
@@ -200,13 +207,15 @@ export default class CardEditor extends React.Component<Props, State> {
                   : [])
               ]
             : []),
-          <button
+          <Button
             key="nextChunkButton"
+            color="default"
+            variant="outlined"
             onClick={this.trySwitchToNextChunk}
             className="anchor"
           >
             To next chunk
-          </button>
+          </Button>
         ].map((element, i) => (
           <div className="cardEditorRow" key={i}>
             {element}
