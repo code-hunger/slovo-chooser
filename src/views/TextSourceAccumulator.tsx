@@ -1,12 +1,14 @@
 import * as React from "react";
 import { flatMap, values } from "lodash";
 import reactbind from "react-bind-decorator";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
+
+import Grid from "@material-ui/core/Grid";
 import * as PropTypes from "prop-types";
 import { WithStyles, Theme } from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
 
 import TextEditor from "../containers/TextEditor";
 import CardEditor from "../containers/CardEditor";
@@ -32,17 +34,22 @@ interface Props {
 
 const styles = (theme: Theme) => ({
   paper: {
-    padding: theme.spacing.unit,
-    marginBottom: theme.spacing.unit
+    padding: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2
+  },
+  fullHeight: {
+    padding: theme.spacing.unit * 2,
+    paddingBottom: 0,
+    [theme.breakpoints.up("sm")]: {
+      height: "100%"
+    }
   }
 });
 
 type StyledProps = Props & WithStyles<typeof styles>;
 
 @reactbind()
-class TextSourceAccumulator extends React.Component<
-  StyledProps
-> {
+class TextSourceAccumulator extends React.Component<StyledProps> {
   generateCsvFile() {
     const csvArray = flatMap(this.props.savedChunks).map(values);
     exportToCsv("anki_export.csv", csvArray);
@@ -50,41 +57,50 @@ class TextSourceAccumulator extends React.Component<
 
   render() {
     return (
-      <>
-        <Paper className={this.props.classes.paper}>
-          <Typography variant="headline">
-            Choose words to check meaning:
-          </Typography>
-          <TextEditor
-            tabIndex={0}
-            emptyText="Loading text..."
-            clickStrategy={this.props.textClickStrategy}
-            className={this.props.isSelectingContext ? "selectContext" : ""}
-          />
-        </Paper>
-        <Paper className={this.props.classes.paper}>
-          <Typography variant="headline">Marked unknown:</Typography>
-          <UnknownWordList tabIndex={0} />
-        </Paper>
-        <Paper className={this.props.classes.paper}>
-          <CardEditor
-            isSelectingContext={this.props.isSelectingContext}
-            switchToNextChunk={this.props.onReady}
-            onSave={this.props.onCardSave}
-            textSourceId={this.props.textSourceId}
-            dictionary={Dictionary}
-          />
-        </Paper>
+      <Grid container justify="center" spacing={8}>
+        <Grid item sm={8} xs={12}>
+          <Paper className={this.props.classes.fullHeight}>
+            <Typography variant="headline">
+              Choose words to check meaning:
+            </Typography>
+            <TextEditor
+              tabIndex={0}
+              emptyText="Loading text..."
+              clickStrategy={this.props.textClickStrategy}
+              className={this.props.isSelectingContext ? "selectContext" : ""}
+            />
+          </Paper>
+        </Grid>
+        <Grid item sm={4} xs={12}>
+          <Paper className={this.props.classes.fullHeight}>
+            <Typography variant="headline">Marked unknown:</Typography>
+            <UnknownWordList tabIndex={0} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12}>
+          <Paper className={this.props.classes.paper}>
+            <CardEditor
+              isSelectingContext={this.props.isSelectingContext}
+              switchToNextChunk={this.props.onReady}
+              onSave={this.props.onCardSave}
+              textSourceId={this.props.textSourceId}
+              dictionary={Dictionary}
+            />
+          </Paper>
+        </Grid>
         {this.props.savedChunks ? (
-          <Button
-            variant="contained"
-            className="anchor block"
-            onClick={this.generateCsvFile}
-          >
-            Generate a <kbd>csv</kbd> file for anki
-          </Button>
+          <Grid item>
+            <Button
+              variant="contained"
+              className="anchor block"
+              onClick={this.generateCsvFile}
+              fullWidth
+            >
+              Generate a <kbd>csv</kbd> file for anki
+            </Button>
+          </Grid>
         ) : null}
-      </>
+      </Grid>
     );
   }
 }
