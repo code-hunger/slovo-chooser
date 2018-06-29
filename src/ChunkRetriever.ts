@@ -23,7 +23,7 @@ export default class ChunkRetriever {
   }
 
   getOptionsFromServer = () =>
-    axios.get("/status", { responseType: "json" }).then(({ data }) => {
+    axios.get("http://localhost:3000/status", { responseType: "json" }).then(({ data }) => {
       _.forOwn(data, (_, file) => {
         this.sources[file] = {
           description: file.replace(/_/g, " "),
@@ -54,7 +54,7 @@ export default class ChunkRetriever {
 
   chunkFromLocalServer(file: string, chunkId: number): MyPr {
     return axios
-      .get("/text", {
+      .get("http://localhost:3000/text", {
         params: { chunkId, file },
         responseType: "json"
       })
