@@ -51,8 +51,9 @@ class SavedWordsContainer extends React.Component<StyledProps> {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell padding="dense">Word</TableCell>
-            <TableCell>Meaning</TableCell>
+            <TableCell colSpan={2} classes={this.props.classes}>
+              Recently added words
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{this.props.words.map(this.renderSavedWord)}</TableBody>
