@@ -3,6 +3,7 @@ import { flatMap, values } from "lodash";
 import reactbind from "react-bind-decorator";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
 
 import TextEditor from "../containers/TextEditor";
 import CardEditor from "../containers/CardEditor";
@@ -36,24 +37,36 @@ export default class TextSourceAccumulator extends React.Component<Props> {
   render() {
     return (
       <>
-        <Typography variant="headline">Choose words to check meaning:</Typography>
-        <TextEditor
-          tabIndex={0}
-          emptyText="Loading text..."
-          clickStrategy={this.props.textClickStrategy}
-          className={this.props.isSelectingContext ? "selectContext" : ""}
-        />
-        <Typography variant="headline">Marked unknown:</Typography>
-        <UnknownWordList tabIndex={0} />
-        <CardEditor
-          isSelectingContext={this.props.isSelectingContext}
-          switchToNextChunk={this.props.onReady}
-          onSave={this.props.onCardSave}
-          textSourceId={this.props.textSourceId}
-          dictionary={Dictionary}
-        />
+        <Paper>
+          <Typography variant="headline">
+            Choose words to check meaning:
+          </Typography>
+          <TextEditor
+            tabIndex={0}
+            emptyText="Loading text..."
+            clickStrategy={this.props.textClickStrategy}
+            className={this.props.isSelectingContext ? "selectContext" : ""}
+          />
+        </Paper>
+        <Paper>
+          <Typography variant="headline">Marked unknown:</Typography>
+          <UnknownWordList tabIndex={0} />
+        </Paper>
+        <Paper>
+          <CardEditor
+            isSelectingContext={this.props.isSelectingContext}
+            switchToNextChunk={this.props.onReady}
+            onSave={this.props.onCardSave}
+            textSourceId={this.props.textSourceId}
+            dictionary={Dictionary}
+          />
+        </Paper>
         {this.props.savedChunks ? (
-          <Button variant="contained" className="anchor block" onClick={this.generateCsvFile}>
+          <Button
+            variant="contained"
+            className="anchor block"
+            onClick={this.generateCsvFile}
+          >
             Generate a <kbd>csv</kbd> file for anki
           </Button>
         ) : null}
