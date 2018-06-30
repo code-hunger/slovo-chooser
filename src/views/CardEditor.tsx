@@ -21,7 +21,9 @@ interface Props {
     textSourceId: string
   ) => void;
   readonly switchToNextChunk: () => void;
-  readonly dictionary: React.ComponentClass<{ word: string }>;
+  readonly dictionary:
+    | React.ComponentClass<{ word: string }>
+    | React.StatelessComponent<{ word: string }>;
   readonly textSourceId: string;
 
   isSelectingContext: boolean;
@@ -188,7 +190,10 @@ export default class CardEditor extends React.Component<Props, State> {
                           isSelectingContext={this.props.isSelectingContext}
                           onReady={this.props.toggleSelectingContext}
                         />
-                        <Button size="small" onClick={this.props.toggleSelectingContext}>
+                        <Button
+                          size="small"
+                          onClick={this.props.toggleSelectingContext}
+                        >
                           Select context words
                         </Button>
                       </>,

@@ -12,7 +12,9 @@ interface OutsideProps {
     textSourceId: string
   ) => void;
   readonly switchToNextChunk: () => void;
-  readonly dictionary: React.ComponentClass<{ word: string }>;
+  readonly dictionary:
+    | React.ComponentClass<{ word: string }>
+    | React.StatelessComponent<{ word: string }>;
   readonly textSourceId: string;
 
   isSelectingContext: boolean;
