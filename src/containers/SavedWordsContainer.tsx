@@ -69,8 +69,9 @@ export default connect<
   State
 >((state, ownProps) => ({
   words: _.reverse(
-    _.isUndefined(ownProps.textSourceId)
+    (_.isUndefined(ownProps.textSourceId)
       ? _.flattenDeep(_.flatMap(state.savedChunks).map(_.values))
       : _.flatMap(state.savedChunks[ownProps.textSourceId])
-  ).slice(0, 10)
+    ).slice(0, 10)
+  )
 }))(withStyles(wordCellStyles)(SavedWordsContainer));
