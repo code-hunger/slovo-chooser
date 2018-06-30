@@ -13,7 +13,7 @@ type Props = PropsFromState & PropsFromDispatch & PropsFromOutside;
 
 interface PropsFromOutside {
   textSourceId: string;
-  onReady: () => void;
+  switchChunk: (direction: 1 | -1) => void;
 }
 
 interface PropsFromState {

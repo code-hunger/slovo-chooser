@@ -20,7 +20,7 @@ interface Props {
     chunkId: number,
     textSourceId: string
   ) => void;
-  readonly switchToNextChunk: () => void;
+  readonly switchChunk: (direction: 1 | -1) => void;
   readonly dictionary:
     | React.ComponentClass<{ word: string }>
     | React.StatelessComponent<{ word: string }>;
@@ -121,15 +121,22 @@ export default class CardEditor extends React.Component<Props, State> {
     this.setState({ dictionarySearch: value, unknownField: value });
   }
 
-  trySwitchToNextChunk() {
+  trySwitchChunk(direction: 1 | -1) {
     if (
       this.state.unknownField.length <= 1 ||
       confirm("Are you sure?") ||
       this.props.usedHints.length
     ) {
       this.resetState();
-      this.props.switchToNextChunk();
+      this.props.switchChunk(direction);
     }
+  }
+
+  trySwitchToNextChunk() {
+    this.trySwitchChunk(1);
+  }
+  trySwitchToPrevChunk() {
+    this.trySwitchChunk(-1);
   }
 
   onSave() {
@@ -218,8 +225,19 @@ export default class CardEditor extends React.Component<Props, State> {
             variant="outlined"
             onClick={this.trySwitchToNextChunk}
             className="anchor"
+            name="nextChunkButton"
           >
             To next chunk
+          </Button>,
+          <Button
+            key="prevChunkButton"
+            color="default"
+            variant="outlined"
+            onClick={this.trySwitchToPrevChunk}
+            className="anchor"
+            name="prevChunkButton"
+          >
+            To previous chunk
           </Button>
         ].map((element, i) => (
           <div className="cardEditorRow" key={i}>

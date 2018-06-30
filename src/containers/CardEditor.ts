@@ -11,7 +11,7 @@ interface OutsideProps {
     chunkId: number,
     textSourceId: string
   ) => void;
-  readonly switchToNextChunk: () => void;
+  readonly switchChunk: (direction: (1 | -1)) => void;
   readonly dictionary:
     | React.ComponentClass<{ word: string }>
     | React.StatelessComponent<{ word: string }>;

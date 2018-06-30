@@ -22,7 +22,7 @@ import exportToCsv from "../exportToCSV";
 
 interface Props {
   textSourceId: string;
-  onReady: () => void;
+  switchChunk: (direction: (1 | -1)) => void;
 
   words: NumberedWord[];
   savedChunks: { [chunkId: number]: SavedWord[] };
@@ -81,7 +81,7 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
           <Paper className={this.props.classes.paper}>
             <CardEditor
               isSelectingContext={this.props.isSelectingContext}
-              switchToNextChunk={this.props.onReady}
+              switchChunk={this.props.switchChunk}
               onSave={this.props.onCardSave}
               textSourceId={this.props.textSourceId}
               dictionary={Dictionary}

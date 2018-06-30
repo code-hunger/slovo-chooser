@@ -104,6 +104,15 @@ class AppClass extends React.Component<Props, State> {
         };
   }
 
+  switchChunk(direction: 1 | -1) {
+    if (isUndefined(this.state.textSourceId))
+      throw "Tried to switch chunk without text source";
+
+    this.switchToNextChunk(
+      this.props.textSourcePositions[this.state.textSourceId] + direction
+    );
+  }
+
   render() {
     const classes = this.props.classes;
     const textSourceId = this.state.textSourceId;
@@ -130,7 +139,7 @@ class AppClass extends React.Component<Props, State> {
         {isUndefined(textSourceId) ? null : (
           <Grid item lg={6} md={8} xs={12}>
             <TextSourceAccumulator
-              onReady={this.switchToNextChunk}
+              switchChunk={this.switchChunk}
               textSourceId={textSourceId}
             />
           </Grid>
