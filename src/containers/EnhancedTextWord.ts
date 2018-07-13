@@ -13,15 +13,10 @@ function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
 const mapStateToTextWordProps = (
   { words, savedWords, cardState: { contextBoundaries } }: State,
   { index }: NumberedWord
-): Word => ({
+) => ({
   word: words[index].word,
-  classNames: [
-    ...words[index].classNames,
-    ...(contextBoundaries && insideBoundaries(contextBoundaries, index)
-      ? ["boundary"]
-      : []),
-    ...(savedWords.indexOf(trim(words[index].word, "\"\',.")) > -1 ? ["fade-word"] : [])
-  ]
+  classNames: words[index].classNames,
+  insideBoundaries: contextBoundaries && insideBoundaries(contextBoundaries, index),
 });
 
 export default connect<Word, null, { index: number }>(mapStateToTextWordProps)(

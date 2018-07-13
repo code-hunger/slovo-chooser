@@ -14,10 +14,20 @@ export interface NumberedWord extends Word {
   readonly index: number;
 }
 
-export class SimpleWord extends React.PureComponent<Clickable & Word> {
+export class SimpleWord extends React.PureComponent<
+  Clickable & Word,
+  { className: string }
+> {
+  state = { className: "word" };
+  componentWillReceiveProps(newProps: Clickable & Word) {
+    if (newProps.classNames !== this.props.classNames)
+      this.setState({
+        className: newProps.classNames.concat("word").join(" ")
+      });
+  }
   render() {
     const props = this.props;
-    const className = props.classNames.concat("word").join(" ");
+    const className = this.state.className;
 
     return (
       <div
@@ -25,7 +35,7 @@ export class SimpleWord extends React.PureComponent<Clickable & Word> {
           className,
           onClick: props.onClick,
           title: props.word,
-          onContextMenu: props.onContextMenu,
+          onContextMenu: props.onContextMenu
         }}
       >
         {props.word}
@@ -34,14 +44,42 @@ export class SimpleWord extends React.PureComponent<Clickable & Word> {
   }
 }
 
+type NumberedWordViewProps = NumberedWord &
+  Clickable & { insideBoundaries: boolean };
+
+interface NumberedWordViewState {
+  classes: string[];
+}
+
 export class NumberedWordView extends React.PureComponent<
-  NumberedWord & Clickable
+  NumberedWordViewProps,
+  NumberedWordViewState
 > {
+  state = { classes: [] };
+
+  componentWillReceiveProps(newProps: NumberedWordViewProps) {
+    if (
+      newProps.classNames !== this.props.classNames ||
+      newProps.insideBoundaries !== this.props.insideBoundaries
+    ) {
+      this.setState({
+        classes: newProps.classNames.concat(
+          newProps.insideBoundaries ? "boundary" : ""
+        )
+      });
+    }
+  }
+
   render() {
     const props = this.props;
     return (
       <div className="word-wrapper">
-        <SimpleWord {...props} />
+        <SimpleWord
+          word={props.word}
+          onClick={props.onClick}
+          onContextMenu={props.onContextMenu}
+          classNames={this.state.classes}
+        />
         <div className="word-tooltip">{props.index + 1}</div>
       </div>
     );
