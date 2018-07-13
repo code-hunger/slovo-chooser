@@ -2,7 +2,7 @@ import * as React from "react";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 
-import { Word, NumberedWord, NumberedWordView } from "../views/Word";
+import { Word, NumberedWord } from "../views/Word";
 import { WordCollector } from "../views/WordCollector";
 import UnknownField from "../containers/UnknownFieldInput";
 import Button from "@material-ui/core/Button";

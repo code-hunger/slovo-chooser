@@ -1,6 +1,5 @@
 import * as React from "react";
-import { WordCollector } from "../views/WordCollector";
-import store, { State, WordAction } from "../store";
+import { State, WordAction } from "../store";
 import { Word, NumberedWord, NumberedWordView } from "../views/Word";
 import { Dispatch, connect } from "react-redux";
 import UnknownWordList from "../views/UnknownWordList";

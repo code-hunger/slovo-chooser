@@ -2,7 +2,7 @@ import * as React from "react";
 import { stubTrue } from "lodash";
 
 import { TextClickStrategy } from "../TextClickStrategies";
-import { Word, NumberedWord, NumberedWordView } from "./Word";
+import { Word, NumberedWord } from "./Word";
 import { WordCollector } from "./WordCollector";
 import { KeyboardSelectableContainer } from "../containers/NumberSelectableContainer";
 
