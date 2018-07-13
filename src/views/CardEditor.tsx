@@ -1,5 +1,5 @@
 import * as React from "react";
-import TextField from "@material-ui/core/TextField";
+import Input from "@material-ui/core/Input";
 import Typography from "@material-ui/core/Typography";
 
 import { Word, NumberedWord } from "../views/Word";
@@ -161,7 +161,7 @@ export default class CardEditor extends React.Component<Props, State> {
     // E.g., remove conditional rendering and render everything while setting className='hidden'
     return (
       <div className="cardEditor">
-        {[
+        <div className="cardEditorRow">
           <UnknownField
             words={this.state.marked}
             usedHints={this.props.usedHints}
@@ -170,80 +170,70 @@ export default class CardEditor extends React.Component<Props, State> {
             key="unknownField"
             onReady={this.loadDictionary}
             isDuplicate={this.props.isDuplicate}
-          />,
-          ...(dictionarySearch.length > CardEditor.MIN_WORD_LENGTH
-            ? [
-                <>
-                  Dictionary results for <strong>{dictionarySearch}</strong>:
-                  <this.props.dictionary
-                    word={dictionarySearch}
-                    key="dictionary"
-                  />
-                </>,
-                <TextField
-                  label="Choose meaning from the dictionaries:"
-                  name="unknownFieldMeaning"
-                  multiline
-                  value={this.state.unknownFieldMeaning}
-                  onChange={this.onchange}
-                  margin="dense"
-                  fullWidth
-                />,
-                ...(this.state.unknownFieldMeaning.length > 2
-                  ? [
-                      <>
-                        <ContextStringField
-                          unknownWord={dictionarySearch}
-                          isSelectingContext={this.props.isSelectingContext}
-                          onReady={this.props.toggleSelectingContext}
-                        />
-                        <Button
-                          size="small"
-                          onClick={this.props.toggleSelectingContext}
-                        >
-                          Select context words
-                        </Button>
-                      </>,
-                      this.props.contextBoundaries.length ? (
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={this.onSave}
-                        >
-                          SAVE
-                        </Button>
-                      ) : (
-                        "Choose context!"
-                      )
-                    ]
-                  : [])
-              ]
-            : []),
-          <Button
-            key="nextChunkButton"
-            color="default"
-            variant="outlined"
-            onClick={this.trySwitchToNextChunk}
-            className="anchor"
-            name="nextChunkButton"
-          >
-            To next chunk
-          </Button>,
-          <Button
-            key="prevChunkButton"
-            color="default"
-            variant="outlined"
-            onClick={this.trySwitchToPrevChunk}
-            className="anchor"
-            name="prevChunkButton"
-          >
-            To previous chunk
-          </Button>
-        ].map((element, i) => (
-          <div className="cardEditorRow" key={i}>
-            {element}
+          />
+        </div>
+        {dictionarySearch.length > CardEditor.MIN_WORD_LENGTH ?
+        <>
+          <div className="cardEditorRow">
+            Dictionary results for <strong>{dictionarySearch}</strong>:
+            <this.props.dictionary word={dictionarySearch}/>
           </div>
-        ))}
+          <div className="cardEditorRow">
+            Choose meaning from the dictionaries:
+            <Input
+              name="unknownFieldMeaning"
+              multiline
+              value={this.state.unknownFieldMeaning}
+              onChange={this.onchange}
+              margin="dense"
+              fullWidth
+            />
+          </div>
+          {this.state.unknownFieldMeaning.length > 2 ? (
+            <div className="cardEditorRow">
+              <ContextStringField
+                unknownWord={dictionarySearch}
+                isSelectingContext={this.props.isSelectingContext}
+                onReady={this.props.toggleSelectingContext}
+              />
+              <Button size="small" onClick={this.props.toggleSelectingContext}>
+                Select context words
+              </Button>
+              {this.props.contextBoundaries.length ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.onSave}
+                >
+                  SAVE
+                </Button>
+              ) : (
+                "Choose context!"
+              )}
+            </div>
+          ) : null}
+        </>
+        : null}
+        <Button
+          key="nextChunkButton"
+          color="default"
+          variant="outlined"
+          onClick={this.trySwitchToNextChunk}
+          className="anchor"
+          name="nextChunkButton"
+        >
+          To next chunk
+        </Button>
+        <Button
+          key="prevChunkButton"
+          color="default"
+          variant="outlined"
+          onClick={this.trySwitchToPrevChunk}
+          className="anchor"
+          name="prevChunkButton"
+        >
+          To previous chunk
+        </Button>
       </div>
     );
   }
