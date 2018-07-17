@@ -1,6 +1,7 @@
 import * as React from "react";
 import { State, SavedWord, SavedChunks } from "../store";
 import { connect, Dispatch } from "react-redux";
+import { NumberedWord } from "../views/Word";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import IconButton from "@material-ui/core/IconButton";
@@ -22,7 +23,7 @@ import reactbind from "react-bind-decorator";
 import * as _ from "lodash";
 
 interface Props {
-  words: SavedWord[];
+  savedChunks: SavedChunks;
   textSourceId?: string;
 }
 
@@ -37,7 +38,28 @@ const wordCellStyles = createStyles({
 type StyledProps = Props & WithStyles<typeof wordCellStyles>;
 
 @reactbind()
-class SavedWordsContainer extends React.Component<StyledProps> {
+class SavedWordsContainer extends React.PureComponent<
+  StyledProps,
+  { words: SavedWord[] }
+> {
+  state = { words: [] };
+
+  componentWillReceiveProps(nextProps: StyledProps) {
+    if (
+      nextProps.savedChunks !== this.props.savedChunks ||
+      nextProps.textSourceId !== this.props.textSourceId
+    ) {
+      this.setState({
+        words: _.reverse(
+          (_.isUndefined(nextProps.textSourceId)
+            ? _.flattenDeep(_.flatMap(nextProps.savedChunks).map(_.values))
+            : _.flatMap(nextProps.savedChunks[nextProps.textSourceId])
+          ).slice(-10)
+        )
+      });
+    }
+  }
+
   renderSavedWord(word: SavedWord) {
     return (
       <TableRow key={word.word}>
@@ -46,6 +68,7 @@ class SavedWordsContainer extends React.Component<StyledProps> {
       </TableRow>
     );
   }
+
   render() {
     return (
       <Table>
@@ -56,22 +79,17 @@ class SavedWordsContainer extends React.Component<StyledProps> {
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>{this.props.words.map(this.renderSavedWord)}</TableBody>
+        <TableBody>{this.state.words.map(this.renderSavedWord)}</TableBody>
       </Table>
     );
   }
 }
 
 export default connect<
-  { words: SavedWord[] },
+  { savedChunks: SavedChunks },
   void,
   { textSourceId?: string },
   State
->((state, ownProps) => ({
-  words: _.reverse(
-    (_.isUndefined(ownProps.textSourceId)
-      ? _.flattenDeep(_.flatMap(state.savedChunks).map(_.values))
-      : _.flatMap(state.savedChunks[ownProps.textSourceId])
-    ).slice(0, 10)
-  )
+>(state => ({
+  savedChunks: state.savedChunks
 }))(withStyles(wordCellStyles)(SavedWordsContainer));
