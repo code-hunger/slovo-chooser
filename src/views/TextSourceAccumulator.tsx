@@ -22,7 +22,7 @@ import exportToCsv from "../exportToCSV";
 
 interface Props {
   textSourceId: string;
-  switchChunk: (direction: (1 | -1)) => void;
+  switchChunk: (direction: 1 | -1) => void;
 
   words: NumberedWord[];
   savedChunks: { [chunkId: number]: SavedWord[] };
@@ -52,7 +52,7 @@ type StyledProps = Props & WithStyles<typeof styles>;
 class TextSourceAccumulator extends React.Component<StyledProps> {
   generateCsvFile() {
     const csvArray = flatMap(this.props.savedChunks).map(values);
-    exportToCsv("anki_export.csv", csvArray);
+    exportToCsv(this.props.textSourceId + ".csv", csvArray);
   }
 
   render() {
