@@ -19,8 +19,9 @@ export type WordAction =
   | { type: "TOGGLE_EDITED_UNKNOWN_WORDS"; added: number[]; removed: number[] }
   | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
   | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" }
-  | { type: "REMOVE_LOCAL_TEXT_SOURCE", sourceIndex: LocalTextSource }
-  | { type: "ADD_LOCAL_TEXT_SOURCE"; source: LocalTextSource };
+  | { type: "REMOVE_LOCAL_TEXT_SOURCE"; sourceIndex: LocalTextSource }
+  | { type: "ADD_LOCAL_TEXT_SOURCE"; source: LocalTextSource }
+  | { type: "SET_DICTIONARY"; url: string };
 
 function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {
@@ -139,7 +140,7 @@ function chunkIdReducer(
     case "REMOVE_LOCAL_TEXT_SOURCE":
       return update(savedPositions, {
         $unset: [action.sourceIndex.id]
-      })
+      });
 
     default:
       return savedPositions;
@@ -175,7 +176,7 @@ function savedChunksReducer(savedChunks: SavedChunks = {}, action: WordAction) {
     case "REMOVE_LOCAL_TEXT_SOURCE":
       return update(savedChunks, {
         $unset: [action.sourceIndex.id]
-      })
+      });
     default:
       return savedChunks;
   }
@@ -230,6 +231,14 @@ function localTextSourcesReducer(
   }
 }
 
+function dictionaryReducer(dictionary: string = "", action: WordAction) {
+  switch (action.type) {
+    case "SET_DICTIONARY":
+      return action.url;
+  }
+  return dictionary;
+}
+
 export interface LocalTextSource extends TextSource<string> {
   text: string;
 }
@@ -264,6 +273,7 @@ interface CardState {
 
 export interface State {
   readonly words: NumberedWord[];
+  readonly dictionary: string;
 
   readonly savedChunks: SavedChunks;
   readonly savedWords: string[];
@@ -276,6 +286,7 @@ export interface State {
 
 const reducers = combineReducers({
   words: textWordsReducer,
+  dictionary: dictionaryReducer,
 
   savedChunks: savedChunksReducer,
   savedWords: savedWordsReducer,
@@ -300,7 +311,8 @@ store.subscribe(
           "savedChunks",
           "savedWords",
           "localTextSources",
-          "textSourcePositions"
+          "textSourcePositions",
+          "dictionary"
         ])
       ),
     2000

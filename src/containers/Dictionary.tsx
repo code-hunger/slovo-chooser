@@ -1,4 +1,6 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { State as ReduxState } from "../store";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
@@ -14,10 +16,11 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 interface DictionaryProps extends WithStyles<typeof styles> {
   word: string;
+  setDictionary: (url: string) => void;
+  url: string;
 }
 
 interface State {
-  url: string;
   isConfiguring: boolean;
 }
 
@@ -34,16 +37,19 @@ const styles = createStyles({
 class Dictionary extends React.PureComponent<DictionaryProps, State> {
   private input: HTMLInputElement;
 
-  state = { url: "", isConfiguring: false };
+  state = { isConfiguring: false };
 
   handleClickOpen = () => {
     this.setState({ isConfiguring: true });
   };
   handleClose = () => {
-    this.setState({ isConfiguring: false, url: this.input.value });
+    this.props.setDictionary(this.input.value);
+    this.setState({ isConfiguring: false });
   };
 
-  inputRef = (input: HTMLInputElement) => { this.input = input }
+  inputRef = (input: HTMLInputElement) => {
+    this.input = input;
+  };
 
   render() {
     const classes = this.props.classes;
@@ -76,7 +82,7 @@ class Dictionary extends React.PureComponent<DictionaryProps, State> {
         </Dialog>
         {this.state.isConfiguring ? null : (
           <iframe
-            src={this.state.url.replace("{}", this.props.word)}
+            src={this.props.url.replace("{}", this.props.word)}
             width="100%"
           />
         )}
@@ -85,4 +91,20 @@ class Dictionary extends React.PureComponent<DictionaryProps, State> {
   }
 }
 
-export default withStyles(styles)(Dictionary);
+const styled = withStyles(styles)(Dictionary);
+
+export default connect<
+  { url: string },
+  { setDictionary: (url: string) => void },
+  { word: string },
+  ReduxState
+>(
+  state => ({
+    url: state.dictionary
+  }),
+  dispatch => ({
+    setDictionary(url) {
+      dispatch({ type: "SET_DICTIONARY", url });
+    }
+  })
+)(styled);
