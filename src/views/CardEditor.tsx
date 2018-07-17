@@ -191,14 +191,6 @@ export default class CardEditor extends React.Component<Props, State> {
           </div>
           {this.state.unknownFieldMeaning.length > 2 ? (
             <div className="cardEditorRow">
-              <ContextStringField
-                unknownWord={dictionarySearch}
-                isSelectingContext={this.props.isSelectingContext}
-                onReady={this.props.toggleSelectingContext}
-              />
-              <Button size="small" onClick={this.props.toggleSelectingContext}>
-                Select context words
-              </Button>
               {this.props.contextBoundaries.length ? (
                 <Button
                   variant="contained"
@@ -210,6 +202,14 @@ export default class CardEditor extends React.Component<Props, State> {
               ) : (
                 "Choose context!"
               )}
+              <ContextStringField
+                unknownWord={dictionarySearch}
+                isSelectingContext={this.props.isSelectingContext}
+                onReady={this.props.toggleSelectingContext}
+              />
+              <Button size="small" onClick={this.props.toggleSelectingContext}>
+                Select context words
+              </Button>
             </div>
           ) : null}
         </>
