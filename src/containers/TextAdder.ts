@@ -2,12 +2,16 @@ import store, { State, WordAction, SavedWord } from "../store";
 import { connect, Dispatch } from "react-redux";
 import TextAdder from "../views/TextAdder";
 
-interface Props {
+interface DispatchProps {
   onDone: (id: string, text: string) => void;
 }
 
-export default connect<void, Props, void, State>(
-  undefined,
+interface StateProps {
+  autoOpen: boolean;
+}
+
+export default connect<StateProps, DispatchProps, void, State>(
+  state => ({ autoOpen: state.localTextSources.length < 1 }),
   (dispatch: Dispatch<WordAction>) => ({
     onDone(id: string, text: string) {
       dispatch({

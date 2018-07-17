@@ -11,6 +11,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 interface Props {
   onDone: (id: string, text: string) => void;
+  autoOpen: boolean;
 }
 
 interface State {
@@ -26,7 +27,8 @@ export default class TextAdder extends React.PureComponent<Props, State> {
 
   onDone() {
     if(this.textField === null || this.textIdField === null) return 
-    this.props.onDone(this.textIdField.value, this.textField.value);
+
+    this.props.onDone(this.textIdField.value || "Unnamed text source", this.textField.value);
     this.handleClose();
   }
 
@@ -40,7 +42,7 @@ export default class TextAdder extends React.PureComponent<Props, State> {
 
   inputRef(el: { value: string; name: "text" | "textId" } | null) {
     if (el !== null) {
-      this[el.name + "Field"] = el; // I acknowledge it's an awful style, but it's type-safe & cool
+      this[el.name + "Field"] = el; // I acknowledge it's an awful code style, but it's completely type-safe and it's cool
     } else {
       this.textField = null;
       this.textIdField = null;
@@ -58,7 +60,7 @@ export default class TextAdder extends React.PureComponent<Props, State> {
           Add a new text source
         </Button>
         <Dialog
-          open={this.state.isOpen}
+          open={this.state.isOpen || this.props.autoOpen}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
           fullWidth
