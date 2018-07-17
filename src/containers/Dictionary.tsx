@@ -72,6 +72,7 @@ class Dictionary extends React.PureComponent<DictionaryProps, State> {
               type="url"
               fullWidth
               inputRef={this.inputRef}
+              defaultValue={this.props.url}
             />
           </DialogContent>
           <DialogActions>
