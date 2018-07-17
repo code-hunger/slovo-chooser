@@ -19,12 +19,13 @@ interface State {
 
 @reactbind()
 export default class TextAdder extends React.PureComponent<Props, State> {
-  private textField: { value: string };
-  private textIdField: { value: string };
+  private textField: { value: string } | null;
+  private textIdField: { value: string } | null;
 
   state = { isOpen: false };
 
   onDone() {
+    if(this.textField === null || this.textIdField === null) return 
     this.props.onDone(this.textIdField.value, this.textField.value);
     this.handleClose();
   }
@@ -37,9 +38,13 @@ export default class TextAdder extends React.PureComponent<Props, State> {
     this.setState({ isOpen: false });
   }
 
-  inputRef(e: HTMLInputElement | HTMLTextAreaElement) {
-    if (e.name === "text") this.textField = e;
-    else if (e.name === "textId") this.textIdField = e;
+  inputRef(el: { value: string; name: "text" | "textId" } | null) {
+    if (el !== null) {
+      this[el.name + "Field"] = el; // I acknowledge it's an awful style, but it's type-safe & cool
+    } else {
+      this.textField = null;
+      this.textIdField = null;
+    }
   }
 
   render() {
