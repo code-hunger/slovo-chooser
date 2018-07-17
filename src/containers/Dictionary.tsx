@@ -32,17 +32,18 @@ const styles = createStyles({
 });
 
 class Dictionary extends React.PureComponent<DictionaryProps, State> {
+  private input: HTMLInputElement;
+
   state = { url: "", isConfiguring: false };
 
   handleClickOpen = () => {
     this.setState({ isConfiguring: true });
   };
   handleClose = () => {
-    this.setState({ isConfiguring: false });
+    this.setState({ isConfiguring: false, url: this.input.value });
   };
-  handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ url: e.target.value });
-  };
+
+  inputRef = (input: HTMLInputElement) => { this.input = input }
 
   render() {
     const classes = this.props.classes;
@@ -64,8 +65,7 @@ class Dictionary extends React.PureComponent<DictionaryProps, State> {
               label="Dictionary URL"
               type="url"
               fullWidth
-              value={this.state.url}
-              onChange={this.handleUrlChange}
+              inputRef={this.inputRef}
             />
           </DialogContent>
           <DialogActions>
