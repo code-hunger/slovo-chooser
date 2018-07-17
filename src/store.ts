@@ -136,6 +136,11 @@ function chunkIdReducer(
         }
       });
 
+    case "REMOVE_LOCAL_TEXT_SOURCE":
+      return update(savedPositions, {
+        $unset: [action.sourceIndex.id]
+      })
+
     default:
       return savedPositions;
   }
@@ -167,6 +172,10 @@ function savedChunksReducer(savedChunks: SavedChunks = {}, action: WordAction) {
           }
         }
       });
+    case "REMOVE_LOCAL_TEXT_SOURCE":
+      return update(savedChunks, {
+        $unset: [action.sourceIndex.id]
+      })
     default:
       return savedChunks;
   }
