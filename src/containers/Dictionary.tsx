@@ -58,11 +58,11 @@ class Dictionary extends React.PureComponent<DictionaryProps, State> {
         <Button onClick={this.handleClickOpen} className={classes.configButton}>
           Configure dictionary
         </Button>
-        <Dialog open={this.state.isConfiguring} onClose={this.handleClose}>
+        <Dialog open={this.state.isConfiguring || this.props.url.length === 0} onClose={this.handleClose}>
           <DialogTitle id="form-dialog-title">Configure dictionary</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Set a URL for the dictionary. <kbd>{}</kbd> will be replaced with
+              Set a URL for the dictionary. <kbd>&#123;&#125;</kbd> will be replaced with
               the searched word.
             </DialogContentText>
             <TextField
