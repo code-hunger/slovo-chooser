@@ -1,5 +1,4 @@
 import * as React from "react";
-import reactbind from "react-bind-decorator";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
@@ -32,19 +31,18 @@ const styles = createStyles({
   }
 });
 
-@reactbind()
 class Dictionary extends React.PureComponent<DictionaryProps, State> {
   state = { url: "", isConfiguring: false };
 
-  handleClickOpen() {
+  handleClickOpen = () => {
     this.setState({ isConfiguring: true });
-  }
-  handleClose() {
+  };
+  handleClose = () => {
     this.setState({ isConfiguring: false });
-  }
-  handleUrlChange(e: React.ChangeEvent<HTMLInputElement>) {
+  };
+  handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ url: e.target.value });
-  }
+  };
 
   render() {
     const classes = this.props.classes;
