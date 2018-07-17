@@ -14,31 +14,18 @@ interface Props {
 }
 
 interface State {
-  id: string;
-  value: string;
   isOpen: boolean;
 }
 
 @reactbind()
 export default class TextAdder extends React.PureComponent<Props, State> {
-  state = { id: "", value: "", isOpen: false };
+  private textField: { value: string };
+  private textIdField: { value: string };
 
-  onChange(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
-    switch (e.target.name) {
-      case "text":
-        this.setState({ value: e.target.value });
-        break;
-      case "textId":
-        this.setState({ id: e.target.value });
-        break;
-    }
-  }
+  state = { isOpen: false };
 
   onDone() {
-    if (this.isValid()) {
-      this.props.onDone(this.state.id, this.state.value);
-      this.setState({ id: "", value: "" });
-    }
+    this.props.onDone(this.textIdField.value, this.textField.value);
     this.handleClose();
   }
 
@@ -50,8 +37,9 @@ export default class TextAdder extends React.PureComponent<Props, State> {
     this.setState({ isOpen: false });
   }
 
-  isValid() {
-    return this.state.id.length > 1 && this.state.value.length > 10;
+  inputRef(e: HTMLInputElement | HTMLTextAreaElement) {
+    if (e.name === "text") this.textField = e;
+    else if (e.name === "textId") this.textIdField = e;
   }
 
   render() {
@@ -80,25 +68,19 @@ export default class TextAdder extends React.PureComponent<Props, State> {
               id="name"
               label="Text source name"
               type="text"
-              onChange={this.onChange}
               name="textId"
-              value={this.state.id}
+              inputRef={this.inputRef}
             />
             <TextField
-              onChange={this.onChange}
               name="text"
-              value={this.state.value}
+              inputRef={this.inputRef}
               label="Enter text source content here"
               multiline
               fullWidth
             />
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={this.onDone}
-              color="primary"
-              disabled={!this.isValid()}
-            >
+            <Button onClick={this.onDone} color="primary">
               Add text source
             </Button>
             <Button onClick={this.handleClose} color="secondary">
