@@ -18,9 +18,22 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Typography from "@material-ui/core/Typography";
 
 import reactbind from "react-bind-decorator";
 import * as _ from "lodash";
+
+const NoWordsTable = withStyles({
+  root: { textAlign: "center", fontStyle: "italic" }
+})(props => (
+  <TableBody>
+    <TableRow>
+      <TableCell colSpan={2} classes={props.classes}>
+        No words added yet
+      </TableCell>
+    </TableRow>
+  </TableBody>
+));
 
 interface Props {
   savedChunks: SavedChunks;
@@ -69,21 +82,31 @@ class SavedWordsContainer extends React.PureComponent<
     );
   }
 
+  renderTableBody() {
+    if (this.state.words.length < 1) return <NoWordsTable />;
+
+    return <TableBody>{this.state.words.map(this.renderSavedWord)}</TableBody>;
+  }
+
   render() {
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell colSpan={2} classes={this.props.classes}>
+              <Typography variant="headline">
               Recently added words
+            </Typography>
             </TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>{this.state.words.map(this.renderSavedWord)}</TableBody>
+        {this.renderTableBody()}
       </Table>
     );
   }
 }
+
+const styled = withStyles(wordCellStyles)(SavedWordsContainer);
 
 export default connect<
   { savedChunks: SavedChunks },
@@ -92,4 +115,4 @@ export default connect<
   State
 >(state => ({
   savedChunks: state.savedChunks
-}))(withStyles(wordCellStyles)(SavedWordsContainer));
+}))(styled);
