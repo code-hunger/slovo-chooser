@@ -3,10 +3,10 @@ import { connect } from "react-redux";
 import { State } from "../store";
 import { pick } from "lodash";
 
-import { NumberedWord } from "../views/Word";
+import { NumberedWord } from "../Word";
 import TextWord from "./EnhancedTextWord";
-import { WordCollector } from "../views/WordCollector";
-import { KeyboardSelectableContainer } from "./NumberSelectableContainer";
+import { WordCollector } from "../WordCollector";
+import { KeyboardSelectableContainer } from "../NumberSelectableContainer";
 import { TextClickStrategy } from "../TextClickStrategies";
 
 type TextEditorProps = PropsFromState & PropsFromOutside;

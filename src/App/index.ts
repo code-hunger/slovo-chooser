@@ -1,4 +1,4 @@
-import App from "../views/App";
+import App from "./App";
 import { pick } from "lodash";
 
 import { State, WordAction, LocalTextSource } from "../store";

@@ -6,8 +6,8 @@ import {
   UnknownWordSelector,
   TextClickStrategy
 } from "../TextClickStrategies";
-import { NumberedWord } from "../views/Word";
-import TextSourceAccumulator from "../views/TextSourceAccumulator";
+import { NumberedWord } from "../Word";
+import TextSourceAccumulator from "../TextSourceAccumulator";
 
 type Props = PropsFromState & PropsFromDispatch & PropsFromOutside;
 

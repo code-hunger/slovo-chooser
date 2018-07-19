@@ -1,7 +1,7 @@
 import * as React from "react";
 import { find, isUndefined } from "lodash";
 import reactbind from "react-bind-decorator";
-import "../App.css";
+import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -11,11 +11,11 @@ import { WithStyles, Theme } from "@material-ui/core";
 
 import ChunkRetriever, { CachedPositions } from "../ChunkRetriever";
 
-import TextAdder from "../containers/TextAdder";
-import TextSourceChooser from "../views/TextSourceChooser";
-import { NumberedWord } from "../views/Word";
-import TextSourceAccumulator from "../containers/TextSourceAccumulator";
-import SavedWordsContainer from "../containers/SavedWordsContainer";
+import TextAdder from "./TextAdder";
+import TextSourceChooser from "./TextSourceChooser";
+import { NumberedWord } from "../Word";
+import TextSourceAccumulator from "./TextSourceAccumulator";
+import SavedWordsContainer from "../SavedWordsContainer";
 
 import { LocalTextSource } from "../store";
 

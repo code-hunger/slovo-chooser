@@ -2,17 +2,17 @@ import * as React from "react";
 import Input from "@material-ui/core/Input";
 import Typography from "@material-ui/core/Typography";
 
-import { Word, NumberedWord } from "../views/Word";
-import { WordCollector } from "../views/WordCollector";
-import UnknownField from "../containers/UnknownFieldInput";
+import { Word, NumberedWord } from "../../Word";
+import { WordCollector } from "../../WordCollector";
+import UnknownField from "./UnknownFieldInput";
 import Button from "@material-ui/core/Button";
 
 import { isEqual } from "lodash";
 import reactbind from "react-bind-decorator";
-import { SavedWord, ContextBoundaries } from "../store";
+import { SavedWord, ContextBoundaries } from "../../store";
 import ContextStringField, {
   generateContextString
-} from "../containers/ContextStringField";
+} from "./ContextStringField";
 
 interface Props {
   readonly onSave: (

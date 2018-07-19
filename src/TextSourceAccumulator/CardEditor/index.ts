@@ -1,8 +1,8 @@
 import * as React from "react";
-import { NumberedWord } from "../views/Word";
-import CardEditor from "../views/CardEditor";
+import { NumberedWord } from "../../Word";
+import CardEditor from "./CardEditor";
 
-import store, { SavedWord, State, ContextBoundaries } from "../store";
+import store, { SavedWord, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
 
 interface OutsideProps {

@@ -1,6 +1,6 @@
 import store, { State, WordAction, SavedWord } from "../store";
 import { connect, Dispatch } from "react-redux";
-import TextAdder from "../views/TextAdder";
+import TextAdder from "../TextAdder";
 
 interface DispatchProps {
   onDone: (id: string, text: string) => void;

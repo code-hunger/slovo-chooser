@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NumberedWord } from "../views/Word";
+import { NumberedWord } from "../Word";
 import { TextClickStrategy } from "../TextClickStrategies";
 import * as _ from "lodash";
 

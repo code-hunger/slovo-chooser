@@ -1,4 +1,4 @@
-import { Word, NumberedWordView, NumberedWord } from "../views/Word";
+import { Word, NumberedWordView, NumberedWord } from "..//Word";
 
 import { connect } from "react-redux";
 import store, { State, ContextBoundaries } from "../store";

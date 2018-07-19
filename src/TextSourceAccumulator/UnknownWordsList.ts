@@ -1,8 +1,8 @@
 import * as React from "react";
 import { State, WordAction } from "../store";
-import { Word, NumberedWord, NumberedWordView } from "../views/Word";
+import { Word, NumberedWord, NumberedWordView } from "../Word";
 import { Dispatch, connect } from "react-redux";
-import UnknownWordList from "../views/UnknownWordList";
+import UnknownWordList from "../UnknownWordList";
 import { trim } from "lodash";
 
 interface PropsFromState {

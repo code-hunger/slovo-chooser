@@ -10,11 +10,11 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 
-import TextEditor from "../containers/TextEditor";
-import CardEditor from "../containers/CardEditor";
-import UnknownWordList from "../containers/UnknownWordsList";
-import { NumberedWord } from "../views/Word";
-import Dictionary from "../containers/Dictionary";
+import TextEditor from "./TextEditor";
+import CardEditor from "./CardEditor";
+import UnknownWordList from "./UnknownWordsList";
+import { NumberedWord } from "../Word";
+import Dictionary from "./Dictionary";
 import { SavedChunks, SavedWord } from "../store";
 
 import { TextClickStrategy } from "../TextClickStrategies";

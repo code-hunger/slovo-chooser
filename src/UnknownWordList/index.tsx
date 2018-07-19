@@ -2,9 +2,9 @@ import * as React from "react";
 import { stubTrue } from "lodash";
 
 import { TextClickStrategy } from "../TextClickStrategies";
-import { Word, NumberedWord } from "./Word";
-import { WordCollector } from "./WordCollector";
-import { KeyboardSelectableContainer } from "../containers/NumberSelectableContainer";
+import { Word, NumberedWord } from "../Word";
+import { WordCollector } from "../WordCollector";
+import { KeyboardSelectableContainer } from "../NumberSelectableContainer";
 
 import Typography from "@material-ui/core/Typography";
 
