@@ -13,8 +13,6 @@ interface UnknownFieldProps {
   onReady: (value: string) => void;
   toggleHints: (added: number[], removed: number[]) => void;
   isDuplicate: (value: string) => boolean;
-
-  minLength: number;
 }
 
 interface UnknownFieldState {
@@ -73,7 +71,7 @@ export default class UnknownField extends React.PureComponent<
       this.props.toggleHints(addedHints, removedHints);
     }
 
-    this.updateDuplicateState()
+    this.updateDuplicateState();
   }
 
   componentWillReceiveProps(nextProps: UnknownFieldProps) {
@@ -114,7 +112,7 @@ export default class UnknownField extends React.PureComponent<
           fullWidth
         />
         {this.state.isDuplicate ? "It is a duplicate!" : null}
-        {this.state.value.length >= this.props.minLength ? (
+        {this.state.value.length ? (
           <Button variant="outlined" onClick={this.onReady}>
             Find in dictionary
           </Button>

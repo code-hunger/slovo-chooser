@@ -64,8 +64,6 @@ function markedIdsToWords({
 
 @reactbind()
 export default class CardEditor extends React.Component<Props, State> {
-  static MIN_WORD_LENGTH = 3;
-
   constructor(props: Props) {
     super(props);
 
@@ -165,55 +163,57 @@ export default class CardEditor extends React.Component<Props, State> {
           <UnknownField
             words={this.state.marked}
             usedHints={this.props.usedHints}
-            minLength={CardEditor.MIN_WORD_LENGTH}
             toggleHints={this.props.toggleHints}
             key="unknownField"
             onReady={this.loadDictionary}
             isDuplicate={this.props.isDuplicate}
           />
         </div>
-        {dictionarySearch.length > CardEditor.MIN_WORD_LENGTH ?
-        <>
-          <div className="cardEditorRow">
-            Dictionary results for <strong>{dictionarySearch}</strong>:
-            <this.props.dictionary word={dictionarySearch}/>
-          </div>
-          <div className="cardEditorRow">
-            Choose meaning from the dictionaries:
-            <Input
-              name="unknownFieldMeaning"
-              multiline
-              value={this.state.unknownFieldMeaning}
-              onChange={this.onchange}
-              margin="dense"
-              fullWidth
-            />
-          </div>
-          {this.state.unknownFieldMeaning.length > 2 ? (
+        {dictionarySearch.length ? (
+          <>
             <div className="cardEditorRow">
-              {this.props.contextBoundaries.length ? (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={this.onSave}
-                >
-                  SAVE
-                </Button>
-              ) : (
-                "Choose context!"
-              )}
-              <ContextStringField
-                unknownWord={dictionarySearch}
-                isSelectingContext={this.props.isSelectingContext}
-                onReady={this.props.toggleSelectingContext}
-              />
-              <Button size="small" onClick={this.props.toggleSelectingContext}>
-                Select context words
-              </Button>
+              Dictionary results for <strong>{dictionarySearch}</strong>:
+              <this.props.dictionary word={dictionarySearch} />
             </div>
-          ) : null}
-        </>
-        : null}
+            <div className="cardEditorRow">
+              Choose meaning from the dictionaries:
+              <Input
+                name="unknownFieldMeaning"
+                multiline
+                value={this.state.unknownFieldMeaning}
+                onChange={this.onchange}
+                margin="dense"
+                fullWidth
+              />
+            </div>
+            {this.state.unknownFieldMeaning.length > 1 ? (
+              <div className="cardEditorRow">
+                {this.props.contextBoundaries.length ? (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={this.onSave}
+                  >
+                    SAVE
+                  </Button>
+                ) : (
+                  "Choose context!"
+                )}
+                <ContextStringField
+                  unknownWord={dictionarySearch}
+                  isSelectingContext={this.props.isSelectingContext}
+                  onReady={this.props.toggleSelectingContext}
+                />
+                <Button
+                  size="small"
+                  onClick={this.props.toggleSelectingContext}
+                >
+                  Select context words
+                </Button>
+              </div>
+            ) : null}
+          </>
+        ) : null}
         <Button
           key="nextChunkButton"
           color="default"
