@@ -12,8 +12,6 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-
-  outline: none;
 }
 
 .wordCollector:after {
@@ -69,10 +67,6 @@ body {
   color: #444;
 }
 
-.block {
-  display: block !important;
-}
-
 .wordCollector:focus {
   outline: 1px dotted black;
 }
@@ -108,33 +102,6 @@ body {
   right: 0;
   background: #cfc;
   color: #111;
-}
-
-.anchor {
-  align-items: normal;
-  background-color: rgba(0, 0, 0, 0);
-  border-color: rgb(0, 0, 238);
-  border-style: none;
-  box-sizing: content-box;
-  color: rgb(0, 0, 238);
-  cursor: pointer;
-  display: inline;
-  font: inherit;
-  height: auto;
-  padding: 0;
-  perspective-origin: 0 0;
-  text-align: start;
-  text-decoration: underline;
-  transform-origin: 0 0;
-  width: auto;
-  -moz-appearance: none;
-  -webkit-logical-height: 1em; /* Chrome ignores auto, so we have to use this hack to set the correct height  */
-  -webkit-logical-width: auto; /* Chrome ignores auto, but here for completeness */
-}
-
-.anchor[disabled] {
-    color: #999;
-    text-decoration: none;
 }
 
 iframe {

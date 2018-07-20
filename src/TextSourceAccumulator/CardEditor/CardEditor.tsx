@@ -219,7 +219,6 @@ export default class CardEditor extends React.Component<Props, State> {
           color="default"
           variant="outlined"
           onClick={this.trySwitchToNextChunk}
-          className="anchor"
           name="nextChunkButton"
         >
           To next chunk
@@ -229,7 +228,6 @@ export default class CardEditor extends React.Component<Props, State> {
           color="default"
           variant="outlined"
           onClick={this.trySwitchToPrevChunk}
-          className="anchor"
           name="prevChunkButton"
         >
           To previous chunk

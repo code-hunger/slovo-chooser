@@ -92,7 +92,6 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
           <Grid item>
             <Button
               variant="contained"
-              className="anchor block"
               onClick={this.generateCsvFile}
               fullWidth
             >
