@@ -97,6 +97,7 @@
             "check-separator",
             "check-type",
             "check-typecast"
-        ]
+        ],
+        "jsx-boolean-value": [true, "never"]
     }
 }
