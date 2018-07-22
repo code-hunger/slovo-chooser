@@ -20,6 +20,50 @@ interface DictionaryProps extends WithStyles<typeof styles> {
   url: string;
 }
 
+interface ConfigProps {
+  isOpen: boolean;
+  setDictionary: (url: string) => void;
+  defaultUrl: string;
+}
+
+class ConfigDialog extends React.PureComponent<ConfigProps> {
+  private input: HTMLInputElement;
+
+  handleClose = () => this.props.setDictionary(this.input.value);
+
+  inputRef = (input: HTMLInputElement) => {
+    this.input = input;
+  };
+
+  render() {
+    return (
+      <Dialog open={this.props.isOpen} onClose={this.handleClose}>
+        <DialogTitle id="form-dialog-title">Configure dictionary</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Set a URL for the dictionary. <kbd>&#123;&#125;</kbd> will be
+            replaced with the searched word.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Dictionary URL"
+            type="url"
+            fullWidth
+            inputRef={this.inputRef}
+            defaultValue={this.props.defaultUrl}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+}
+
 interface State {
   isConfiguring: boolean;
 }
@@ -35,20 +79,15 @@ const styles = createStyles({
 });
 
 class Dictionary extends React.PureComponent<DictionaryProps, State> {
-  private input: HTMLInputElement;
-
   state = { isConfiguring: false };
 
   handleClickOpen = () => {
     this.setState({ isConfiguring: true });
   };
-  handleClose = () => {
-    this.props.setDictionary(this.input.value);
-    this.setState({ isConfiguring: false });
-  };
 
-  inputRef = (input: HTMLInputElement) => {
-    this.input = input;
+  handleClose = (url: string) => {
+    this.props.setDictionary(url);
+    this.setState({ isConfiguring: false });
   };
 
   render() {
@@ -58,29 +97,11 @@ class Dictionary extends React.PureComponent<DictionaryProps, State> {
         <Button onClick={this.handleClickOpen} className={classes.configButton}>
           Configure dictionary
         </Button>
-        <Dialog open={this.state.isConfiguring || this.props.url.length === 0} onClose={this.handleClose}>
-          <DialogTitle id="form-dialog-title">Configure dictionary</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Set a URL for the dictionary. <kbd>&#123;&#125;</kbd> will be replaced with
-              the searched word.
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Dictionary URL"
-              type="url"
-              fullWidth
-              inputRef={this.inputRef}
-              defaultValue={this.props.url}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <ConfigDialog
+          isOpen={this.state.isConfiguring || this.props.url.length === 0}
+          defaultUrl={this.props.url}
+          setDictionary={this.handleClose}
+        />
         {this.state.isConfiguring ? null : (
           <iframe
             src={this.props.url.replace("{}", this.props.word)}
