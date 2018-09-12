@@ -5,9 +5,12 @@ import { CachedPositions } from "./ChunkRetriever";
 import * as _ from "lodash";
 import { loadState, persistState } from "./localStorage";
 import { TextSource } from "./App/TextSourceChooser";
+import { WordState, wordStateReducer } from "./reducers/wordState"
+import { SavedWord, SavedChunks, savedChunksReducer } from "./reducers/savedChunks"
+
+export { SavedWord, SavedChunks }
 
 const emptyStrArr: string[] = [];
-const emptyNumArr: number[] = [];
 
 export type WordAction =
   | { type: "SET_TEXT"; text: string; chunkId: number; textSourceId: string }
@@ -50,52 +53,6 @@ function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
       });
     default:
       return words;
-  }
-}
-
-function markedWordsReducer(state: number[] = emptyNumArr, action: WordAction) {
-  switch (action.type) {
-    case "WORD_CLICKED":
-      if (state.indexOf(action.word) > -1) return _.without(state, action.word);
-      return state.concat(action.word).sort((a, b) => a - b);
-    case "SET_TEXT":
-      return emptyNumArr;
-    default:
-      return state;
-  }
-}
-
-function editedMarkedReducer(
-  editedMarked: number[] = emptyNumArr,
-  action: WordAction,
-  marked: number[] = emptyNumArr
-) {
-  switch (action.type) {
-    case "TOGGLE_EDITED_UNKNOWN_WORD":
-      if (editedMarked.indexOf(action.word) > -1)
-        return _.without(editedMarked, action.word);
-      return editedMarked.concat(action.word).sort((a, b) => a - b);
-    case "TOGGLE_EDITED_UNKNOWN_WORDS":
-      let cleaned = _.without(editedMarked, ...action.removed);
-      let withAdded = cleaned.concat(action.added);
-      return withAdded.sort((a, b) => a - b);
-    case "WORD_CLICKED":
-      const editedMarkedIndex = marked.indexOf(action.word);
-
-      if (editedMarkedIndex === -1)
-        return editedMarked.map(
-          word => (marked[word] >= action.word ? word + 1 : word)
-        );
-
-      const withoutToggledWord = _.without(editedMarked, editedMarkedIndex);
-      return withoutToggledWord.map(
-        word => (word >= editedMarkedIndex ? word - 1 : word)
-      );
-    case "SAVE_WORD":
-    case "SET_TEXT":
-      return emptyNumArr;
-    default:
-      return editedMarked;
   }
 }
 
@@ -146,60 +103,6 @@ function chunkIdReducer(
       return savedPositions;
   }
 }
-
-function savedChunksReducer(savedChunks: SavedChunks = {}, action: WordAction) {
-  switch (action.type) {
-    case "SAVE_WORD":
-      const sourceId = action.textSourceId,
-        chunkId = action.chunkId;
-      if (_.isUndefined(savedChunks[sourceId])) {
-        savedChunks = update(savedChunks, {
-          $merge: {
-            [sourceId]: { [chunkId]: [] }
-          }
-        });
-      } else if (_.isUndefined(savedChunks[sourceId][chunkId]))
-        savedChunks = update(savedChunks, {
-          [sourceId]: {
-            $merge: {
-              [chunkId]: []
-            }
-          }
-        });
-      return update(savedChunks, {
-        [sourceId]: {
-          [chunkId]: {
-            $push: [action.obj]
-          }
-        }
-      });
-    case "REMOVE_LOCAL_TEXT_SOURCE":
-      return update(savedChunks, {
-        $unset: [action.sourceIndex.id]
-      });
-    default:
-      return savedChunks;
-  }
-}
-
-function wordStateReducer(wordState: WordState, action: WordAction): WordState {
-  // Ugly function. @TODO make it beautiful.
-  if (_.isUndefined(wordState))
-    return {
-      marked: markedWordsReducer(undefined, action),
-      editedMarked: editedMarkedReducer(undefined, action)
-    };
-
-  return {
-    marked: markedWordsReducer(wordState.marked, action),
-    editedMarked: editedMarkedReducer(
-      wordState.editedMarked,
-      action,
-      wordState.marked
-    )
-  };
-}
-
 function isSelectingContextReducer(
   isSelectingContext: boolean = false,
   action: WordAction
@@ -247,24 +150,6 @@ export interface ContextBoundaries {
   start: number;
   length: number;
 }
-
-export interface SavedWord {
-  readonly word: string;
-  readonly meaning: string;
-  readonly context: string;
-}
-
-export interface SavedChunks {
-  [textSourceId: string]: {
-    [chunkId: number]: SavedWord[];
-  };
-}
-
-interface WordState {
-  marked: number[];
-  editedMarked: number[];
-}
-
 interface CardState {
   readonly words: WordState;
   readonly contextBoundaries: ContextBoundaries;
