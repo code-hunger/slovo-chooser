@@ -7,8 +7,10 @@ import { loadState, persistState } from "./localStorage";
 import { TextSource } from "./App/TextSourceChooser";
 import { WordState, wordStateReducer } from "./reducers/wordState"
 import { SavedWord, SavedChunks, savedChunksReducer } from "./reducers/savedChunks"
+import { CardState, cardStateReducer } from "./reducers/cardState"
 
 export { SavedWord, SavedChunks }
+export { ContextBoundaries } from "./reducers/cardState"
 
 const emptyStrArr: string[] = [];
 
@@ -56,21 +58,6 @@ function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   }
 }
 
-function contextBoundaryReducer(
-  context: ContextBoundaries = { start: 0, length: 0 },
-  action: WordAction
-) {
-  switch (action.type) {
-    case "CONTEXT_SELECT_WORD_BOUNDARY":
-      return { start: action.start, length: action.length };
-    case "SET_TEXT":
-    case "SAVE_WORD":
-      return { start: 0, length: 100 };
-    default:
-      return context;
-  }
-}
-
 function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   switch (action.type) {
     case "SAVE_WORD":
@@ -101,18 +88,6 @@ function chunkIdReducer(
 
     default:
       return savedPositions;
-  }
-}
-function isSelectingContextReducer(
-  isSelectingContext: boolean = false,
-  action: WordAction
-): boolean {
-  switch (action.type) {
-    case "TOGGLE_SELECTING_CONTEXT_BOUNDARIES":
-      return !isSelectingContext;
-      break;
-    default:
-      return isSelectingContext;
   }
 }
 
@@ -146,16 +121,6 @@ export interface LocalTextSource extends TextSource<string> {
   text: string;
 }
 
-export interface ContextBoundaries {
-  start: number;
-  length: number;
-}
-interface CardState {
-  readonly words: WordState;
-  readonly contextBoundaries: ContextBoundaries;
-  readonly isSelectingContext: boolean;
-}
-
 export interface State {
   readonly words: NumberedWord[];
   readonly dictionary: string;
@@ -179,11 +144,7 @@ const reducers = combineReducers({
   textSourcePositions: chunkIdReducer,
   localTextSources: localTextSourcesReducer,
 
-  cardState: combineReducers<CardState>({
-    words: wordStateReducer,
-    contextBoundaries: contextBoundaryReducer,
-    isSelectingContext: isSelectingContextReducer
-  })
+  cardState: cardStateReducer
 });
 
 const store = createStore(reducers, loadState());
