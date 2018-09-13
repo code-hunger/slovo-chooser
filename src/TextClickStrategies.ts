@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { Dispatch } from "react-redux";
+import { Dispatch } from "redux";
 import { WordAction } from "./store";
 import reactbind from "react-bind-decorator";
 

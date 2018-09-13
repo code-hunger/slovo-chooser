@@ -1,6 +1,7 @@
 import * as React from "react";
 import { State, SavedWord, SavedChunks } from "../store";
-import { connect, Dispatch } from "react-redux";
+import { connect } from "react-redux";
+import { Dispatch } from 'redux';
 import { NumberedWord } from "..//Word";
 
 import withStyles from "@material-ui/core/styles/withStyles";

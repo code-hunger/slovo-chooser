@@ -1,7 +1,8 @@
 import * as React from "react";
 import { State, WordAction } from "../store";
 import { Word, NumberedWord, NumberedWordView } from "../Word";
-import { Dispatch, connect } from "react-redux";
+import { connect } from "react-redux";
+import { Dispatch } from 'redux';
 import UnknownWordList from "../UnknownWordList";
 import { trim } from "lodash";
 
