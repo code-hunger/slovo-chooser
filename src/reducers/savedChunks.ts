@@ -42,7 +42,7 @@ function saveWord(
         $push: [obj]
       }
     }
-  });
+  } as any);
 }
 
 export function savedChunksReducer(
