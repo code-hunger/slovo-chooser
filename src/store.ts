@@ -63,7 +63,7 @@ function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
     case "SAVE_WORD":
       return update(savedWords, {
         $push: [_.trim(action.obj.word, "\"\',.")]
-      });
+      } as any);
     default:
       return savedWords;
   }
@@ -99,7 +99,7 @@ function localTextSourcesReducer(
     case "ADD_LOCAL_TEXT_SOURCE":
       return update(sources, {
         $push: [action.source]
-      });
+      } as any);
 
     case "REMOVE_LOCAL_TEXT_SOURCE":
       return _.without(sources, action.sourceIndex);
