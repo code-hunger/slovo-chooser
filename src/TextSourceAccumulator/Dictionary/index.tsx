@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { State as ReduxState } from "../../store";
+import { setDictionary } from "../../actions";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
@@ -78,7 +79,7 @@ export default connect<
   }),
   dispatch => ({
     setDictionary(url) {
-      dispatch({ type: "SET_DICTIONARY", url });
+      dispatch(setDictionary(url));
     }
   })
 )(styled);

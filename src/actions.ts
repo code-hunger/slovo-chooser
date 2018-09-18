@@ -13,3 +13,8 @@ export const saveWord = createAction(
   resolve => (obj: SavedWord, chunkId: number, textSourceId: string) =>
     resolve({ obj, chunkId, textSourceId })
 );
+
+export const setDictionary = createAction(
+  "SET_DICTIONARY",
+  resolve => (url: string) => resolve(url)
+);

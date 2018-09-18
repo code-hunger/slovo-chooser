@@ -31,8 +31,7 @@ export type WordAction =
   | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
   | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" }
   | { type: "REMOVE_LOCAL_TEXT_SOURCE"; sourceIndex: LocalTextSource }
-  | { type: "ADD_LOCAL_TEXT_SOURCE"; source: LocalTextSource }
-  | { type: "SET_DICTIONARY"; url: string };
+  | { type: "ADD_LOCAL_TEXT_SOURCE"; source: LocalTextSource };
 
 function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {
@@ -116,8 +115,8 @@ function localTextSourcesReducer(
 
 function dictionaryReducer(dictionary: string = "", action: WordAction) {
   switch (action.type) {
-    case "SET_DICTIONARY":
-      return action.url;
+    case getType(actions.setDictionary):
+      return action.payload;
   }
   return dictionary;
 }
