@@ -1,6 +1,5 @@
 import * as React from "react";
 import { flatMap, values } from "lodash";
-import reactbind from "react-bind-decorator";
 
 import Grid from "@material-ui/core/Grid";
 import * as PropTypes from "prop-types";
@@ -48,9 +47,8 @@ const styles = (theme: Theme) => ({
 
 type StyledProps = Props & WithStyles<typeof styles>;
 
-@reactbind()
 class TextSourceAccumulator extends React.Component<StyledProps> {
-  generateCsvFile() {
+  generateCsvFile = () => {
     const csvArray = flatMap(this.props.savedChunks).map(values);
     exportToCsv(this.props.textSourceId + ".csv", csvArray);
   }
