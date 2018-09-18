@@ -1,4 +1,7 @@
+import { getType } from "typesafe-actions";
+
 import { WordAction } from "../store";
+import { saveWord as saveWordAction } from "../actions"
 import update from "immutability-helper";
 import { without, isUndefined } from "lodash";
 
@@ -50,12 +53,12 @@ export function savedChunksReducer(
   action: WordAction
 ) {
   switch (action.type) {
-    case "SAVE_WORD":
+    case getType(saveWordAction):
       return saveWord(
         savedChunks,
-        action.textSourceId,
-        action.chunkId,
-        action.obj
+        action.payload.textSourceId,
+        action.payload.chunkId,
+        action.payload.obj
       );
     case "REMOVE_LOCAL_TEXT_SOURCE":
       return update(savedChunks, {

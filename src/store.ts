@@ -24,7 +24,6 @@ const emptyStrArr: string[] = [];
 export type WordAction =
   | ActionType<typeof actions>
   | { type: "WORD_CLICKED"; word: number }
-  | { type: "SAVE_WORD"; obj: SavedWord; chunkId: number; textSourceId: string }
   | { type: "WORD_NUMBER_SET"; number: number }
   | { type: "WORD_NUMBER_TYPED_RESET" }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
@@ -66,9 +65,9 @@ function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
 
 function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   switch (action.type) {
-    case "SAVE_WORD":
+    case getType(actions.saveWord):
       return update(savedWords, {
-        $push: [_.trim(action.obj.word, "\"',.")]
+        $push: [_.trim(action.payload.obj.word, "\"',.")]
       } as any);
     default:
       return savedWords;

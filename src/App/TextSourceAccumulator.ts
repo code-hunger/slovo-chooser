@@ -1,7 +1,8 @@
 import { connect } from "react-redux";
-import { Dispatch } from 'redux';
+import { Dispatch } from "redux";
 
 import store, { State, WordAction, SavedChunks, SavedWord } from "../store";
+import { saveWord } from "../actions";
 import {
   ContextSelector,
   UnknownWordSelector,
@@ -44,7 +45,7 @@ const mapDispatchToProps = (
   dispatch: Dispatch<WordAction>
 ): PropsFromDispatch => ({
   onCardSave(obj: SavedWord, chunkId: number, textSourceId: string) {
-    dispatch({ type: "SAVE_WORD", obj, chunkId, textSourceId });
+    dispatch(saveWord(obj, chunkId, textSourceId));
   }
 });
 
@@ -53,4 +54,7 @@ export default connect<
   PropsFromDispatch,
   PropsFromOutside,
   State
->(mapStateToProps, mapDispatchToProps)(TextSourceAccumulator);
+>(
+  mapStateToProps,
+  mapDispatchToProps
+)(TextSourceAccumulator);

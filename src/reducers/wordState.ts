@@ -1,5 +1,5 @@
 import { WordAction } from "../store";
-import { setText } from "../actions";
+import { setText, saveWord } from "../actions";
 import { getType } from "typesafe-actions";
 import { without, isUndefined } from "lodash";
 
@@ -48,7 +48,7 @@ function editedMarkedReducer(
       return withoutToggledWord.map(
         word => (word >= editedMarkedIndex ? word - 1 : word)
       );
-    case "SAVE_WORD":
+    case getType(saveWord):
     case getType(setText):
       return emptyNumArr;
     default:

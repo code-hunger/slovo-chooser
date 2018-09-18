@@ -3,7 +3,7 @@ import { getType } from "typesafe-actions";
 
 import { WordState, wordStateReducer } from "./wordState";
 import { WordAction } from "../store";
-import { setText } from "../actions";
+import { setText, saveWord } from "../actions";
 
 export interface ContextBoundaries {
   start: number;
@@ -37,7 +37,7 @@ function contextBoundaryReducer(
     case "CONTEXT_SELECT_WORD_BOUNDARY":
       return { start: action.start, length: action.length };
     case getType(setText):
-    case "SAVE_WORD":
+    case getType(saveWord):
       return { start: 0, length: 100 };
     default:
       return context;

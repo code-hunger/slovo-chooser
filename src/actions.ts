@@ -8,3 +8,8 @@ export const setText = createAction(
     resolve({ text, chunkId, textSourceId })
 );
 
+export const saveWord = createAction(
+  "SAVE_WORD",
+  resolve => (obj: SavedWord, chunkId: number, textSourceId: string) =>
+    resolve({ obj, chunkId, textSourceId })
+);
