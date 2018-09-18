@@ -21,7 +21,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 
-import reactbind from "react-bind-decorator";
 import * as _ from "lodash";
 
 const NoWordsTable = withStyles({
@@ -51,7 +50,6 @@ const wordCellStyles = createStyles({
 
 type StyledProps = Props & WithStyles<typeof wordCellStyles>;
 
-@reactbind()
 class SavedWordsContainer extends React.PureComponent<
   StyledProps,
   { words: SavedWord[] }
@@ -74,7 +72,7 @@ class SavedWordsContainer extends React.PureComponent<
     }
   }
 
-  renderSavedWord(word: SavedWord) {
+  renderSavedWord = (word: SavedWord) => {
     return (
       <TableRow key={word.word}>
         <TableCell classes={this.props.classes}>{word.word}</TableCell>
@@ -83,7 +81,7 @@ class SavedWordsContainer extends React.PureComponent<
     );
   }
 
-  renderTableBody() {
+  renderTableBody = () => {
     if (this.state.words.length < 1) return <NoWordsTable />;
 
     return <TableBody>{this.state.words.map(this.renderSavedWord)}</TableBody>;
