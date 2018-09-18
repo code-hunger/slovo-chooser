@@ -2,6 +2,7 @@ import App from "./App";
 import { pick } from "lodash";
 
 import { State, LocalTextSource } from "../store";
+import { setText } from "../actions";
 import { CachedPositions } from "../ChunkRetriever";
 
 import { connect } from "react-redux";
@@ -20,7 +21,7 @@ export default connect<AppStateProps, AppDispatchProps, void, State>(
   state => pick(state, ["textSourcePositions", "localTextSources"]),
   dispatch => ({
     setText(text: string, chunkId: number, textSourceId: string) {
-      dispatch({ type: "SET_TEXT", text, chunkId, textSourceId });
+      dispatch(setText(text, chunkId, textSourceId));
     },
     textSourceRemover(sourceIndex: LocalTextSource) {
       dispatch({ type: "REMOVE_LOCAL_TEXT_SOURCE", sourceIndex });

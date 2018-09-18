@@ -1,7 +1,9 @@
 import { combineReducers } from "redux";
+import { getType } from "typesafe-actions";
 
 import { WordState, wordStateReducer } from "./wordState";
 import { WordAction } from "../store";
+import { setText } from "../actions";
 
 export interface ContextBoundaries {
   start: number;
@@ -34,7 +36,7 @@ function contextBoundaryReducer(
   switch (action.type) {
     case "CONTEXT_SELECT_WORD_BOUNDARY":
       return { start: action.start, length: action.length };
-    case "SET_TEXT":
+    case getType(setText):
     case "SAVE_WORD":
       return { start: 0, length: 100 };
     default:

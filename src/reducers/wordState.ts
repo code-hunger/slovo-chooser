@@ -1,5 +1,7 @@
-import { WordAction } from "../store"
-import { without, isUndefined } from "lodash"
+import { WordAction } from "../store";
+import { setText } from "../actions";
+import { getType } from "typesafe-actions";
+import { without, isUndefined } from "lodash";
 
 const emptyNumArr: number[] = [];
 
@@ -13,7 +15,7 @@ function markedWordsReducer(state: number[] = emptyNumArr, action: WordAction) {
     case "WORD_CLICKED":
       if (state.indexOf(action.word) > -1) return without(state, action.word);
       return state.concat(action.word).sort((a, b) => a - b);
-    case "SET_TEXT":
+    case getType(setText):
       return emptyNumArr;
     default:
       return state;
@@ -47,14 +49,17 @@ function editedMarkedReducer(
         word => (word >= editedMarkedIndex ? word - 1 : word)
       );
     case "SAVE_WORD":
-    case "SET_TEXT":
+    case getType(setText):
       return emptyNumArr;
     default:
       return editedMarked;
   }
 }
 
-export function wordStateReducer(wordState: WordState, action: WordAction): WordState {
+export function wordStateReducer(
+  wordState: WordState,
+  action: WordAction
+): WordState {
   // Ugly function. @TODO make it beautiful.
   if (isUndefined(wordState))
     return {
@@ -71,5 +76,3 @@ export function wordStateReducer(wordState: WordState, action: WordAction): Word
     )
   };
 }
-
-

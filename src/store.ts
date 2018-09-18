@@ -5,17 +5,24 @@ import { CachedPositions } from "./ChunkRetriever";
 import * as _ from "lodash";
 import { loadState, persistState } from "./localStorage";
 import { TextSource } from "./App/TextSourceChooser";
-import { WordState, wordStateReducer } from "./reducers/wordState"
-import { SavedWord, SavedChunks, savedChunksReducer } from "./reducers/savedChunks"
-import { CardState, cardStateReducer } from "./reducers/cardState"
+import { WordState, wordStateReducer } from "./reducers/wordState";
+import {
+  SavedWord,
+  SavedChunks,
+  savedChunksReducer
+} from "./reducers/savedChunks";
+import { CardState, cardStateReducer } from "./reducers/cardState";
 
-export { SavedWord, SavedChunks }
-export { ContextBoundaries } from "./reducers/cardState"
+export { SavedWord, SavedChunks };
+export { ContextBoundaries } from "./reducers/cardState";
+
+import { ActionType, getType } from "typesafe-actions";
+import * as actions from "./actions";
 
 const emptyStrArr: string[] = [];
 
 export type WordAction =
-  | { type: "SET_TEXT"; text: string; chunkId: number; textSourceId: string }
+  | ActionType<typeof actions>
   | { type: "WORD_CLICKED"; word: number }
   | { type: "SAVE_WORD"; obj: SavedWord; chunkId: number; textSourceId: string }
   | { type: "WORD_NUMBER_SET"; number: number }
@@ -30,9 +37,8 @@ export type WordAction =
 
 function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {
-    case "SET_TEXT":
-      let text: string = action.text;
-      console.log("set text!", words, action.text);
+    case getType(actions.setText):
+      let text: string = action.payload.text;
       return text
         .substr(0, 1000)
         .split(/[\s—–]+/gu)
@@ -62,7 +68,7 @@ function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   switch (action.type) {
     case "SAVE_WORD":
       return update(savedWords, {
-        $push: [_.trim(action.obj.word, "\"\',.")]
+        $push: [_.trim(action.obj.word, "\"',.")]
       } as any);
     default:
       return savedWords;
@@ -74,10 +80,10 @@ function chunkIdReducer(
   action: WordAction
 ): CachedPositions {
   switch (action.type) {
-    case "SET_TEXT":
+    case getType(actions.setText):
       return update(savedPositions, {
-        [action.textSourceId]: {
-          $set: action.chunkId
+        [action.payload.textSourceId]: {
+          $set: action.payload.chunkId
         }
       });
 
