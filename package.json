@@ -9,7 +9,6 @@
     "@material-ui/icons": "^1.1.1",
     "@types/lodash": "^4.14.116",
     "@types/prop-types": "^15.5.5",
-    "@types/redux-actions": "^2.3.0",
     "axios": "^0.18.0",
     "immutability-helper": "^2.8.0",
     "lodash": "^4.17.11",
@@ -22,7 +21,7 @@
     "react-redux": "^5.0.7",
     "react-scripts-ts": "2.14.0",
     "redux": "^4.0.0",
-    "redux-actions": "^2.6.1"
+    "typesafe-actions": "^2.0.4"
   },
   "scripts": {
     "start": "react-scripts-ts start",
