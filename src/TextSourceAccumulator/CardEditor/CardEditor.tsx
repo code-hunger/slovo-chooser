@@ -115,9 +115,8 @@ export default class CardEditor extends React.Component<Props, State> {
     }
   }
 
-  loadDictionary(value: string) {
+  loadDictionary = (value: string) =>
     this.setState({ dictionarySearch: value, unknownField: value });
-  }
 
   trySwitchChunk(direction: 1 | -1) {
     if (
@@ -130,12 +129,9 @@ export default class CardEditor extends React.Component<Props, State> {
     }
   }
 
-  trySwitchToNextChunk() {
-    this.trySwitchChunk(1);
-  }
-  trySwitchToPrevChunk() {
-    this.trySwitchChunk(-1);
-  }
+  trySwitchToNextChunk = () => this.trySwitchChunk(1);
+
+  trySwitchToPrevChunk = () => this.trySwitchChunk(-1);
 
   onSave() {
     this.props.onSave(

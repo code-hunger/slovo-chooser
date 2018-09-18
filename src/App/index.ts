@@ -1,7 +1,7 @@
 import App from "./App";
 import { pick } from "lodash";
 
-import { State, WordAction, LocalTextSource } from "../store";
+import { State, LocalTextSource } from "../store";
 import { CachedPositions } from "../ChunkRetriever";
 
 import { connect } from "react-redux";
