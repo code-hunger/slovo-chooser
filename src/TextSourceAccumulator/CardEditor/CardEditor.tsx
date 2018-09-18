@@ -8,7 +8,6 @@ import UnknownField from "./UnknownFieldInput";
 import Button from "@material-ui/core/Button";
 
 import { isEqual } from "lodash";
-import reactbind from "react-bind-decorator";
 import { SavedWord, ContextBoundaries } from "../../store";
 import ContextStringField, {
   generateContextString
@@ -62,7 +61,6 @@ function markedIdsToWords({
   }));
 }
 
-@reactbind()
 export default class CardEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -87,7 +85,7 @@ export default class CardEditor extends React.Component<Props, State> {
     );
   }
 
-  resetState() {
+  resetState = () => {
     this.setState({
       unknownField: "",
       unknownFieldMeaning: "",
@@ -107,7 +105,7 @@ export default class CardEditor extends React.Component<Props, State> {
       });
   }
 
-  onchange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  onchange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     switch (e.target.name) {
       case "unknownFieldMeaning":
         const unknownFieldMeaning = e.target.value;
@@ -118,7 +116,7 @@ export default class CardEditor extends React.Component<Props, State> {
   loadDictionary = (value: string) =>
     this.setState({ dictionarySearch: value, unknownField: value });
 
-  trySwitchChunk(direction: 1 | -1) {
+  trySwitchChunk = (direction: 1 | -1) => {
     if (
       this.state.unknownField.length <= 1 ||
       confirm("Are you sure?") ||
@@ -133,7 +131,7 @@ export default class CardEditor extends React.Component<Props, State> {
 
   trySwitchToPrevChunk = () => this.trySwitchChunk(-1);
 
-  onSave() {
+  onSave = () => {
     this.props.onSave(
       {
         word: this.state.unknownField,

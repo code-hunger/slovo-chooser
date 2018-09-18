@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
 import { Word, NumberedWord } from "../../Word";
-import reactbind from "react-bind-decorator";
 
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -39,7 +38,6 @@ function updateFieldWithNewHints(
     .trim();
 }
 
-@reactbind()
 export default class UnknownField extends React.PureComponent<
   UnknownFieldProps,
   UnknownFieldState
@@ -52,7 +50,7 @@ export default class UnknownField extends React.PureComponent<
     }));
   }, 500);
 
-  onChange(e: React.ChangeEvent<HTMLInputElement>) {
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const usedHints = this.props.usedHints,
       unusedHints = _.without(
         this.props.words.map(w => w.index),
@@ -92,11 +90,11 @@ export default class UnknownField extends React.PureComponent<
     }
   }
 
-  onReady() {
+  onReady = () => {
     this.props.onReady(this.state.value);
   }
 
-  onKeyDown(e: React.KeyboardEvent<HTMLElement>) {
+  onKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.keyCode === 13) this.onReady();
   }
 

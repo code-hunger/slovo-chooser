@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as _ from "lodash";
-import reactbind from "react-bind-decorator";
 import store, { WordAction, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
 import { NumberedWord } from "../../Word";
