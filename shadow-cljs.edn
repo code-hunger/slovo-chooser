@@ -1,17 +1,12 @@
 ;; shadow-cljs configuration
 {:source-paths
- ["src"
-  "src/main"
-  "src/test"]
+ ["src/cljs"]
 
  :output-dir "public/assets/app/js"
  :asset-path "/assets/app/js"
 
- :builds
- {:app  {:target  :browser
-         :output-dir "public/cljs"
-         :modules { :somemodule { :entries [cljs.main] } }
-         }
+ :dependencies
+ [[reagent "0.8.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
+  ]
 
-  }
-}
+ }
