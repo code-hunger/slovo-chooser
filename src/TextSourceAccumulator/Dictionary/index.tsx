@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { State as ReduxState } from "../../store";
 import { setDictionary } from "../../actions";
 
@@ -77,9 +78,5 @@ export default connect<
   state => ({
     url: state.dictionary
   }),
-  dispatch => ({
-    setDictionary(url) {
-      dispatch(setDictionary(url));
-    }
-  })
+  dispatch => bindActionCreators({ setDictionary }, dispatch)
 )(styled);
