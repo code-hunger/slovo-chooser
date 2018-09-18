@@ -18,6 +18,8 @@ import SavedWordsContainer from "../SavedWordsContainer";
 
 import { LocalTextSource } from "../store";
 
+import { Closud } from "shadow-cljs/project.entry"
+
 type Props = AppProps & WithStyles<typeof styles>;
 
 interface AppProps {
@@ -145,6 +147,7 @@ class AppClass extends React.Component<Props, State> {
         <Grid item lg={3} xs={12}>
           <Paper className={classes.paper}>
             <SavedWordsContainer textSourceId={textSourceId} maxRows={10} />
+            <Closud />
           </Paper>
         </Grid>
       </Grid>
