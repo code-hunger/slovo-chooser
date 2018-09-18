@@ -11,7 +11,6 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import { createStyles, WithStyles, Theme } from "@material-ui/core";
 import Badge from "@material-ui/core/Badge";
 import Typography from "@material-ui/core/Typography";
-import reactbind from "react-bind-decorator";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -41,12 +40,11 @@ type PropsWithStyles<T> = Props<T> & WithStyles<typeof styles>;
 
 interface State {}
 
-@reactbind()
 class TextSourceChooser<IdType> extends React.PureComponent<
   PropsWithStyles<IdType>,
   State
 > {
-  renderTextSourceItem({ id, description, chunkId }: TextSource<IdType>) {
+  renderTextSourceItem = ({ id, description, chunkId }: TextSource<IdType>) => {
     const classes = this.props.classes;
     const isCurrent = id === this.props.currentSourceId;
     const textSourceRemover = this.props.removeTextSource(id);

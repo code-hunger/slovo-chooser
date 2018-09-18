@@ -1,6 +1,5 @@
 import * as React from "react";
 import { find, isUndefined } from "lodash";
-import reactbind from "react-bind-decorator";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -34,7 +33,6 @@ interface State {
   sources: { id: string; description: string; chunkId: number }[];
 }
 
-@reactbind()
 class AppClass extends React.Component<Props, State> {
   private chunkRetriever: ChunkRetriever;
 
@@ -55,11 +53,11 @@ class AppClass extends React.Component<Props, State> {
     };
   }
 
-  importLocalSources(localTextSources: LocalTextSource[]) {
+  importLocalSources = (localTextSources: LocalTextSource[]) => {
     localTextSources.forEach(textSource =>
       this.chunkRetriever.addTextSource(textSource.id, textSource.text)
     );
-  }
+  };
 
   componentWillReceiveProps(nextProps: AppProps) {
     if (nextProps.localTextSources !== this.props.localTextSources) {
@@ -68,10 +66,10 @@ class AppClass extends React.Component<Props, State> {
     }
   }
 
-  switchToNextChunk(
+  switchToNextChunk = (
     chunkId?: number,
     textSourceId: string | undefined = this.state.textSourceId
-  ) {
+  ) => {
     if (isUndefined(textSourceId)) throw "No text source";
 
     return this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
@@ -84,15 +82,15 @@ class AppClass extends React.Component<Props, State> {
       },
       fail => alert("Error fetching chunk from server: " + fail)
     );
-  }
+  };
 
-  setTextSource(id: string) {
+  setTextSource = (id: string) => {
     if (this.state.textSourceId === id) return;
 
     this.switchToNextChunk(this.props.textSourcePositions[id], id);
   }
 
-  removeTextSource(id: string) {
+  removeTextSource = (id: string) => {
     // The text source string id needs to be converted to the numeric id of the source in props.localSources
     const localTextSourceId = find(this.props.localTextSources, ["id", id]);
     return isUndefined(localTextSourceId)
@@ -104,7 +102,7 @@ class AppClass extends React.Component<Props, State> {
         };
   }
 
-  switchChunk(direction: 1 | -1) {
+  switchChunk = (direction: 1 | -1) => {
     if (isUndefined(this.state.textSourceId))
       throw "Tried to switch chunk without text source";
 
