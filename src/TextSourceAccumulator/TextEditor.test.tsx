@@ -8,8 +8,8 @@ import { Provider } from "react-redux";
 import { reducers } from "../store";
 
 it("teditor word click works", () => {
-  const unknownWordSelector = UnknownWordSelector;
-  unknownWordSelector.onWordClick = jest.fn();
+  const onWordClick = jest.fn(),
+    onContextMenu = jest.fn();
 
   const words = [{ index: 0, word: "word", classNames: [] }];
   const store = createStore(reducers, { words });
@@ -20,7 +20,8 @@ it("teditor word click works", () => {
         className=""
         tabIndex={0}
         emptyText=""
-        clickStrategy={unknownWordSelector}
+        onWordClick={onWordClick}
+        onContextMenu={onContextMenu}
       />
     </Provider>
   );
@@ -30,5 +31,5 @@ it("teditor word click works", () => {
     .first()
     .simulate("click");
 
-  expect(unknownWordSelector.onWordClick).toBeCalledWith(0);
+  expect(onWordClick).toBeCalledWith(0);
 });

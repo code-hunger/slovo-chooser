@@ -7,7 +7,6 @@ import { NumberedWord } from "../Word";
 import TextWord from "./EnhancedTextWord";
 import { WordCollector } from "../WordCollector";
 import { KeyboardSelectableContainer } from "../NumberSelectableContainer";
-import { TextClickStrategy } from "../TextClickStrategies";
 
 type TextEditorProps = PropsFromState & PropsFromOutside;
 
@@ -17,14 +16,14 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
       <div className={"textEditor " + this.props.className}>
         <KeyboardSelectableContainer
           elementCount={this.props.words.length}
-          onSelectElement={this.props.clickStrategy.onWordClick}
+          onSelectElement={this.props.onWordClick}
         >
           <WordCollector
             words={this.props.words}
             wordType={TextWord}
             tabIndex={this.props.tabIndex}
-            onWordClick={this.props.clickStrategy.onWordClick}
-            onContextMenu={this.props.clickStrategy.onContextMenu}
+            onWordClick={this.props.onWordClick}
+            onContextMenu={this.props.onContextMenu}
           />
         </KeyboardSelectableContainer>
       </div>
@@ -43,10 +42,8 @@ interface PropsFromOutside {
   tabIndex: number;
   emptyText: string;
 
-  clickStrategy: {
-    onWordClick: (id: number) => void;
-    onContextMenu: (word: number) => void;
-  };
+  onWordClick: (id: number) => void;
+  onContextMenu: (word: number) => void;
 }
 
 export default connect<PropsFromState, void, PropsFromOutside, State>(
