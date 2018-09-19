@@ -1,18 +1,18 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
-import  TextEditor  from "./TextEditor";
+import TextEditor from "./TextEditor";
 import { UnknownWordSelector } from "../TextClickStrategies";
-import { mount } from "enzyme"
+import { mount } from "enzyme";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import { reducers } from "../store"
+import { reducers } from "../store";
 
 it("teditor word click works", () => {
-  const dispatchMock = jest.fn();
-  const unknownWordSelector = UnknownWordSelector(dispatchMock);
+  const unknownWordSelector = UnknownWordSelector;
+  unknownWordSelector.onWordClick = jest.fn();
 
-  const words = [ {index: 0, word: "word", classNames: [] } ]
-  const store = createStore(reducers, { words })
+  const words = [{ index: 0, word: "word", classNames: [] }];
+  const store = createStore(reducers, { words });
 
   const textEditor = mount(
     <Provider store={store}>
@@ -25,9 +25,10 @@ it("teditor word click works", () => {
     </Provider>
   );
 
-  textEditor.find('.word').first().simulate('click')
+  textEditor
+    .find(".word")
+    .first()
+    .simulate("click");
 
-  expect(dispatchMock).toBeCalledWith({
-    type: "WORD_CLICKED", word: 0
-  })
+  expect(unknownWordSelector.onWordClick).toBeCalledWith(0);
 });

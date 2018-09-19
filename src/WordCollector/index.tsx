@@ -7,11 +7,15 @@ export interface WordCollectorProps {
   words: NumberedWord[];
   wordType: React.ComponentClass | React.StatelessComponent;
   tabIndex?: number;
-  clickStrategy: TextClickStrategy;
   className?: string;
+
+  onWordClick: (word: number) => void;
+  onContextMenu: (word: number) => void;
 }
 
-export class WordCollector<WordT> extends React.PureComponent<WordCollectorProps> {
+export class WordCollector<WordT> extends React.PureComponent<
+  WordCollectorProps
+> {
   private clickHandlers: [
     (wordId: number) => void,
     (wordId: number) => void
@@ -19,24 +23,25 @@ export class WordCollector<WordT> extends React.PureComponent<WordCollectorProps
 
   constructor(props: WordCollectorProps) {
     super(props);
-    this.fillHandlers(props.words.length, props.clickStrategy);
+    this.fillHandlers(
+      props.words.length,
+      props.onWordClick,
+      props.onContextMenu
+    );
   }
 
   componentWillReceiveProps(prop: WordCollectorProps) {
-    if (prop.clickStrategy !== this.props.clickStrategy) {
+    if (prop.onWordClick !== this.props.onWordClick || prop.onContextMenu !== this.props.onContextMenu) {
       this.clickHandlers = [];
     }
-    this.fillHandlers(prop.words.length, prop.clickStrategy);
+    this.fillHandlers(prop.words.length, prop.onWordClick, prop.onContextMenu);
   }
 
-  fillHandlers(upTo: number, clickStrategy: TextClickStrategy) {
-    if(this.clickHandlers.length >= upTo) return;
+  fillHandlers(upTo: number, onWordClick, onContextMenu) {
+    if (this.clickHandlers.length >= upTo) return;
 
     _.range(this.clickHandlers.length, upTo).forEach(i =>
-      this.clickHandlers.push([
-        () => clickStrategy.onWordClick(i),
-        () => clickStrategy.onContextMenu(i)
-      ])
+      this.clickHandlers.push([() => onWordClick(i), () => onContextMenu(i)])
     );
   }
 

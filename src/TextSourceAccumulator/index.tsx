@@ -25,7 +25,10 @@ interface Props {
 
   words: NumberedWord[];
   savedChunks: { [chunkId: number]: SavedWord[] };
-  textClickStrategy: TextClickStrategy;
+  textClickStrategy: {
+    onWordClick: (id: number) => void;
+    onContextMenu: (word: number) => void;
+  };
   isSelectingContext: boolean;
 
   onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;

@@ -1,29 +1,26 @@
 import * as _ from "lodash";
-import { Dispatch } from "redux";
 import { WordAction } from "./store";
 
 export interface TextClickStrategy {
-  onWordClick(wordId: number): void;
-  onContextMenu(wordId: number): void;
+  onWordClick(wordId: number): WordAction|undefined;
+  onContextMenu(wordId: number): WordAction|undefined;
 }
 
-export const UnknownWordSelector = (dispatch: Dispatch<WordAction>) => ({
+export const UnknownWordSelector = {
   onWordClick(wordId: number) {
-    dispatch({ type: "WORD_CLICKED", word: wordId });
+    return <WordAction>{ type: "WORD_CLICKED", word: wordId };
   },
   onContextMenu(wordId: number) {
-    return;
+    return undefined;
   }
-});
+};
 
 export class ContextSelector implements TextClickStrategy {
   private start = 0;
   private length: number;
-  private dispatch: Dispatch<WordAction>;
 
-  constructor(dispatch: Dispatch<WordAction>, wordCount: number) {
+  constructor(wordCount: number) {
     this.length = wordCount;
-    this.dispatch = dispatch;
   }
 
   onWordClick = (wordId: number) => {
@@ -48,14 +45,14 @@ export class ContextSelector implements TextClickStrategy {
     if (!_.isNumber(this.start) || !_.isNumber(this.length))
       throw new Error("Start or length undefined!");
 
-    this.dispatch({
+    return <WordAction>{
       type: "CONTEXT_SELECT_WORD_BOUNDARY",
       start: this.start,
       length: this.length
-    });
-  }
+    };
+  };
 
   onContextMenu = (wordId: number) => {
-    return;
-  }
+    return undefined;
+  };
 }

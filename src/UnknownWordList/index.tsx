@@ -1,7 +1,6 @@
 import * as React from "react";
 import { stubTrue } from "lodash";
 
-import { TextClickStrategy } from "../TextClickStrategies";
 import { Word, NumberedWord } from "../Word";
 import { WordCollector } from "../WordCollector";
 import { KeyboardSelectableContainer } from "../NumberSelectableContainer";
@@ -16,17 +15,9 @@ type Props = {
 };
 
 export default class UnknownWordList extends React.PureComponent<Props> {
-  private clickStrategy: TextClickStrategy;
-
   constructor(props: Props) {
     super(props);
     this.onWordClick = this.onWordClick.bind(this);
-    this.clickStrategy = {
-      onWordClick: this.onWordClick,
-      onContextMenu: stubTrue
-    };
-    this.clickStrategy.onWordClick.bind(this.clickStrategy);
-    this.clickStrategy.onContextMenu.bind(this.clickStrategy);
   }
 
   onWordClick(wordId: number) {
@@ -45,7 +36,8 @@ export default class UnknownWordList extends React.PureComponent<Props> {
           wordType={this.props.wordType}
           words={this.props.words}
           tabIndex={this.props.tabIndex}
-          clickStrategy={this.clickStrategy}
+          onWordClick={this.onWordClick}
+          onContextMenu={stubTrue}
         />
       </KeyboardSelectableContainer>
     ) : (

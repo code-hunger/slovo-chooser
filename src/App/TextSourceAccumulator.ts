@@ -21,7 +21,10 @@ interface PropsFromOutside {
 interface PropsFromState {
   words: NumberedWord[];
   savedChunks: { [chunkId: number]: SavedWord[] };
-  textClickStrategy: TextClickStrategy;
+  textClickStrategy: {
+    onWordClick: (id: number) => void;
+    onContextMenu: (word: number) => void;
+  };
   isSelectingContext: boolean;
 }
 
@@ -36,9 +39,22 @@ const mapStateToProps = (
   words,
   savedChunks: savedChunks[textSourceId],
   isSelectingContext,
-  textClickStrategy: isSelectingContext
-    ? new ContextSelector(store.dispatch, words.length)
-    : UnknownWordSelector(store.dispatch)
+  textClickStrategy: {
+    onWordClick(id) {
+      const str = isSelectingContext
+        ? new ContextSelector(words.length)
+        : UnknownWordSelector;
+      const action = str.onWordClick(id);
+      if (action) store.dispatch(action);
+    },
+    onContextMenu(id) {
+      const str = isSelectingContext
+        ? new ContextSelector(words.length)
+        : UnknownWordSelector;
+      const action = str.onContextMenu(id);
+      if (action) store.dispatch(action);
+    }
+  }
 });
 
 export default connect<

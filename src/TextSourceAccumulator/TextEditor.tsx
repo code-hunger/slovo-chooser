@@ -23,7 +23,8 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
             words={this.props.words}
             wordType={TextWord}
             tabIndex={this.props.tabIndex}
-            clickStrategy={this.props.clickStrategy}
+            onWordClick={this.props.clickStrategy.onWordClick}
+            onContextMenu={this.props.clickStrategy.onContextMenu}
           />
         </KeyboardSelectableContainer>
       </div>
@@ -42,7 +43,10 @@ interface PropsFromOutside {
   tabIndex: number;
   emptyText: string;
 
-  clickStrategy: TextClickStrategy;
+  clickStrategy: {
+    onWordClick: (id: number) => void;
+    onContextMenu: (word: number) => void;
+  };
 }
 
 export default connect<PropsFromState, void, PropsFromOutside, State>(
