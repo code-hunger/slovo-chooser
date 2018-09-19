@@ -138,7 +138,7 @@ export interface State {
   readonly cardState: CardState;
 }
 
-const reducers = combineReducers({
+export const reducers = combineReducers({
   words: textWordsReducer,
   dictionary: dictionaryReducer,
 
