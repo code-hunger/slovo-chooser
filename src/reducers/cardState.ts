@@ -23,7 +23,8 @@ function isSelectingContextReducer(
   switch (action.type) {
     case "TOGGLE_SELECTING_CONTEXT_BOUNDARIES":
       return !isSelectingContext;
-      break;
+    case "SET_TEXT":
+      return false;
     default:
       return isSelectingContext;
   }
