@@ -82,7 +82,6 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
         <Grid item xs={12}>
           <Paper className={this.props.classes.paper}>
             <CardEditor
-              isSelectingContext={this.props.isSelectingContext}
               switchChunk={this.props.switchChunk}
               onSave={this.props.onCardSave}
               textSourceId={this.props.textSourceId}

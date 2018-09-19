@@ -16,8 +16,6 @@ interface OutsideProps {
     | React.ComponentClass<{ word: string }>
     | React.StatelessComponent<{ word: string }>;
   readonly textSourceId: string;
-
-  isSelectingContext: boolean;
 }
 
 interface PropsFromState {

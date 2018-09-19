@@ -25,8 +25,6 @@ interface Props {
     | React.StatelessComponent<{ word: string }>;
   readonly textSourceId: string;
 
-  isSelectingContext: boolean;
-
   readonly usedHints: number[];
   readonly chunkId: number;
 
@@ -80,8 +78,7 @@ export default class CardEditor extends React.Component<Props, State> {
       this.state.unknownField === newState.unknownField &&
       this.state.unknownFieldMeaning === newState.unknownFieldMeaning &&
       this.state.dictionarySearch === newState.dictionarySearch &&
-      this.props.contextBoundaries === nextProps.contextBoundaries &&
-      this.props.isSelectingContext === nextProps.isSelectingContext
+      this.props.contextBoundaries === nextProps.contextBoundaries
     );
   }
 
@@ -195,7 +192,6 @@ export default class CardEditor extends React.Component<Props, State> {
                 )}
                 <ContextStringField
                   unknownWord={dictionarySearch}
-                  isSelectingContext={this.props.isSelectingContext}
                   onReady={this.props.toggleSelectingContext}
                 />
                 <Button
