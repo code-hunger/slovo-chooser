@@ -15,3 +15,8 @@ export const saveWord = createAction(
 );
 
 export const setDictionary = createStandardAction("SET_DICTIONARY")<string>();
+
+export const setContextBoundaries = createAction(
+  "SET_CONTEXT_BOUNDARIES",
+  resolve => (start: number, length: number) => resolve({ start, length })
+);
