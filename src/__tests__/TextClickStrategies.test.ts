@@ -22,3 +22,14 @@ it("context boundaries properly set", () => {
     });
   });
 });
+
+it("unknown word clicked dispatches properly", () => {
+  const unknownWordSelector = strategies.UnknownWordSelector;
+
+  _.range(10).forEach(i => {
+    expect(unknownWordSelector.onWordClick(i)).toEqual({
+      type: "WORD_CLICKED",
+      word: i
+    });
+  })
+});
