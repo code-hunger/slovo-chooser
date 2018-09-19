@@ -1,9 +1,10 @@
 import * as _ from "lodash";
 import { WordAction } from "./store";
+import { setContextBoundaries } from "./actions";
 
 export interface TextClickStrategy {
-  onWordClick(wordId: number): WordAction|undefined;
-  onContextMenu(wordId: number): WordAction|undefined;
+  onWordClick(wordId: number): WordAction | undefined;
+  onContextMenu(wordId: number): WordAction | undefined;
 }
 
 export const UnknownWordSelector = {
@@ -45,11 +46,7 @@ export class ContextSelector implements TextClickStrategy {
     if (!_.isNumber(this.start) || !_.isNumber(this.length))
       throw new Error("Start or length undefined!");
 
-    return <WordAction>{
-      type: "CONTEXT_SELECT_WORD_BOUNDARY",
-      start: this.start,
-      length: this.length
-    };
+    return setContextBoundaries(this.start, this.length);
   };
 
   onContextMenu = (wordId: number) => {
