@@ -1,6 +1,6 @@
 import { SavedWord, SavedChunks } from "./reducers/savedChunks";
 
-import { createAction } from "typesafe-actions";
+import { createAction, createStandardAction } from "typesafe-actions";
 
 export const setText = createAction(
   "SET_TEXT",
@@ -14,7 +14,4 @@ export const saveWord = createAction(
     resolve({ obj, chunkId, textSourceId })
 );
 
-export const setDictionary = createAction(
-  "SET_DICTIONARY",
-  resolve => (url: string) => resolve(url)
-);
+export const setDictionary = createStandardAction("SET_DICTIONARY")<string>();
