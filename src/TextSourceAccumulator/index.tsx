@@ -67,7 +67,8 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
             <TextEditor
               tabIndex={0}
               emptyText="Loading text..."
-              clickStrategy={this.props.textClickStrategy}
+              onWordClick={this.props.textClickStrategy.onWordClick}
+              onContextMenu={this.props.textClickStrategy.onContextMenu}
               className={this.props.isSelectingContext ? "selectContext" : ""}
             />
           </Paper>
