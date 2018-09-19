@@ -2,19 +2,19 @@ import * as React from "react";
 import * as _ from "lodash";
 import { WordAction, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
-import { NumberedWord } from "../../Word";
+import { Word, NumberedWord } from "../../Word";
 
 type Props = PropsFromState & PropsFromOutside;
 
 interface PropsFromOutside {
   unknownWord: string;
-  isSelectingContext: boolean;
   onReady: () => void;
 }
 
 interface PropsFromState {
   words: NumberedWord[];
   contextBoundaries: ContextBoundaries;
+  isSelectingContext: boolean;
 }
 
 export function generateContextString(
@@ -53,9 +53,10 @@ class ContextStringField extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State): PropsFromState => ({
   contextBoundaries: state.cardState.contextBoundaries,
-  words: state.words
+  words: state.words,
+  isSelectingContext: state.cardState.isSelectingContext
 });
 
 export default connect<PropsFromState, void, PropsFromOutside, State>(
-  mapStateToProps
+  mapStateToProps,
 )(ContextStringField);
