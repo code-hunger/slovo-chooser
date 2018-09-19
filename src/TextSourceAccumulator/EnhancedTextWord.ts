@@ -1,7 +1,7 @@
 import { Word, NumberedWordView, NumberedWord } from "..//Word";
 
 import { connect } from "react-redux";
-import store, { State, ContextBoundaries } from "../store";
+import { State, ContextBoundaries } from "../store";
 import { trim } from "lodash";
 
 function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
-import store, { WordAction, State, ContextBoundaries } from "../../store";
+import { WordAction, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
 import { NumberedWord } from "../../Word";
 

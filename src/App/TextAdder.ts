@@ -1,4 +1,4 @@
-import store, { State, WordAction, SavedWord } from "../store";
+import { State, WordAction, SavedWord } from "../store";
 import { connect } from "react-redux";
 import { Dispatch } from 'redux';
 import TextAdder from "../TextAdder";
