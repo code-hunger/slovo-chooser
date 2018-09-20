@@ -1,6 +1,7 @@
 # Слово-chooser
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b9ce4a748ed47e58a45cb085d369f50)](https://app.codacy.com/app/beinghavingbreackfast/slovo-chooser?utm_source=github.com&utm_medium=referral&utm_content=code-hunger/slovo-chooser&utm_campaign=Badge_Grade_Settings)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/3c9afddce2ce47a5b396bb2a68d9e0e4)](https://www.codacy.com/app/beinghavingbreackfast/slovo-chooser?utm_source=github.com&utm_medium=referral&utm_content=code-hunger/slovo-chooser&utm_campaign=Badge_Coverage)
 
 ## What is this?
 
