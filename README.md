@@ -1,5 +1,7 @@
 # Слово-chooser
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b9ce4a748ed47e58a45cb085d369f50)](https://app.codacy.com/app/beinghavingbreackfast/slovo-chooser?utm_source=github.com&utm_medium=referral&utm_content=code-hunger/slovo-chooser&utm_campaign=Badge_Grade_Settings)
+
 ## What is this?
 
 A tool that helps *foreign language learners* pick unknown words from any song/article/other text they like, and quickly generate long lists of these words along with translations and the context they're used within.
