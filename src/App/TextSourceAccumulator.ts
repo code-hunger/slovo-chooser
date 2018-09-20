@@ -26,6 +26,9 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
+
+  onWordClick: (strategy: TextClickStrategy, word: number) => void;
+  onContextMenu: (strategy: TextClickStrategy, word: number) => void;
 }
 
 const mapStateToProps = (
@@ -44,5 +47,15 @@ export default connect<
   State
 >(
   mapStateToProps,
-  dispatch => bindActionCreators({ onCardSave: saveWord }, dispatch)
+  dispatch => ({
+    ...bindActionCreators({ onCardSave: saveWord }, dispatch),
+    onWordClick(strategy, id) {
+      const action = strategy.onWordClick(id);
+      if (action) dispatch(action);
+    },
+    onContextMenu(strategy, id) {
+      const action = strategy.onContextMenu(id);
+      if (action) dispatch(action);
+    }
+  })
 )(TextSourceAccumulator);
