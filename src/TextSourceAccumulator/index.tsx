@@ -16,7 +16,7 @@ import { NumberedWord } from "../Word";
 import Dictionary from "./Dictionary";
 import { SavedChunks, SavedWord } from "../store";
 
-import { TextClickStrategy } from "../TextClickStrategies";
+import { TextClickStrategy, UnknownWordSelector } from "../TextClickStrategies";
 import exportToCsv from "../exportToCSV";
 
 interface Props {
@@ -25,10 +25,10 @@ interface Props {
 
   words: NumberedWord[];
   savedChunks: { [chunkId: number]: SavedWord[] };
-  textClickStrategy: {
-    onWordClick: (id: number) => void;
-    onContextMenu: (word: number) => void;
-  };
+
+  onWordClick: (strategy: TextClickStrategy, id: number) => void;
+  onContextMenu: (strategy: TextClickStrategy, word: number) => void;
+
   isSelectingContext: boolean;
 
   onCardSave: (obj: SavedWord, chunkId: number, textSourceId: string) => void;
@@ -54,7 +54,10 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
   generateCsvFile = () => {
     const csvArray = flatMap(this.props.savedChunks).map(values);
     exportToCsv(this.props.textSourceId + ".csv", csvArray);
-  }
+  };
+
+  onWordClick = id => this.props.onWordClick(UnknownWordSelector, id);
+  onContextMenu = id => this.props.onContextMenu(UnknownWordSelector, id);
 
   render() {
     return (
@@ -67,8 +70,8 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
             <TextEditor
               tabIndex={0}
               emptyText="Loading text..."
-              onWordClick={this.props.textClickStrategy.onWordClick}
-              onContextMenu={this.props.textClickStrategy.onContextMenu}
+              onWordClick={this.onWordClick}
+              onContextMenu={this.onContextMenu}
               className={this.props.isSelectingContext ? "selectContext" : ""}
             />
           </Paper>
