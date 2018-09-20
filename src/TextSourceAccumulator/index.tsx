@@ -61,8 +61,8 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
 
   render() {
     return (
-      <Grid container justify="center" spacing={8}>
-        <Grid item sm={8} xs={12}>
+      <Grid container={true} justify="center" spacing={8}>
+        <Grid item={true} sm={8} xs={12}>
           <Paper className={this.props.classes.fullHeight}>
             <Typography variant="headline">
               Choose words to check meaning:
@@ -76,13 +76,13 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
             />
           </Paper>
         </Grid>
-        <Grid item sm={4} xs={12}>
+        <Grid item={true} sm={4} xs={12}>
           <Paper className={this.props.classes.fullHeight}>
             <Typography variant="headline">Marked unknown:</Typography>
             <UnknownWordList tabIndex={0} />
           </Paper>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item={true} xs={12}>
           <Paper className={this.props.classes.paper}>
             <CardEditor
               switchChunk={this.props.switchChunk}
@@ -93,11 +93,11 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
           </Paper>
         </Grid>
         {this.props.savedChunks ? (
-          <Grid item>
+          <Grid item={true}>
             <Button
               variant="contained"
               onClick={this.generateCsvFile}
-              fullWidth
+              fullWidth={true}
             >
               Generate a <kbd>csv</kbd> file for anki
             </Button>
