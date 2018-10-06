@@ -12,7 +12,7 @@ it("selects words properly", () => {
     onContextMenu = jest.fn(),
     switchChunk = jest.fn();
 
-  const words = [{ index: 1, word: "word", classNames: [] }];
+  const words = [{ index: 0, word: "word", classNames: [] }];
   const store = createStore(reducers, { words });
 
   const tsac = mount(
@@ -24,13 +24,12 @@ it("selects words properly", () => {
     </Provider>
   );
 
-  const wordElements = tsac.find('.word')
-  expect(wordElements).toHaveLength(words.length)
+  const wordElements = tsac.find(".word");
+  expect(wordElements).toHaveLength(words.length);
 
-  const firstWordElement = wordElements.first()
-  firstWordElement.simulate('click')
+  const firstWordElement = wordElements.first();
+  firstWordElement.simulate("click");
 
-  
   const markedWords = store.getState().cardState.words.marked;
-  expect(markedWords).toContain(words[0].index)
+  expect(markedWords).toContain(words[0].index);
 });
