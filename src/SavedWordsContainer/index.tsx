@@ -1,7 +1,6 @@
 import * as React from "react";
 import { State, SavedWord, SavedChunks } from "../store";
 import { connect } from "react-redux";
-import { Dispatch } from 'redux';
 import { NumberedWord } from "..//Word";
 
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -23,7 +22,7 @@ import Typography from "@material-ui/core/Typography";
 
 import * as _ from "lodash";
 
-const NoWordsTable = withStyles({
+export const NoWordsTable = withStyles({
   root: { textAlign: "center", fontStyle: "italic" }
 })(props => (
   <TableBody>
@@ -105,7 +104,7 @@ class SavedWordsContainer extends React.PureComponent<
   }
 }
 
-const styled = withStyles(wordCellStyles)(SavedWordsContainer);
+export const styled = withStyles(wordCellStyles)(SavedWordsContainer);
 
 export default connect<
   { savedChunks: SavedChunks },
