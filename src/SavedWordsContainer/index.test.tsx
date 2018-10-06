@@ -10,7 +10,7 @@ import { styled as SavedWordsContainer, NoWordsTable } from "./index";
 import { setText } from "../actions";
 
 const generateSavedWords = chunk =>
-  _.range(10).map(n => [
+  _.range(15).map(n => [
     { word: chunk + "word" + n, meaning: "meaning", context: "" }
   ]);
 
@@ -34,9 +34,10 @@ it("works when no text source is selected", () => {
       someSourceId: savedChunks
     }
   });
+  const maxRows = 10;
 
   const swc = mount(
-    <SavedWordsContainer textSourceId="someSourceId" savedChunks={{}} />
+    <SavedWordsContainer textSourceId="someSourceId" savedChunks={{}} maxRows={maxRows} />
   );
 
   expect(getRows(swc)).toHaveLength(noWordsTable.find('TableBody TableRow').length)
@@ -44,5 +45,5 @@ it("works when no text source is selected", () => {
   store.dispatch(setText("ABC", 1, "chunk0"));
   swc.setProps({ savedChunks: store.getState().savedChunks }).update();
 
-  expect( getRows(swc)).toHaveLength(savedChunks["chunk0"].length);
+  expect( getRows(swc)).toHaveLength(Math.min(savedChunks["chunk0"].length, maxRows));
 });

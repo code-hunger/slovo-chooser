@@ -37,6 +37,7 @@ export const NoWordsTable = withStyles({
 interface Props {
   savedChunks: SavedChunks;
   textSourceId?: string;
+  maxRows: number;
 }
 
 const wordCellStyles = createStyles({
@@ -58,14 +59,15 @@ class SavedWordsContainer extends React.PureComponent<
   componentWillReceiveProps(nextProps: StyledProps) {
     if (
       nextProps.savedChunks !== this.props.savedChunks ||
-      nextProps.textSourceId !== this.props.textSourceId
+      nextProps.textSourceId !== this.props.textSourceId ||
+      nextProps.maxRows !== this.props.maxRows
     ) {
       this.setState({
         words: _.reverse(
           (_.isUndefined(nextProps.textSourceId)
             ? _.flattenDeep(_.flatMap(nextProps.savedChunks).map(_.values))
             : _.flatMap(nextProps.savedChunks[nextProps.textSourceId])
-          ).slice(-10)
+          ).slice(-nextProps.maxRows)
         )
       });
     }
@@ -78,13 +80,13 @@ class SavedWordsContainer extends React.PureComponent<
         <TableCell>{word.meaning}</TableCell>
       </TableRow>
     );
-  }
+  };
 
   renderTableBody = () => {
     if (this.state.words.length < 1) return <NoWordsTable />;
 
     return <TableBody>{this.state.words.map(this.renderSavedWord)}</TableBody>;
-  }
+  };
 
   render() {
     return (
@@ -92,9 +94,7 @@ class SavedWordsContainer extends React.PureComponent<
         <TableHead>
           <TableRow>
             <TableCell colSpan={2} classes={this.props.classes}>
-              <Typography variant="headline">
-              Recently added words
-            </Typography>
+              <Typography variant="headline">Recently added words</Typography>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -113,4 +113,5 @@ export default connect<
   State
 >(state => ({
   savedChunks: state.savedChunks
+
 }))(styled);
