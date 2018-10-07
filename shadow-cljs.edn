@@ -1,12 +1,18 @@
 ;; shadow-cljs configuration
 {:source-paths
- ["src/cljs"]
+ ["src/cljs", "src/clj"]
 
  :output-dir "public/assets/app/js"
  :asset-path "/assets/app/js"
 
  :dependencies
- [[reagent "0.8.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
-  ]
+ [[org.clojure/clojure "1.9.0"]
+  [clj-time "0.14.4"]
+  [reagent "0.8.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
+  [yogthos/config "1.1.1"]
+  [ring/ring-defaults "0.3.1"]
+  [ring "1.6.3"]
+  [prone "1.6.1"]
+  [ring-server "0.5.0"]]
 
  }
