@@ -60,7 +60,7 @@
      nil
      (let [line (trim (first chunk-seq))
            rest' (rest chunk-seq)]
-       (if (blank? line)
+       (if (or (blank? line) (re-matches #"^=+$" line))
          (get-nth-chunk wanted-id current-id rest')
          (if (< current-id wanted-id)
            (recur wanted-id (inc current-id) rest')
