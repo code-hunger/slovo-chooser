@@ -66,6 +66,11 @@
            (recur wanted-id (inc current-id) rest')
            {:text line :id current-id}))))))
 
+(defn find-chunk-in-file 
+  [file chunk-id]
+  (with-open [my-reader (reader file)]
+    (get-nth-chunk chunk-id (line-seq my-reader))))
+
 (defn json-response [data] 
   (let [stringified (generate-string data)]
     (content-type (response stringified) "application/json")))
@@ -82,10 +87,9 @@
                chunk-id (parse-int chunkId)]
            (if-not (fs/file? path)
              {:text "File not given"}
-             (with-open [my-reader (reader path)]
-               (if-let [found-chunk (get-nth-chunk chunk-id (line-seq my-reader))]
-                 {:text (found-chunk :text) :chunkId (found-chunk :id )}
-                 {:error "The wanted line is past the end of the file."}))))))
+             (if-let [found-chunk (find-chunk-in-file path chunk-id)]
+               {:text (found-chunk :text) :chunkId (found-chunk :id )}
+               {:error "The wanted line is past the end of the file."})))))
 
   (resources "/")
   (not-found "Not Found"))
