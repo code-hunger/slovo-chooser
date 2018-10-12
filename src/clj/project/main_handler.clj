@@ -50,10 +50,13 @@
      mount-target
      (include-js "/js/app.js")]))
 
+(defn json-response [data] 
+  (let [stringified (generate-string data)]
+    (content-type (response stringified) "application/json")))
 
 (defroutes routes
   (GET "/" [] (loading-page))
-  (GET "/status" [] (content-type (response (generate-string resource-files)) "application/json"))
+  (GET "/status" [] (json-response resource-files))
   
   (resources "/")
   (not-found "Not Found"))
