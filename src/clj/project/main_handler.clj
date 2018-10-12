@@ -5,7 +5,8 @@
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [config.core :refer [env]]
             [prone.middleware :refer [wrap-exceptions]]
-            [ring.middleware.reload :refer [wrap-reload]]))
+            [ring.middleware.reload :refer [wrap-reload]]
+            [me.raynes.fs :as fs]))
 
 (defn wrap-middleware-dev [handler]
   (-> handler
@@ -17,6 +18,16 @@
   (wrap-defaults handler site-defaults))
 
 (def wrap-middleware (if (env :dev) wrap-middleware-dev wrap-middleware-prod))
+
+(defn get-config-file 
+  ([fname] (get-config-file fname (into [] (fs/split fs/*cwd*))))
+  ([fname dirs]
+   (if (empty? dirs)
+     nil
+     (let [path (apply fs/file (conj dirs fname))]
+       (if (fs/file? path)
+         path
+         (recur fname (pop dirs)))))))
 
 (def mount-target
   [:div#app
