@@ -11,7 +11,8 @@
             [me.raynes.fs :as fs]
             [yaml.core :as yaml]
             [cheshire.core :refer [generate-string]]
-            [clojure.java.io :refer [reader]]))
+            [clojure.java.io :refer [reader]]
+            [clojure.string :refer [trim blank?]]))
 
 (defn wrap-middleware-dev [handler]
   (-> handler
@@ -52,22 +53,40 @@
      mount-target
      (include-js "/js/app.js")]))
 
+(defn get-nth-chunk
+  ([chunk-id chunk-seq] (get-nth-chunk chunk-id 1 chunk-seq))
+  ([wanted-id current-id chunk-seq]
+   (if (empty? chunk-seq) 
+     nil
+     (let [line (trim (first chunk-seq))
+           rest' (rest chunk-seq)]
+       (if (blank? line)
+         (get-nth-chunk wanted-id current-id rest')
+         (if (< current-id wanted-id)
+           (recur wanted-id (inc current-id) rest')
+           {:text line :id current-id}))))))
+
 (defn json-response [data] 
   (let [stringified (generate-string data)]
     (content-type (response stringified) "application/json")))
+
+(defn parse-int [s]
+  (Integer. (re-find #"^[0-9]*" s)))
 
 (defroutes routes
   (GET "/" [] (loading-page))
   (GET "/status" [] (json-response resource-files))
   (GET "/text" [chunkId file] 
-       (let [path (str base-dir file)]
+       (let [path (str base-dir file)
+             chunk-id (parse-int chunkId)]
          (if-not (fs/file? path)
            (json-response {:text "File not given"})
            (with-open [my-reader (reader path)]
-             (str (first (line-seq my-reader)))))))
-            ;(doseq [line (line-seq my-reader)]
-                           ;(println line))
+             (if-let [found-chunk (get-nth-chunk chunk-id (line-seq my-reader))]
+               (json-response {:text ( found-chunk :text) :chunkId (found-chunk :id )})
+               (json-response {:error "The wanted line is past the end of the file."}))))))
+
   (resources "/")
   (not-found "Not Found"))
 
-(def handler (wrap-middleware-prod #'routes))
+(def handler (wrap-middleware #'routes))
