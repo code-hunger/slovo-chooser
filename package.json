@@ -32,7 +32,6 @@
     "eject": "react-scripts-ts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-
     "test-with-coverage": "cat ./coverage/lcov.info | codacy-coverage --username code-hunger --projectName slovo-chooser"
   },
   "devDependencies": {
@@ -47,6 +46,7 @@
     "gh-pages": "^1.2.0",
     "typescript": "^2.9.2",
     "why-did-you-update": "^0.1.1"
+  },
   "setupFiles": [
     "<rootDir>/src/setupTests.ts"
   ]

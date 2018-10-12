@@ -12,7 +12,7 @@
              (let [{:keys [name]} props]
                  [:div 
                   {:on-click (fn [] (swap! counter inc))}
-                  name "updatehere!"
+                  name "updatehere!" @counter
                   ])
              )}))
 
