@@ -10,7 +10,8 @@
             [ring.middleware.reload :refer [wrap-reload]]
             [me.raynes.fs :as fs]
             [yaml.core :as yaml]
-            [cheshire.core :refer [generate-string]]))
+            [cheshire.core :refer [generate-string]]
+            [clojure.java.io :refer [reader]]))
 
 (defn wrap-middleware-dev [handler]
   (-> handler
@@ -36,6 +37,7 @@
 (def conf-file (yaml/from-file (get-config-file "readStatus.yml")))
 
 (def resource-files (:files conf-file))
+(def base-dir (:base_url conf-file))
 
 (def mount-target
   [:div#app
@@ -57,7 +59,14 @@
 (defroutes routes
   (GET "/" [] (loading-page))
   (GET "/status" [] (json-response resource-files))
-  
+  (GET "/text" [chunkId file] 
+       (let [path (str base-dir file)]
+         (if-not (fs/file? path)
+           (json-response {:text "File not given"})
+           (with-open [my-reader (reader path)]
+             (str (first (line-seq my-reader)))))))
+            ;(doseq [line (line-seq my-reader)]
+                           ;(println line))
   (resources "/")
   (not-found "Not Found"))
 
