@@ -12,14 +12,9 @@ it("context boundaries properly set", () => {
   );
 
   wordsToClick.forEach(i => {
-    expect(contextSelector.onWordClick(i)).toEqual({
-      type: getType(actions.setContextBoundaries),
-      payload: {
-        start: i,
-        length: wordCount - i
-      },
-      meta: undefined
-    });
+    expect(contextSelector.onWordClick(i)).toEqual(
+      actions.setContextBoundaries(i, wordCount - i)
+    );
   });
 });
 
@@ -28,5 +23,5 @@ it("unknown word clicked dispatches properly", () => {
 
   _.range(10).forEach(i => {
     expect(unknownWordSelector.onWordClick(i)).toEqual(actions.wordClicked(i));
-  })
+  });
 });
