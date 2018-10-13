@@ -2,7 +2,7 @@ import * as React from "react";
 import { State, WordAction } from "../store";
 import { Word, NumberedWord, NumberedWordView } from "../Word";
 import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import { bindActionCreators } from "redux";
 import UnknownWordList from "../UnknownWordList";
 import { trim } from "lodash";
 import { toggleEditedUnknownWord } from "../actions";
@@ -17,13 +17,19 @@ interface PropsFromDispatch {
 }
 
 const markedWordStateToProps = (
-  { cardState: { words: { marked, editedMarked } }, words, savedWords }: State,
+  {
+    cardState: {
+      words: { marked, editedMarked }
+    },
+    words,
+    savedWords
+  }: State,
   ownProps: NumberedWord
 ): Word => ({
   word: words[marked[ownProps.index]].word,
   classNames:
     editedMarked.indexOf(ownProps.index) > -1 ||
-    savedWords.indexOf(trim(ownProps.word, "\"\',.")) > -1
+    savedWords.indexOf(trim(ownProps.word, "\"',.")) > -1
       ? ownProps.classNames.concat("fade-word")
       : ownProps.classNames
 });
@@ -45,10 +51,6 @@ export default connect<
       index: i
     }))
   }),
-  (dispatch: Dispatch<WordAction>) => ({
-    onWordClick(index: number) {
-      dispatch(toggleEditedUnknownWord(index));
-      return true;
-    }
-  })
+  dispatch =>
+    bindActionCreators({ onWordClick: toggleEditedUnknownWord }, dispatch)
 )(UnknownWordList);
