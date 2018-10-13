@@ -34,3 +34,5 @@ export const removeLocalTextSource = createStandardAction(
 export const addLocalTextSource = createStandardAction("ADD_LOCAL_TEXT_SOURCE")<
   LocalTextSource
 >();
+
+export const toggleSelectingContext = createStandardAction("TOGGLE_SELECTING_CONTEXT_BOUNDARIES")<void>();

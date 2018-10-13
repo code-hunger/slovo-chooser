@@ -1,6 +1,7 @@
 import * as React from "react";
 import { NumberedWord } from "../../Word";
 import CardEditor from "./CardEditor";
+import { toggleSelectingContext } from "../../actions";
 
 import { SavedWord, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
@@ -11,7 +12,7 @@ interface OutsideProps {
     chunkId: number,
     textSourceId: string
   ) => void;
-  readonly switchChunk: (direction: (1 | -1)) => void;
+  readonly switchChunk: (direction: 1 | -1) => void;
   readonly dictionary:
     | React.ComponentClass<{ word: string }>
     | React.StatelessComponent<{ word: string }>;
@@ -54,9 +55,7 @@ export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
       });
     },
     toggleSelectingContext() {
-      dispatch({
-        type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
-      });
+      dispatch(toggleSelectingContext());
     }
   })
 )(CardEditor);

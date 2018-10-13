@@ -24,8 +24,7 @@ const emptyStrArr: string[] = [];
 export type WordAction =
   | ActionType<typeof actions>
   | { type: "TOGGLE_EDITED_UNKNOWN_WORDS"; added: number[]; removed: number[] }
-  | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
-  | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" };
+  | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number };
 
 function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {

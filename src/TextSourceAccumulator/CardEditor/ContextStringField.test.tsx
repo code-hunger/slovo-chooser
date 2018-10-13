@@ -4,7 +4,7 @@ import { mount } from "enzyme";
 import { Provider } from "react-redux";
 import { reducers } from "../../store";
 import { createStore } from "redux";
-import { setContextBoundaries } from "../../actions";
+import { setContextBoundaries, toggleSelectingContext } from "../../actions";
 
 import ContextStringField from "./ContextStringField";
 
@@ -36,7 +36,7 @@ it("renders without errors", () => {
 
   expect(csf.update().find("input")).toHaveLength(1);
 
-  store.dispatch({ type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" });
+  store.dispatch(toggleSelectingContext());
 
   const cardState = store.getState().cardState;
   expect(cardState.isSelectingContext).toBeTruthy();

@@ -3,7 +3,7 @@ import { getType } from "typesafe-actions";
 
 import { WordState, wordStateReducer } from "./wordState";
 import { WordAction } from "../store";
-import { setText, saveWord, setContextBoundaries } from "../actions";
+import { setText, saveWord, setContextBoundaries, toggleSelectingContext } from "../actions";
 
 export interface ContextBoundaries {
   start: number;
@@ -21,7 +21,7 @@ function isSelectingContextReducer(
   action: WordAction
 ): boolean {
   switch (action.type) {
-    case "TOGGLE_SELECTING_CONTEXT_BOUNDARIES":
+    case getType(toggleSelectingContext):
       return !isSelectingContext;
     case "SET_TEXT":
       return false;
