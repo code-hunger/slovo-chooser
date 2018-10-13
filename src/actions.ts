@@ -20,3 +20,5 @@ export const setContextBoundaries = createAction(
   "SET_CONTEXT_BOUNDARIES",
   resolve => (start: number, length: number) => resolve({ start, length })
 );
+
+export const wordClicked = createStandardAction("WORD_CLICKED")<number>();

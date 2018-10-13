@@ -23,7 +23,6 @@ const emptyStrArr: string[] = [];
 
 export type WordAction =
   | ActionType<typeof actions>
-  | { type: "WORD_CLICKED"; word: number }
   | { type: "WORD_NUMBER_SET"; number: number }
   | { type: "WORD_NUMBER_TYPED_RESET" }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
@@ -47,10 +46,10 @@ function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
           word,
           classNames: emptyStrArr
         }));
-    case "WORD_CLICKED":
-      console.log("Word Clicked!", action.word);
+    case getType(actions.wordClicked):
+      console.log("Word Clicked!", action.payload);
       return update(words, {
-        [action.word]: {
+        [action.payload]: {
           classNames: (classes: ReadonlyArray<string>) =>
             classes.indexOf("unknown") > -1
               ? _.without(classes, "unknown")

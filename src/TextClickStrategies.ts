@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import { WordAction } from "./store";
-import { setContextBoundaries } from "./actions";
+import { setContextBoundaries, wordClicked } from "./actions";
 
 export interface TextClickStrategy {
   onWordClick(wordId: number): WordAction | undefined;
@@ -8,9 +8,7 @@ export interface TextClickStrategy {
 }
 
 export const UnknownWordSelector = {
-  onWordClick(wordId: number) {
-    return <WordAction>{ type: "WORD_CLICKED", word: wordId };
-  },
+  onWordClick: wordClicked,
   onContextMenu(wordId: number) {
     return undefined;
   }

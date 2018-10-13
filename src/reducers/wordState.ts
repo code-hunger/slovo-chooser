@@ -1,5 +1,5 @@
 import { WordAction } from "../store";
-import { setText, saveWord } from "../actions";
+import { setText, saveWord, wordClicked } from "../actions";
 import { getType } from "typesafe-actions";
 import { without, isUndefined } from "lodash";
 
@@ -12,9 +12,9 @@ export interface WordState {
 
 function markedWordsReducer(state: number[] = emptyNumArr, action: WordAction) {
   switch (action.type) {
-    case "WORD_CLICKED":
-      if (state.indexOf(action.word) > -1) return without(state, action.word);
-      return state.concat(action.word).sort((a, b) => a - b);
+    case getType(wordClicked):
+      if (state.indexOf(action.payload) > -1) return without(state, action.payload);
+      return state.concat(action.payload).sort((a, b) => a - b);
     case getType(setText):
       return emptyNumArr;
     default:
@@ -36,12 +36,12 @@ function editedMarkedReducer(
       let cleaned = without(editedMarked, ...action.removed);
       let withAdded = cleaned.concat(action.added);
       return withAdded.sort((a, b) => a - b);
-    case "WORD_CLICKED":
-      const editedMarkedIndex = marked.indexOf(action.word);
+    case getType(wordClicked):
+      const editedMarkedIndex = marked.indexOf(action.payload);
 
       if (editedMarkedIndex === -1)
         return editedMarked.map(
-          word => (marked[word] >= action.word ? word + 1 : word)
+          word => (marked[word] >= action.payload ? word + 1 : word)
         );
 
       const withoutToggledWord = without(editedMarked, editedMarkedIndex);
