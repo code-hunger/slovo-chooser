@@ -5,6 +5,7 @@ import { State, LocalTextSource } from "../store";
 import * as actions from "../actions";
 import { CachedPositions } from "../ChunkRetriever";
 
+import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 interface AppStateProps {
@@ -19,12 +20,5 @@ interface AppDispatchProps {
 
 export default connect<AppStateProps, AppDispatchProps, void, State>(
   state => pick(state, ["textSourcePositions", "localTextSources"]),
-  dispatch => ({
-    setText(text: string, chunkId: number, textSourceId: string) {
-      dispatch(actions.setText(text, chunkId, textSourceId));
-    },
-    textSourceRemover(sourceIndex: LocalTextSource) {
-      dispatch(actions.removeLocalTextSource(sourceIndex));
-    }
-  })
+  dispatch => bindActionCreators({ setText: actions.setText, textSourceRemover: actions.removeLocalTextSource }, dispatch)
 )(App);
