@@ -28,6 +28,11 @@ export const toggleEditedUnknownWord = createStandardAction(
   "TOGGLE_EDITED_UNKNOWN_WORD"
 )<number>();
 
+export const toggleEditedUnknownWords = createAction(
+  "TOGGLE_EDITED_UNKNOWN_WORDS",
+  resolve => (added: number[], removed: number[]) => resolve({ added, removed })
+);
+
 export const removeLocalTextSource = createStandardAction(
   "REMOVE_LOCAL_TEXT_SOURCE"
 )<LocalTextSource>();
@@ -35,4 +40,6 @@ export const addLocalTextSource = createStandardAction("ADD_LOCAL_TEXT_SOURCE")<
   LocalTextSource
 >();
 
-export const toggleSelectingContext = createStandardAction("TOGGLE_SELECTING_CONTEXT_BOUNDARIES")<void>();
+export const toggleSelectingContext = createStandardAction(
+  "TOGGLE_SELECTING_CONTEXT_BOUNDARIES"
+)<void>();

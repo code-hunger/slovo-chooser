@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NumberedWord } from "../../Word";
 import CardEditor from "./CardEditor";
-import { toggleSelectingContext } from "../../actions";
+import { toggleEditedUnknownWords, toggleSelectingContext } from "../../actions";
 
 import { SavedWord, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
@@ -48,11 +48,7 @@ export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
   }),
   dispatch => ({
     toggleHints(added: number[], removed: number[]) {
-      dispatch({
-        type: "TOGGLE_EDITED_UNKNOWN_WORDS",
-        added,
-        removed
-      });
+      dispatch(toggleEditedUnknownWords(added, removed));
     },
     toggleSelectingContext() {
       dispatch(toggleSelectingContext());

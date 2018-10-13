@@ -1,5 +1,5 @@
 import { WordAction } from "../store";
-import { setText, saveWord, wordClicked, toggleEditedUnknownWord } from "../actions";
+import { setText, saveWord, wordClicked, toggleEditedUnknownWord, toggleEditedUnknownWords } from "../actions";
 import { getType } from "typesafe-actions";
 import { without, isUndefined } from "lodash";
 
@@ -32,9 +32,9 @@ function editedMarkedReducer(
       if (editedMarked.indexOf(action.payload) > -1)
         return without(editedMarked, action.payload);
       return editedMarked.concat(action.payload).sort((a, b) => a - b);
-    case "TOGGLE_EDITED_UNKNOWN_WORDS":
-      let cleaned = without(editedMarked, ...action.removed);
-      let withAdded = cleaned.concat(action.added);
+    case getType(toggleEditedUnknownWords):
+      let cleaned = without(editedMarked, ...action.payload.removed);
+      let withAdded = cleaned.concat(action.payload.added);
       return withAdded.sort((a, b) => a - b);
     case getType(wordClicked):
       const editedMarkedIndex = marked.indexOf(action.payload);
