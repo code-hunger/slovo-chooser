@@ -23,9 +23,6 @@ const emptyStrArr: string[] = [];
 
 export type WordAction =
   | ActionType<typeof actions>
-  | { type: "WORD_NUMBER_SET"; number: number }
-  | { type: "WORD_NUMBER_TYPED_RESET" }
-  | { type: "TOGGLE_EDITED_UNKNOWN_WORD"; word: number }
   | { type: "TOGGLE_EDITED_UNKNOWN_WORDS"; added: number[]; removed: number[] }
   | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
   | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" }

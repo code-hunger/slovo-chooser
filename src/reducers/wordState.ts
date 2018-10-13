@@ -1,5 +1,5 @@
 import { WordAction } from "../store";
-import { setText, saveWord, wordClicked } from "../actions";
+import { setText, saveWord, wordClicked, toggleEditedUnknownWord } from "../actions";
 import { getType } from "typesafe-actions";
 import { without, isUndefined } from "lodash";
 
@@ -28,10 +28,10 @@ function editedMarkedReducer(
   marked: number[] = emptyNumArr
 ) {
   switch (action.type) {
-    case "TOGGLE_EDITED_UNKNOWN_WORD":
-      if (editedMarked.indexOf(action.word) > -1)
-        return without(editedMarked, action.word);
-      return editedMarked.concat(action.word).sort((a, b) => a - b);
+    case getType(toggleEditedUnknownWord):
+      if (editedMarked.indexOf(action.payload) > -1)
+        return without(editedMarked, action.payload);
+      return editedMarked.concat(action.payload).sort((a, b) => a - b);
     case "TOGGLE_EDITED_UNKNOWN_WORDS":
       let cleaned = without(editedMarked, ...action.removed);
       let withAdded = cleaned.concat(action.added);

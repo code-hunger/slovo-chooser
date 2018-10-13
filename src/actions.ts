@@ -22,3 +22,5 @@ export const setContextBoundaries = createAction(
 );
 
 export const wordClicked = createStandardAction("WORD_CLICKED")<number>();
+
+export const toggleEditedUnknownWord = createStandardAction("TOGGLE_EDITED_UNKNOWN_WORD")<number>();

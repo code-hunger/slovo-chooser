@@ -2,9 +2,10 @@ import * as React from "react";
 import { State, WordAction } from "../store";
 import { Word, NumberedWord, NumberedWordView } from "../Word";
 import { connect } from "react-redux";
-import { Dispatch } from 'redux';
+import { Dispatch } from "redux";
 import UnknownWordList from "../UnknownWordList";
 import { trim } from "lodash";
+import { toggleEditedUnknownWord } from "../actions";
 
 interface PropsFromState {
   words: NumberedWord[];
@@ -46,10 +47,7 @@ export default connect<
   }),
   (dispatch: Dispatch<WordAction>) => ({
     onWordClick(index: number) {
-      dispatch({
-        type: "TOGGLE_EDITED_UNKNOWN_WORD",
-        word: index
-      });
+      dispatch(toggleEditedUnknownWord(index));
       return true;
     }
   })
