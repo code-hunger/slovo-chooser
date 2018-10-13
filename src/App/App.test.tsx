@@ -3,7 +3,10 @@ import * as React from "react";
 import App from "../App";
 
 import { Provider } from "react-redux";
-import store from "../../src/store";
+import { createStore } from "redux";
+import { reducers } from "../../src/store";
+
+const store = createStore(reducers);
 
 it("renders without crashing", () => {
   const div = document.createElement("div") as HTMLElement;

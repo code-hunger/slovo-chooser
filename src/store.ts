@@ -1,9 +1,8 @@
-import { createStore, combineReducers } from "redux";
+import { combineReducers } from "redux";
 import update from "immutability-helper";
 import { NumberedWord } from "./Word";
 import { CachedPositions } from "./ChunkRetriever";
 import * as _ from "lodash";
-import { loadState, persistState } from "./localStorage";
 import { TextSource } from "./App/TextSourceChooser";
 import { WordState, wordStateReducer } from "./reducers/wordState";
 import {
@@ -141,22 +140,3 @@ export const reducers = combineReducers({
   cardState: cardStateReducer
 });
 
-const store = createStore(reducers, loadState());
-
-store.subscribe(
-  _.throttle(
-    () =>
-      persistState(
-        _.pick(store.getState(), [
-          "savedChunks",
-          "savedWords",
-          "localTextSources",
-          "textSourcePositions",
-          "dictionary"
-        ])
-      ),
-    2000
-  )
-);
-
-export default store;
