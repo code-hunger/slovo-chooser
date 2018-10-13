@@ -147,7 +147,6 @@ class AppClass extends React.Component<Props, State> {
         <Grid item lg={3} xs={12}>
           <Paper className={classes.paper}>
             <SavedWordsContainer textSourceId={textSourceId} maxRows={10} />
-            <Closud />
           </Paper>
         </Grid>
       </Grid>

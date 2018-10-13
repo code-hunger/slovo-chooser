@@ -25,9 +25,7 @@ export type WordAction =
   | ActionType<typeof actions>
   | { type: "TOGGLE_EDITED_UNKNOWN_WORDS"; added: number[]; removed: number[] }
   | { type: "CONTEXT_SELECT_WORD_BOUNDARY"; start: number; length: number }
-  | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" }
-  | { type: "REMOVE_LOCAL_TEXT_SOURCE"; sourceIndex: LocalTextSource }
-  | { type: "ADD_LOCAL_TEXT_SOURCE"; source: LocalTextSource };
+  | { type: "TOGGLE_SELECTING_CONTEXT_BOUNDARIES" };
 
 function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {
@@ -81,9 +79,9 @@ function chunkIdReducer(
         }
       });
 
-    case "REMOVE_LOCAL_TEXT_SOURCE":
+    case getType(actions.removeLocalTextSource):
       return update(savedPositions, {
-        $unset: [action.sourceIndex.id]
+        $unset: [action.payload.id]
       });
 
     default:
@@ -96,13 +94,13 @@ function localTextSourcesReducer(
   action: WordAction
 ) {
   switch (action.type) {
-    case "ADD_LOCAL_TEXT_SOURCE":
+    case getType(actions.addLocalTextSource):
       return update(sources, {
-        $push: [action.source]
+        $push: [action.payload]
       } as any);
 
-    case "REMOVE_LOCAL_TEXT_SOURCE":
-      return _.without(sources, action.sourceIndex);
+    case getType(actions.removeLocalTextSource):
+      return _.without(sources, action.payload);
 
     default:
       return sources;

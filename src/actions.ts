@@ -1,4 +1,5 @@
 import { SavedWord, SavedChunks } from "./reducers/savedChunks";
+import { LocalTextSource } from "./store";
 
 import { createAction, createStandardAction } from "typesafe-actions";
 
@@ -23,4 +24,13 @@ export const setContextBoundaries = createAction(
 
 export const wordClicked = createStandardAction("WORD_CLICKED")<number>();
 
-export const toggleEditedUnknownWord = createStandardAction("TOGGLE_EDITED_UNKNOWN_WORD")<number>();
+export const toggleEditedUnknownWord = createStandardAction(
+  "TOGGLE_EDITED_UNKNOWN_WORD"
+)<number>();
+
+export const removeLocalTextSource = createStandardAction(
+  "REMOVE_LOCAL_TEXT_SOURCE"
+)<LocalTextSource>();
+export const addLocalTextSource = createStandardAction("ADD_LOCAL_TEXT_SOURCE")<
+  LocalTextSource
+>();
