@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NumberedWord } from "../Word";
 import { TextClickStrategy } from "../TextClickStrategies";
-import * as _ from "lodash";
+import { range } from "lodash";
 
 export interface WordCollectorProps {
   words: NumberedWord[];
@@ -40,7 +40,7 @@ export class WordCollector<WordT> extends React.PureComponent<
   fillHandlers(upTo: number, onWordClick, onContextMenu) {
     if (this.clickHandlers.length >= upTo) return;
 
-    _.range(this.clickHandlers.length, upTo).forEach(i =>
+    range(this.clickHandlers.length, upTo).forEach(i =>
       this.clickHandlers.push([() => onWordClick(i), () => onContextMenu(i)])
     );
   }

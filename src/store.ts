@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import update from "immutability-helper";
 import { NumberedWord } from "./Word";
 import { CachedPositions } from "./ChunkRetriever";
-import * as _ from "lodash";
+import { without, trim } from "lodash";
 import { TextSource } from "./App/TextSourceChooser";
 import { WordState, wordStateReducer } from "./reducers/wordState";
 import {
@@ -37,12 +37,11 @@ function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
           classNames: emptyStrArr
         }));
     case getType(actions.wordClicked):
-      console.log("Word Clicked!", action.payload);
       return update(words, {
         [action.payload]: {
           classNames: (classes: ReadonlyArray<string>) =>
             classes.indexOf("unknown") > -1
-              ? _.without(classes, "unknown")
+              ? without(classes, "unknown")
               : classes.concat("unknown")
         }
       });
@@ -55,7 +54,7 @@ function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   switch (action.type) {
     case getType(actions.saveWord):
       return update(savedWords, {
-        $push: [_.trim(action.payload.obj.word, "\"',.")]
+        $push: [trim(action.payload.obj.word, "\"',.")]
       } as any);
     default:
       return savedWords;
@@ -95,7 +94,7 @@ function localTextSourcesReducer(
       } as any);
 
     case getType(actions.removeLocalTextSource):
-      return _.without(sources, action.payload);
+      return without(sources, action.payload);
 
     default:
       return sources;
@@ -139,4 +138,3 @@ export const reducers = combineReducers({
 
   cardState: cardStateReducer
 });
-

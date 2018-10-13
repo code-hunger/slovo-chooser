@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import { isNumber } from "lodash";
 import { WordAction } from "./store";
 import { setContextBoundaries, wordClicked } from "./actions";
 
@@ -23,7 +23,7 @@ export class ContextSelector implements TextClickStrategy {
   }
 
   onWordClick = (wordId: number) => {
-    if (!_.isNumber(this.start)) {
+    if (!isNumber(this.start)) {
       this.start = wordId;
       return;
     }
@@ -41,7 +41,7 @@ export class ContextSelector implements TextClickStrategy {
       } else this.length = wordId - this.start;
     }
 
-    if (!_.isNumber(this.start) || !_.isNumber(this.length))
+    if (!isNumber(this.start) || !isNumber(this.length))
       throw new Error("Start or length undefined!");
 
     return setContextBoundaries(this.start, this.length);

@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as _ from "lodash";
+import { range } from "lodash";
 import { mount } from "enzyme";
 import { Provider } from "react-redux";
 import { reducers } from "../../store";
@@ -9,7 +9,7 @@ import { setContextBoundaries, toggleSelectingContext } from "../../actions";
 import ContextStringField from "./ContextStringField";
 
 const generateWords = count =>
-  _.range(count).map(i => ({
+  range(count).map(i => ({
     index: i,
     word: "word" + i,
     classNames: []

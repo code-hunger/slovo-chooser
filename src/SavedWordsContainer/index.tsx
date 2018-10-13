@@ -20,7 +20,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 
-import * as _ from "lodash";
+import { reverse, isUndefined, flattenDeep, flatMap, values } from "lodash";
 
 export const NoWordsTable = withStyles({
   root: { textAlign: "center", fontStyle: "italic" }
@@ -63,10 +63,10 @@ class SavedWordsContainer extends React.PureComponent<
       nextProps.maxRows !== this.props.maxRows
     ) {
       this.setState({
-        words: _.reverse(
-          (_.isUndefined(nextProps.textSourceId)
-            ? _.flattenDeep(_.flatMap(nextProps.savedChunks).map(_.values))
-            : _.flatMap(nextProps.savedChunks[nextProps.textSourceId])
+        words: reverse(
+          (isUndefined(nextProps.textSourceId)
+            ? flattenDeep(flatMap(nextProps.savedChunks).map(values))
+            : flatMap(nextProps.savedChunks[nextProps.textSourceId])
           ).slice(-nextProps.maxRows)
         )
       });
@@ -113,5 +113,4 @@ export default connect<
   State
 >(state => ({
   savedChunks: state.savedChunks
-
 }))(styled);

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Provider } from "react-redux";
 import { mount } from "enzyme";
 import { createStore } from "redux";
-import * as _ from "lodash";
+import { stubTrue } from "lodash";
 
 import { reducers } from "../store";
 import TextSourceAccumulator from "./index";
@@ -27,7 +27,7 @@ it("text source accumulator renders", () => {
 
         isSelectingContext={false}
         onWordClick={onWordClick}
-        onContextMenu={_.stubTrue}
+        onContextMenu={stubTrue}
 
         onCardSave={onCardSave}
       />

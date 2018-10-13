@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as _ from "lodash";
+import { isUndefined, keys, forOwn } from "lodash";
 
 type MyPr = Promise<{ text: string; newId: number }>;
 
@@ -24,7 +24,7 @@ export default class ChunkRetriever {
 
   getOptionsFromServer = () =>
     axios.get("http://localhost:3000/status", { responseType: "json" }).then(({ data }) => {
-      _.forOwn(data, (_, file) => {
+      forOwn(data, (_, file) => {
         this.sources[file] = {
           description: file.replace(/_/g, " "),
           fetch: this.chunkFromLocalServer.bind(this, file)
@@ -73,7 +73,7 @@ export default class ChunkRetriever {
   }
 
   getOptions() {
-    return _.keys(this.sources).map(key => ({
+    return keys(this.sources).map(key => ({
       id: key,
       description: this.sources[key].description,
       chunkId: this.cachedPositions[key]
@@ -81,12 +81,12 @@ export default class ChunkRetriever {
   }
 
   positionBySource = (textSourceId: string, newValue?: number) => {
-    if (_.isUndefined(newValue)) return this.cachedPositions[textSourceId];
+    if (isUndefined(newValue)) return this.cachedPositions[textSourceId];
     return (this.cachedPositions[textSourceId] = newValue);
   };
 
   getNextChunk(textSourceId: string, chunkId?: number): MyPr {
-    if (_.isUndefined(chunkId)) {
+    if (isUndefined(chunkId)) {
       if (textSourceId in this.cachedPositions)
         chunkId = this.cachedPositions[textSourceId] + 1;
       else chunkId = 1;

@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as _ from "lodash";
+import { difference, trim, negate, without, throttle } from "lodash";
 import { Word, NumberedWord } from "../../Word";
 
 import TextField from "@material-ui/core/TextField";
@@ -44,7 +44,7 @@ export default class UnknownField extends React.PureComponent<
 > {
   state = { value: "", isDuplicate: false };
 
-  updateDuplicateState = _.throttle(() => {
+  updateDuplicateState = throttle(() => {
     this.setState(state => ({
       isDuplicate: this.props.isDuplicate(state.value)
     }));
@@ -52,7 +52,7 @@ export default class UnknownField extends React.PureComponent<
 
   onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const usedHints = this.props.usedHints,
-      unusedHints = _.without(
+      unusedHints = without(
         this.props.words.map(w => w.index),
         ...this.props.usedHints
       ),
@@ -61,8 +61,8 @@ export default class UnknownField extends React.PureComponent<
     this.setState({ value });
 
     const hasWord = (word: number) =>
-      value.includes(_.trim(this.props.words[word].word, "\"',."));
-    const removedHints = usedHints.filter(_.negate(hasWord));
+      value.includes(trim(this.props.words[word].word, "\"',."));
+    const removedHints = usedHints.filter(negate(hasWord));
     const addedHints = unusedHints.filter(hasWord);
 
     if (removedHints.length || addedHints.length) {
@@ -80,8 +80,8 @@ export default class UnknownField extends React.PureComponent<
       wordedNew = newHints.map(hint => nextProps.words[hint].word);
 
     // Could be optimized, but no need for that
-    const addedWords = _.difference(wordedNew, wordedOld),
-      removedWords = _.difference(wordedOld, wordedNew);
+    const addedWords = difference(wordedNew, wordedOld),
+      removedWords = difference(wordedOld, wordedNew);
 
     if (addedWords.length || removedWords.length) {
       this.setState(({ value }) => ({
