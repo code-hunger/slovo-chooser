@@ -15,7 +15,7 @@ import { CardState, cardStateReducer } from "./reducers/cardState";
 export { SavedWord, SavedChunks };
 export { ContextBoundaries } from "./reducers/cardState";
 
-import { ActionType, getType } from "typesafe-actions";
+import { ActionType, StateType, getType } from "typesafe-actions";
 import * as actions from "./actions";
 
 const emptyStrArr: string[] = [];
@@ -113,19 +113,6 @@ export interface LocalTextSource extends TextSource<string> {
   text: string;
 }
 
-export interface State {
-  readonly words: NumberedWord[];
-  readonly dictionary: string;
-
-  readonly savedChunks: SavedChunks;
-  readonly savedWords: string[];
-
-  readonly localTextSources: LocalTextSource[];
-  readonly textSourcePositions: CachedPositions;
-
-  readonly cardState: CardState;
-}
-
 export const reducers = combineReducers({
   words: textWordsReducer,
   dictionary: dictionaryReducer,
@@ -138,3 +125,5 @@ export const reducers = combineReducers({
 
   cardState: cardStateReducer
 });
+
+export type State = StateType<typeof reducers>;
