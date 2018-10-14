@@ -9,11 +9,10 @@
      (fn [props]
        [:div 
         {:style {:position 'relative}
-         :on-key-down #((:handler props)  
-                       @value 
-                       (:elementCount props)  
-                       %
-                       (:onSelectElement props) 
-                       (fn [x] reset! value x))}
+         :on-key-down #(swap! value ((:handler props)  
+                                     @value 
+                                     (:elementCount props)  
+                                     %
+                                     (:onSelectElement props)))}
         (if (> @value 0) [:div#wordNumberTyped "Typing: " @value])
         (:children props)])}))
