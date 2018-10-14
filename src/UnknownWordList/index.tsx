@@ -3,7 +3,8 @@ import { stubTrue } from "lodash";
 
 import { Word, NumberedWord } from "../Word";
 import { WordCollector } from "../WordCollector";
-import { KeyboardSelectableContainer } from "../NumberSelectableContainer";
+import { KeyboardSelectableContainer } from "shadow-cljs/project.keyboardFocusable";
+import { handler } from "shadow-cljs/project.TEKeyboardHandler";
 
 import Typography from "@material-ui/core/Typography";
 
@@ -30,6 +31,7 @@ export default class UnknownWordList extends React.PureComponent<Props> {
       <KeyboardSelectableContainer
         elementCount={this.props.words.length}
         onSelectElement={this.onWordClick}
+        handler={handler}
       >
         <WordCollector
           className="unknownWordsList"

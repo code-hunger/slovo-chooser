@@ -6,7 +6,8 @@ import { pick } from "lodash";
 import { NumberedWord } from "../Word";
 import TextWord from "./EnhancedTextWord";
 import { WordCollector } from "../WordCollector";
-import { KeyboardSelectableContainer } from "../NumberSelectableContainer";
+import { KeyboardSelectableContainer } from "shadow-cljs/project.keyboardFocusable";
+import { handler } from "shadow-cljs/project.TEKeyboardHandler";
 
 type TextEditorProps = PropsFromState & PropsFromOutside;
 
@@ -17,6 +18,7 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
         <KeyboardSelectableContainer
           elementCount={this.props.words.length}
           onSelectElement={this.props.onWordClick}
+          handler={handler}
         >
           <WordCollector
             words={this.props.words}
