@@ -11,7 +11,6 @@ export default function TextEditorKeyboardHandler(
   const SPACE = 32,
     RETURN = 13,
     BACKSPACE = 8,
-    //ZERO = 48,
     ESCAPE = 27;
 
   switch (code) {
@@ -36,11 +35,6 @@ export default function TextEditorKeyboardHandler(
       }
     default:
       let key = e.key;
-
-      // If e.key is not recognized as number or is unsupported, try with e.keyCode
-      //if (typeof key === "undefined" || !isFinite(key))
-      //if (code < ZERO || code > ZERO + 9) break;
-      //else key = code - ZERO;
 
       const typedNumber = parseInt(wordNumberTyped + "" + key, 10);
 
