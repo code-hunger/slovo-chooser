@@ -16,10 +16,7 @@ export interface WordCollectorProps {
 export class WordCollector<WordT> extends React.PureComponent<
   WordCollectorProps
 > {
-  private clickHandlers: [
-    (wordId: number) => void,
-    (wordId: number) => void
-  ][] = [];
+  private clickHandlers: [ () => void, () => void ][] = [];
 
   constructor(props: WordCollectorProps) {
     super(props);
