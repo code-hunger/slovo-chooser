@@ -9,8 +9,8 @@ export interface NumberedWord extends Word {
 
 type NumberedWordViewProps = NumberedWord & {
   insideBoundaries: boolean;
-  onClick: (index: number, e: React.MouseEvent<HTMLElement>) => void;
-  onContextMenu: (index: number, e: React.MouseEvent<HTMLElement>) => void;
+  onClick: (index: number) => void;
+  onContextMenu: (index: number) => void;
 };
 
 interface NumberedWordViewState {
@@ -36,8 +36,8 @@ export class NumberedWordView extends React.PureComponent<
     }
   }
 
-  onClick = e => this.props.onClick(this.props.index, e);
-  onContextMenu = e => this.props.onContextMenu(this.props.index, e);
+  onClick = e => this.props.onClick(this.props.index);
+  onContextMenu = e => this.props.onContextMenu(this.props.index);
 
   render() {
     const props = this.props;

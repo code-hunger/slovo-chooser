@@ -18,9 +18,11 @@ it("word collector fires click events", () => {
     />
   );
 
-  const wordElements = wordCollector.find('.word');
-  expect(wordElements.length).toBe(words.length)
+  const wordElements = wordCollector.find(".word");
+  expect(wordElements.length).toBe(words.length);
 
-  wordElements.first().simulate('click')
-  expect(onWordClick).toBeCalledWith(0)
+  wordElements.first().simulate("click");
+  expect(onWordClick).toBeCalledWith(
+    expect.objectContaining({ type: "click" })
+  );
 });
