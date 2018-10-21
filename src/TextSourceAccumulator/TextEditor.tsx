@@ -5,7 +5,7 @@ import { pick } from "lodash";
 
 import { NumberedWord } from "../Word";
 import TextWord from "./EnhancedTextWord";
-import { WordCollector } from "../WordCollector";
+import { WordCollector } from "shadow-cljs/project.WordCollector";
 import { KeyboardSelectableContainer } from "shadow-cljs/project.keyboardFocusable";
 import { handler } from "shadow-cljs/project.TEKeyboardHandler";
 

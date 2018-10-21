@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { WordCollector } from "./index";
+import { WordCollector } from "shadow-cljs/project.WordCollector";
 import { SimpleWord } from "../Word";
 import { mount } from "enzyme";
 

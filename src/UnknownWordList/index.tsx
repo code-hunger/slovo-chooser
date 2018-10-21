@@ -2,7 +2,7 @@ import * as React from "react";
 import { stubTrue } from "lodash";
 
 import { Word, NumberedWord } from "../Word";
-import { WordCollector } from "../WordCollector";
+import { WordCollector } from "shadow-cljs/project.WordCollector";
 import { KeyboardSelectableContainer } from "shadow-cljs/project.keyboardFocusable";
 import { handler } from "shadow-cljs/project.TEKeyboardHandler";
 
