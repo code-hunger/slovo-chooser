@@ -1,7 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { State } from "../store";
-import { pick } from "lodash";
 
 import { NumberedWord } from "../Word";
 import TextWord from "./EnhancedTextWord";
@@ -9,9 +6,19 @@ import { WordCollector } from "shadow-cljs/project.WordCollector";
 import { KeyboardSelectableContainer } from "shadow-cljs/project.keyboardFocusable";
 import { handler } from "shadow-cljs/project.TEKeyboardHandler";
 
-type TextEditorProps = PropsFromState & PropsFromOutside;
+interface  TextEditorProps {
+  readonly words: NumberedWord[];
+  readonly wordType: any;
 
-class TextEditor extends React.PureComponent<TextEditorProps> {
+  className: string;
+  tabIndex: number;
+  emptyText: string;
+
+  onWordClick: (id: number) => void;
+  onContextMenu: (word: number) => void;
+}
+
+export default class TextEditor extends React.PureComponent<TextEditorProps> {
   render() {
     return this.props.words.length ? (
       <div className={"textEditor " + this.props.className}>
@@ -34,20 +41,3 @@ class TextEditor extends React.PureComponent<TextEditorProps> {
     );
   }
 }
-
-interface PropsFromState {
-  readonly words: NumberedWord[];
-}
-
-interface PropsFromOutside {
-  className: string;
-  tabIndex: number;
-  emptyText: string;
-
-  onWordClick: (id: number) => void;
-  onContextMenu: (word: number) => void;
-}
-
-export default connect<PropsFromState, void, PropsFromOutside, State>(
-  state => ({ words: state.words })
-)(TextEditor);

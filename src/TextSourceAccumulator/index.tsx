@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 
+import TextWord from "./EnhancedTextWord";
 import TextEditor from "./TextEditor";
 import CardEditor from "./CardEditor";
 import UnknownWordList from "./UnknownWordsList";
@@ -73,6 +74,8 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
               onWordClick={this.onWordClick}
               onContextMenu={this.onContextMenu}
               className={this.props.isSelectingContext ? "selectContext" : ""}
+              words={this.props.words}
+              wordType={TextWord}
             />
           </Paper>
         </Grid>

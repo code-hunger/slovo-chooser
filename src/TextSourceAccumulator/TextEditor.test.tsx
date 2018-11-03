@@ -14,22 +14,22 @@ it("teditor word click works", () => {
   const words = [{ index: 0, word: "word", classNames: [] }];
   const store = createStore(reducers, { words });
 
-  const textEditor = mount(
-    <Provider store={store}>
-      <TextEditor
-        className=""
-        tabIndex={0}
-        emptyText=""
-        onWordClick={onWordClick}
-        onContextMenu={onContextMenu}
-      />
-    </Provider>
-  );
+  //const textEditor = mount(
+    //<Provider store={store}>
+      //<TextEditor
+        //className=""
+        //tabIndex={0}
+        //emptyText=""
+        //onWordClick={onWordClick}
+        //onContextMenu={onContextMenu}
+      ///>
+    //</Provider>
+  //);
 
-  textEditor
-    .find(".word")
-    .first()
-    .simulate("click");
+  //textEditor
+    //.find(".word")
+    //.first()
+    //.simulate("click");
 
   expect(onWordClick).toBeCalledWith(0);
 });
