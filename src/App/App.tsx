@@ -18,7 +18,7 @@ import SavedWordsContainer from "../SavedWordsContainer";
 
 import { LocalTextSource } from "../store";
 
-import { Closud } from "shadow-cljs/project.entry"
+import { Closud } from "shadow-cljs/project.entry";
 
 type Props = AppProps & WithStyles<typeof styles>;
 
@@ -90,7 +90,7 @@ class AppClass extends React.Component<Props, State> {
     if (this.state.textSourceId === id) return;
 
     this.switchToNextChunk(this.props.textSourcePositions[id], id);
-  }
+  };
 
   removeTextSource = (id: string) => {
     // The text source string id needs to be converted to the numeric id of the source in props.localSources
@@ -102,7 +102,7 @@ class AppClass extends React.Component<Props, State> {
           this.setState({ sources: this.chunkRetriever.getOptions() });
           this.props.textSourceRemover(localTextSourceId);
         };
-  }
+  };
 
   switchChunk = (direction: 1 | -1) => {
     if (isUndefined(this.state.textSourceId))
@@ -111,7 +111,7 @@ class AppClass extends React.Component<Props, State> {
     this.switchToNextChunk(
       this.props.textSourcePositions[this.state.textSourceId] + direction
     );
-  }
+  };
 
   render() {
     const classes = this.props.classes;
@@ -133,7 +133,7 @@ class AppClass extends React.Component<Props, State> {
               currentSourceId={textSourceId}
               removeTextSource={this.removeTextSource}
             />
-            <TextAdder />
+            <TextAdder autoOpen={this.state.sources.length < 1} />
           </Paper>
         </Grid>
         {isUndefined(textSourceId) ? null : (

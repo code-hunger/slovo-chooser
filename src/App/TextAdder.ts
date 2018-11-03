@@ -8,14 +8,14 @@ interface DispatchProps {
   onDone: (id: string, text: string) => void;
 }
 
-interface StateProps {
+interface OutsideProps {
   autoOpen: boolean;
 }
 
 const onDone = (id: string, text: string) =>
   addLocalTextSource({ id, description: id, text });
 
-export default connect<StateProps, DispatchProps, void, State>(
-  state => ({ autoOpen: state.localTextSources.length < 1 }),
+export default connect<void, DispatchProps, OutsideProps, State>(
+  null,
   dispatch => bindActionCreators({ onDone }, dispatch)
 )(TextAdder);
