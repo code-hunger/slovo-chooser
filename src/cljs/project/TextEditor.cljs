@@ -1,19 +1,21 @@
 (ns project.TextEditor
-  (:require [reagent.core :as r]))
+  (:require [reagent.core :as r]
+             ["shadow-cljs/project.keyboardFocusable" :refer (KeyboardSelectableContainer)]
+             ["shadow-cljs/project.WordCollector" :refer (WordCollector)]))
 
 (def TextEditor
   (r/create-class
-    {:reagent-render
+    {:display-name 'TextEditor
+     :reagent-render
      (fn [props]
-       (if-not (project.keyboardFocusable/KeyboardSelectableContainer) (js/console.err "FAKK FAKKKKKK"))
        (let [words (props :words)]
          (if (empty? words)
-           (props :emptyText)
-           [:div {}
-            [project.keyboardFocusable/KeyboardSelectableContainer
+           (:emptyText props )
+           [:div {:class-name 'textEditor}
+            [KeyboardSelectableContainer
              {:elementCount (count words)
               :onSelectElement (props :onWordClick)}
-             [project.WordCollector/WordCollector
+             [WordCollector
               {:words words
                :wordType (props :wordType)
                :tabIndex (props :tabIndex)

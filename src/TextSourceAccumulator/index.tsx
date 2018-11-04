@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 
 import TextWord from "./EnhancedTextWord";
-import TextEditor from "./TextEditor";
+import { TextEditor } from "shadow-cljs/project.TextEditor";
 import CardEditor from "./CardEditor";
 import UnknownWordList from "./UnknownWordsList";
 import { NumberedWord } from "../Word";
