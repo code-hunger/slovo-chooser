@@ -8,17 +8,11 @@
     {:display-name 'TextEditor
      :reagent-render
      (fn [props]
-       (let [words (props :words)]
-         (if (empty? words)
-           (:emptyText props )
-           [:div {:class-name 'textEditor}
-            [KeyboardSelectableContainer
-             {:elementCount (count words)
-              :onSelectElement (props :onWordClick)}
-             [WordCollector
-              {:words words
-               :wordType (props :wordType)
-               :tabIndex (props :tabIndex)
-               :onWordClick (props :onWordClick)
-               :onContextMenu (props :onContextMenu)}]]]
-           )))}))
+       (if (empty? (props :words))
+         (:emptyText props)
+         [:div {:class-name 'textEditor}
+          [KeyboardSelectableContainer
+           {:elementCount (count (props :words))
+            :onSelectElement (props :onWordClick)}
+           [WordCollector props]]]
+         ))}))
