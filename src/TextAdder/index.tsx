@@ -24,19 +24,22 @@ export default class TextAdder extends React.PureComponent<Props, State> {
   state = { isOpen: false };
 
   onDone = () => {
-    if(this.textField === null || this.textIdField === null) return 
+    if (this.textField === null || this.textIdField === null) return;
 
-    this.props.onDone(this.textIdField.value || "Unnamed text source", this.textField.value);
+    this.props.onDone(
+      this.textIdField.value || "Unnamed text source",
+      this.textField.value
+    );
     this.handleClose();
-  }
+  };
 
   handleClickOpen = () => {
     this.setState({ isOpen: true });
-  }
+  };
 
   handleClose = () => {
     this.setState({ isOpen: false });
-  }
+  };
 
   inputRef = (el: { value: string; name: "text" | "textId" } | null) => {
     if (el !== null) {
@@ -45,7 +48,7 @@ export default class TextAdder extends React.PureComponent<Props, State> {
       this.textField = null;
       this.textIdField = null;
     }
-  }
+  };
 
   render() {
     return (
@@ -88,7 +91,11 @@ export default class TextAdder extends React.PureComponent<Props, State> {
             <Button onClick={this.onDone} color="primary">
               Add text source
             </Button>
-            <Button onClick={this.handleClose} color="secondary">
+            <Button
+              onClick={this.handleClose}
+              color="secondary"
+              disabled={this.props.autoOpen}
+            >
               Cancel
             </Button>
           </DialogActions>
