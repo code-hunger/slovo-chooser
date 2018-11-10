@@ -1,6 +1,7 @@
 (ns project.main_handler
   (:refer-clojure :exclude [load])
   (:require [compojure.core :refer [GET defroutes]]
+            [compojure.route :refer [not-found]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [ring.util.response :refer [response content-type]]
             [config.core :refer [env]]
@@ -73,6 +74,7 @@
              {:text "File not given"}
              (if-let [found-chunk (find-chunk-in-file path chunk-id)]
                {:text (found-chunk :text) :chunkId (found-chunk :id )}
-               {:error "The wanted line is past the end of the file."}))))))
+               {:error "The wanted line is past the end of the file."})))))
+  (not-found "<h1>Page not found</h1>"))
 
 (def handler (wrap-middleware #'routes))
