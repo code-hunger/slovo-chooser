@@ -1,5 +1,6 @@
 import axios from "axios";
 import { isUndefined, keys, forOwn } from "lodash";
+import { TextSource } from "./App/TextSourceChooser";
 
 type MyPr = Promise<{ text: string; newId: number }>;
 
@@ -72,12 +73,13 @@ export default class ChunkRetriever {
       );
   }
 
-  getOptions() {
+  getOptions() : TextSource<string>[] {
     return keys(this.sources).map(key => ({
       id: key,
       description: this.sources[key].description,
-      chunkId: this.cachedPositions[key]
-    }));
+      chunkId: this.cachedPositions[key],
+      origin: "remote"
+    } as TextSource<typeof key>));
   }
 
   positionBySource = (textSourceId: string, newValue?: number) => {

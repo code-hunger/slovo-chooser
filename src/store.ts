@@ -111,6 +111,7 @@ function dictionaryReducer(dictionary: string = "", action: WordAction) {
 
 export interface LocalTextSource extends TextSource<string> {
   text: string;
+  origin: "local";
 }
 
 export const reducers = combineReducers({

@@ -27,6 +27,7 @@ export interface TextSource<IdType> {
   id: IdType;
   description: string;
   chunkId?: number;
+  origin: "local" | "remote";
 }
 
 interface Props<IdType> {
@@ -67,7 +68,7 @@ class TextSourceChooser<IdType> extends React.PureComponent<
         ) : null}
       </ListItem>
     );
-  }
+  };
 
   render() {
     return (
