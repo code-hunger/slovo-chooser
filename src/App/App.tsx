@@ -18,8 +18,6 @@ import SavedWordsContainer from "../SavedWordsContainer";
 
 import { LocalTextSource } from "../store";
 
-import { Closud } from "shadow-cljs/project.entry";
-
 type Props = AppProps & WithStyles<typeof styles>;
 
 interface AppProps {
@@ -45,7 +43,7 @@ class AppClass extends React.Component<Props, State> {
     this.chunkRetriever.getOptionsFromServer().then(sources => {
       this.setState({ sources });
       this.setTextSource(sources[0].id);
-    });
+    }).catch(() => this.setTextSource(this.props.localTextSources[0].id));
 
     this.importLocalSources(props.localTextSources);
 
