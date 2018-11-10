@@ -1,5 +1,5 @@
 import * as React from "react";
-import { find, isUndefined } from "lodash";
+import { find, isUndefined, get as getPath } from "lodash";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -47,7 +47,10 @@ class AppClass extends React.Component<Props, State> {
         return sources;
       })
       .catch(() => this.props.localTextSources)
-      .then(sources => this.setTextSource(sources[0].id));
+      .then(sources => {
+        const textSourceId: string = getPath(sources, "[0].id");
+        if (textSourceId) this.setTextSource(textSourceId);
+      });
 
     this.importLocalSources(props.localTextSources);
 
