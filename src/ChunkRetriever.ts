@@ -24,6 +24,27 @@ function makeLocalFetcher(textLines: string[]) {
     });
 }
 
+function makeRemoteFetcher(file: string, updateCachedPosition) {
+  return (chunkId: number): MyPr =>
+    axios
+      .get("http://localhost:3000/text", {
+        params: { chunkId, file },
+        responseType: "json"
+      })
+      .then(
+        ({ data }) => {
+          updateCachedPosition(data.chunkId);
+          return { text: data.text, newId: data.chunkId };
+        },
+        error => {
+          if (error.response) {
+            throw error.response.data.error;
+          }
+          throw "Unknown error happened";
+        }
+      );
+}
+
 export default class ChunkRetriever {
   private cachedPositions: CachedPositions;
   private sources: Sources = {};
@@ -39,7 +60,10 @@ export default class ChunkRetriever {
         forOwn(data, (_, file) => {
           this.sources[file] = {
             description: file.replace(/_/g, " "),
-            fetch: this.chunkFromLocalServer.bind(this, file)
+            fetch: makeRemoteFetcher(
+              file,
+              chunkId => (this.cachedPositions[file] = chunkId)
+            )
           };
         });
         return this.getOptions();
@@ -58,26 +82,6 @@ export default class ChunkRetriever {
 
   removeTextSource(id: string) {
     delete this.sources[id];
-  }
-
-  chunkFromLocalServer(file: string, chunkId: number): MyPr {
-    return axios
-      .get("http://localhost:3000/text", {
-        params: { chunkId, file },
-        responseType: "json"
-      })
-      .then(
-        ({ data }) => {
-          this.cachedPositions[file] = data.chunkId;
-          return { text: data.text, newId: data.chunkId };
-        },
-        error => {
-          if (error.response) {
-            throw error.response.data.error;
-          }
-          throw "Unknown error happened";
-        }
-      );
   }
 
   getOptions(): TextSource<string>[] {
