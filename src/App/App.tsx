@@ -11,7 +11,7 @@ import { WithStyles, Theme } from "@material-ui/core";
 import ChunkRetriever, { CachedPositions } from "../ChunkRetriever";
 
 import TextAdder from "./TextAdder";
-import TextSourceChooser from "./TextSourceChooser";
+import TextSourceChooser, { TextSource } from "./TextSourceChooser";
 import { NumberedWord } from "../Word";
 import TextSourceAccumulator from "./TextSourceAccumulator";
 import SavedWordsContainer from "../SavedWordsContainer";
@@ -30,7 +30,7 @@ interface AppProps {
 
 interface State {
   textSourceId?: string;
-  sources: { id: string; description: string; chunkId: number }[];
+  sources: TextSource<string>[];
 }
 
 class AppClass extends React.Component<Props, State> {
@@ -40,10 +40,14 @@ class AppClass extends React.Component<Props, State> {
     super(props);
 
     this.chunkRetriever = new ChunkRetriever(props.textSourcePositions);
-    this.chunkRetriever.getOptionsFromServer().then(sources => {
-      this.setState({ sources });
-      this.setTextSource(sources[0].id);
-    }).catch(() => this.setTextSource(this.props.localTextSources[0].id));
+    this.chunkRetriever
+      .getOptionsFromServer()
+      .then(sources => {
+        this.setState({ sources });
+        return sources;
+      })
+      .catch(() => this.props.localTextSources)
+      .then(sources => this.setTextSource(sources[0].id));
 
     this.importLocalSources(props.localTextSources);
 
