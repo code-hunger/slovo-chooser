@@ -1,6 +1,7 @@
 import axios from "axios";
 import { isUndefined, keys, forOwn } from "lodash";
 import { TextSource } from "./App/TextSourceChooser";
+import { LocalTextSource } from "./store";
 
 type MyPr = Promise<{ text: string; newId: number }>;
 
@@ -15,6 +16,14 @@ export interface CachedPositions {
   [id: string]: number;
 }
 
+function makeLocalFetcher(textLines: string[]) {
+  return (chunkId: number): MyPr =>
+    new Promise((resolve, failure) => {
+      if (chunkId > textLines.length) failure("Out of bounds");
+      else resolve({ text: textLines[chunkId - 1], newId: chunkId });
+    });
+}
+
 export default class ChunkRetriever {
   private cachedPositions: CachedPositions;
   private sources: Sources = {};
@@ -24,28 +33,26 @@ export default class ChunkRetriever {
   }
 
   getOptionsFromServer = () =>
-    axios.get("http://localhost:3000/status", { responseType: "json" }).then(({ data }) => {
-      forOwn(data, (_, file) => {
-        this.sources[file] = {
-          description: file.replace(/_/g, " "),
-          fetch: this.chunkFromLocalServer.bind(this, file)
-        };
+    axios
+      .get("http://localhost:3000/status", { responseType: "json" })
+      .then(({ data }) => {
+        forOwn(data, (_, file) => {
+          this.sources[file] = {
+            description: file.replace(/_/g, " "),
+            fetch: this.chunkFromLocalServer.bind(this, file)
+          };
+        });
+        return this.getOptions();
       });
-      return this.getOptions();
-    });
 
   addTextSource(id: string, text: string) {
     if (this.sources[id]) return false;
-    const lines = text.split("\n").filter(line => line !== "");
+
     this.sources[id] = {
-      fetch: (chunkId: number) => {
-        return new Promise((resolve, failure) => {
-          if (chunkId > lines.length) failure("Out of bounds");
-          else resolve({ text: lines[chunkId - 1], newId: chunkId });
-        });
-      },
+      fetch: makeLocalFetcher(text.split("\n").filter(line => line !== "")),
       description: id
     };
+
     return true;
   }
 
@@ -73,13 +80,16 @@ export default class ChunkRetriever {
       );
   }
 
-  getOptions() : TextSource<string>[] {
-    return keys(this.sources).map(key => ({
-      id: key,
-      description: this.sources[key].description,
-      chunkId: this.cachedPositions[key],
-      origin: "remote"
-    } as TextSource<typeof key>));
+  getOptions(): TextSource<string>[] {
+    return keys(this.sources).map(
+      key =>
+        ({
+          id: key,
+          description: this.sources[key].description,
+          chunkId: this.cachedPositions[key],
+          origin: "remote"
+        } as TextSource<typeof key>)
+    );
   }
 
   positionBySource = (textSourceId: string, newValue?: number) => {
