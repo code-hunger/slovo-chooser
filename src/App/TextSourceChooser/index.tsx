@@ -12,6 +12,8 @@ import { createStyles, WithStyles, Theme } from "@material-ui/core";
 import Badge from "@material-ui/core/Badge";
 import Typography from "@material-ui/core/Typography";
 
+import { sourceFetchers } from "../../ChunkRetriever";
+
 const styles = (theme: Theme) =>
   createStyles({
     selected: {
@@ -27,7 +29,7 @@ export interface TextSource<IdType> {
   id: IdType;
   description: string;
   chunkId?: number;
-  origin: "local" | "remote";
+  origin: keyof (typeof sourceFetchers);
 }
 
 interface Props<IdType> {

@@ -47,6 +47,11 @@ function makeRemoteFetcher(file: string, updateCachedPosition) {
       );
 }
 
+export const sourceFetchers = {
+  local: makeLocalFetcher,
+  remote: makeRemoteFetcher
+};
+
 export default class ChunkRetriever {
   private cachedPositions: CachedPositions;
   private sources: Sources = {};
@@ -62,7 +67,7 @@ export default class ChunkRetriever {
         forOwn(data, (_, file) => {
           this.sources[file] = {
             description: file.replace(/_/g, " "),
-            fetch: makeRemoteFetcher(
+            fetch: sourceFetchers.remote(
               file,
               chunkId => (this.cachedPositions[file] = chunkId)
             )
@@ -75,7 +80,7 @@ export default class ChunkRetriever {
     if (this.sources[id]) return false;
 
     this.sources[id] = {
-      fetch: makeLocalFetcher(chunks),
+      fetch: sourceFetchers.local(chunks),
       description: id
     };
 
