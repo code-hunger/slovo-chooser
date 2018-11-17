@@ -19,7 +19,7 @@ export interface CachedPositions {
 function makeLocalFetcher(textLines: string[]) {
   return (chunkId: number): MyPr =>
     new Promise((resolve, failure) => {
-      if (chunkId > textLines.length) failure("Out of bounds");
+      if (chunkId > textLines.length || chunkId < 1) failure("Out of bounds");
       else resolve({ text: textLines[chunkId - 1], newId: chunkId });
     });
 }
@@ -33,6 +33,7 @@ function makeRemoteFetcher(file: string, updateCachedPosition) {
       })
       .then(
         ({ data }) => {
+          if (data.error) throw data.error;
           updateCachedPosition(data.chunkId);
           return { text: data.text, newId: data.chunkId };
         },
