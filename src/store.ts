@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import update from "immutability-helper";
 import { NumberedWord } from "./Word";
 import { CachedPositions } from "./ChunkRetriever";
-import { without, trim, compact, take, map } from "lodash";
+import { without, trim, chain, compact, take, map } from "lodash";
 import { TextSource } from "./App/TextSourceChooser";
 import { WordState, wordStateReducer } from "./reducers/wordState";
 import {
@@ -25,13 +25,16 @@ export type WordAction = ActionType<typeof actions>;
 function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
   switch (action.type) {
     case getType(actions.setText):
-      let text: string = action.payload.text;
-      const newWords = text.substr(0, 1000).split(/[\s—–]+/gu);
-      return map(compact(take(newWords, 40)), (word, index) => ({
-        index,
-        word,
-        classNames: emptyStrArr
-      }));
+      const newWords = action.payload.text.substr(0, 1000).split(/[\s—–]+/gu);
+      return chain(newWords)
+        .take(40)
+        .compact()
+        .map((word, index) => ({
+          index,
+          word,
+          classNames: emptyStrArr
+        }))
+        .value();
     case getType(actions.wordClicked):
       return update(words, {
         [action.payload]: {
