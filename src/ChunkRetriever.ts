@@ -1,7 +1,6 @@
 import axios from "axios";
 import { isUndefined, keys, forOwn } from "lodash";
 import { TextSource } from "./App/TextSourceChooser";
-import { LocalTextSource } from "./store";
 
 type MyPr = Promise<{ text: string; newId: number }>;
 
@@ -18,10 +17,12 @@ export interface CachedPositions {
 
 function makeLocalFetcher(textLines: string[]) {
   return (chunkId: number): MyPr =>
-    new Promise((resolve, failure) => {
-      if (chunkId > textLines.length || chunkId < 1) failure("Out of bounds");
-      else resolve({ text: textLines[chunkId - 1], newId: chunkId });
-    });
+    new Promise(
+      (resolve, failure) =>
+        chunkId <= textLines.length && chunkId >= 1
+          ? resolve({ text: textLines[chunkId - 1], newId: chunkId })
+          : failure("Out of bounds")
+    );
 }
 
 function makeRemoteFetcher(file: string, updateCachedPosition) {
