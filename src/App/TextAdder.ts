@@ -14,7 +14,11 @@ interface OutsideProps {
 }
 
 const onDone = (id: string, text: string) =>
-  addLocalTextSource({ id, description: id, text } as LocalTextSource);
+  addLocalTextSource({
+    id,
+    description: id,
+    chunks: text.split("\n").filter(line => line !== "")
+  } as LocalTextSource);
 
 export default connect<void, DispatchProps, OutsideProps, State>(
   null,

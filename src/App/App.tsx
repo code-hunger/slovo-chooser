@@ -62,7 +62,7 @@ class AppClass extends React.Component<Props, State> {
 
   importLocalSources = (localTextSources: LocalTextSource[]) => {
     localTextSources.forEach(textSource =>
-      this.chunkRetriever.addTextSource(textSource.id, textSource.text)
+      this.chunkRetriever.addTextSource(textSource.id, textSource.chunks)
     );
   };
 

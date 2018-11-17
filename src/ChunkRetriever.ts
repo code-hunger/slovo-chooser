@@ -69,11 +69,11 @@ export default class ChunkRetriever {
         return this.getOptions();
       });
 
-  addTextSource(id: string, text: string) {
+  addTextSource(id: string, chunks: string[]) {
     if (this.sources[id]) return false;
 
     this.sources[id] = {
-      fetch: makeLocalFetcher(text.split("\n").filter(line => line !== "")),
+      fetch: makeLocalFetcher(chunks),
       description: id
     };
 
