@@ -8,7 +8,7 @@ import * as PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import { WithStyles, Theme } from "@material-ui/core";
 
-import ChunkRetriever, {
+import {
   CachedPositions,
   fetchSourcesFromServer,
   createTextSource,
@@ -21,7 +21,7 @@ import { NumberedWord } from "../Word";
 import TextSourceAccumulator from "./TextSourceAccumulator";
 import SavedWordsContainer from "../SavedWordsContainer";
 
-import { LocalTextSource } from "../store";
+import { PersistedTextSource, LocalTextSource } from "../store";
 
 type Props = AppProps & WithStyles<typeof styles>;
 
@@ -39,20 +39,17 @@ interface State {
 }
 
 class AppClass extends React.Component<Props, State> {
-  private chunkRetriever: ChunkRetriever;
+  private chunkSources: {
+    [id: string]: PersistedTextSource;
+  } = {};
 
   constructor(props: Props) {
     super(props);
 
-    this.chunkRetriever = new ChunkRetriever();
-
     fetchSourcesFromServer(props.textSourcePositions)
       .then(remoteSources => {
-        Object.assign(
-          this.chunkRetriever.sources,
-          mapKeys(remoteSources, "id")
-        );
-        const sources = values(this.chunkRetriever.sources);
+        Object.assign(this.chunkSources, mapKeys(remoteSources, "id"));
+        const sources = values(this.chunkSources);
         this.setState({ sources });
         return sources;
       })
@@ -66,13 +63,13 @@ class AppClass extends React.Component<Props, State> {
 
     this.state = {
       textSourceId: undefined,
-      sources: values(this.chunkRetriever.sources)
+      sources: values(this.chunkSources)
     };
   }
 
   importLocalSources = (localTextSources: LocalTextSource[]) =>
     Object.assign(
-      this.chunkRetriever.sources,
+      this.chunkSources,
       mapKeys(
         localTextSources.map(({ id, chunks }) =>
           createTextSource(id, chunks, this.props.textSourcePositions[id])
@@ -85,7 +82,7 @@ class AppClass extends React.Component<Props, State> {
     if (nextProps.localTextSources !== this.props.localTextSources) {
       this.importLocalSources(nextProps.localTextSources);
       this.setState({
-        sources: values(this.chunkRetriever.sources)
+        sources: values(this.chunkSources)
       });
     }
   }
@@ -96,14 +93,11 @@ class AppClass extends React.Component<Props, State> {
   ) => {
     if (isUndefined(textSourceId)) throw "No text source";
 
-    return getNextChunk(
-      this.chunkRetriever.sources[textSourceId],
-      chunkId
-    ).then(
+    return getNextChunk(this.chunkSources[textSourceId], chunkId).then(
       chunk => {
         this.props.setText(chunk.text, chunk.newId, textSourceId);
         this.setState({
-          sources: values(this.chunkRetriever.sources),
+          sources: values(this.chunkSources),
           textSourceId
         });
       },
@@ -123,9 +117,9 @@ class AppClass extends React.Component<Props, State> {
     return isUndefined(localTextSourceId)
       ? false
       : () => {
-          delete this.chunkRetriever.sources[id];
+          delete this.chunkSources[id];
 
-          this.setState({ sources: values(this.chunkRetriever.sources) });
+          this.setState({ sources: values(this.chunkSources) });
           this.props.textSourceRemover(localTextSourceId);
         };
   };

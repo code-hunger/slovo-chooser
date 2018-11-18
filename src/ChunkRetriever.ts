@@ -5,10 +5,6 @@ import { PersistedTextSource } from "./store";
 
 type MyPr = Promise<{ text: string; newId: number }>;
 
-export interface Sources {
-  [id: string]: PersistedTextSource;
-}
-
 export interface CachedPositions {
   [id: string]: number;
 }
@@ -79,10 +75,6 @@ export const createTextSource = (id: string, text: string, position: number) =>
     chunkId: position,
     origin: "local"
   };
-
-export default class ChunkRetriever {
-  sources: Sources = {};
-}
 
 export const getNextChunk = (source: PersistedTextSource, chunkId: number) =>
   sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
