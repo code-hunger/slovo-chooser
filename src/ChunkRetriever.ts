@@ -75,7 +75,7 @@ export default class ChunkRetriever {
         )
       );
 
-  addTextSource(id: string, text: string) {
+  addTextSource(id: string, text: string, position: number = 1) {
     if (this.sources[id]) return false;
 
     this.sources[id] = {
@@ -83,7 +83,7 @@ export default class ChunkRetriever {
       description: id,
       id,
       value: text,
-      chunkId: 1
+      chunkId: position
     };
 
     return true;

@@ -8,10 +8,7 @@ import * as PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import { WithStyles, Theme } from "@material-ui/core";
 
-import ChunkRetriever, {
-  CachedPositions,
-  getOptions,
-} from "../ChunkRetriever";
+import ChunkRetriever, { CachedPositions, getOptions } from "../ChunkRetriever";
 
 import TextAdder from "./TextAdder";
 import TextSourceChooser, { TextSource } from "./TextSourceChooser";
@@ -66,7 +63,11 @@ class AppClass extends React.Component<Props, State> {
 
   importLocalSources = (localTextSources: LocalTextSource[]) => {
     localTextSources.forEach(textSource =>
-      this.chunkRetriever.addTextSource(textSource.id, textSource.chunks)
+      this.chunkRetriever.addTextSource(
+        textSource.id,
+        textSource.chunks,
+        this.props.textSourcePositions[textSource.id]
+      )
     );
   };
 
