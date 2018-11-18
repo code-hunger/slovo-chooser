@@ -71,7 +71,7 @@
          (let [path (str base-dir file)
                chunk-id (parse-int chunkId)]
            (if-not (fs/file? path)
-             {:text "File not given"}
+             {:error "File not given"}
              (if-let [found-chunk (find-chunk-in-file path chunk-id)]
                {:text (found-chunk :text) :chunkId (found-chunk :id )}
                {:error "The wanted line is past the end of the file."})))))
