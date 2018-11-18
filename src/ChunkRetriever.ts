@@ -93,22 +93,23 @@ export default class ChunkRetriever {
     delete this.sources[id];
   }
 
-  getOptions(sources: Sources): TextSource<string>[] {
-    return keys(sources).map(
-      key =>
-        ({
-          id: key,
-          description: sources[key].description,
-          chunkId: sources[key].chunkId,
-          origin: "remote"
-        } as TextSource<typeof key>)
-    );
-  }
-
-  getNextChunk(source: PersistedTextSource, chunkId: number): MyPr {
-    return sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
-      source.chunkId = chunk.newId;
-      return chunk;
-    });
-  }
+  getNextChunk = (textSourceId: string, chunkId: number) =>
+    getNextChunk(this.sources[textSourceId], chunkId);
 }
+
+export const getOptions = (sources: Sources) =>
+  keys(sources).map(
+    key =>
+      ({
+        id: key,
+        description: sources[key].description,
+        chunkId: sources[key].chunkId,
+        origin: "remote"
+      } as TextSource<typeof key>)
+  );
+
+export const getNextChunk = (source: PersistedTextSource, chunkId: number) =>
+  sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
+    source.chunkId = chunk.newId;
+    return chunk;
+  });
