@@ -1,6 +1,5 @@
 import axios from "axios";
-import { isUndefined, keys, forOwn } from "lodash";
-import { memoize } from "lodash";
+import { memoize, isUndefined, keys, map } from "lodash";
 import { TextSource } from "./App/TextSourceChooser";
 import { PersistedTextSource } from "./store";
 
@@ -62,18 +61,15 @@ export default class ChunkRetriever {
     axios
       .get("http://localhost:3000/status", { responseType: "json" })
       .then(({ data }) =>
-        forOwn(
-          data,
-          (_, file) =>
-            (this.sources[file] = {
-              description: file.replace(/_/g, " "),
-              value: file,
-              id: file,
-              origin: "remote",
-              chunkId: cachedPositions[file]
-            })
-        )
-      );
+        map(data, (_, file) => ({
+          description: file.replace(/_/g, " "),
+          value: file,
+          id: file,
+          origin: "remote",
+          chunkId: cachedPositions[file]
+        } as PersistedTextSource))
+      )
+      .then(newSources => Object.assign(this.sources, newSources));
 
   addTextSource(id: string, text: string, position: number = 1) {
     if (this.sources[id]) return false;
