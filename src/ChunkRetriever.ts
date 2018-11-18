@@ -110,9 +110,7 @@ export default class ChunkRetriever {
 
   getNextChunk(textSourceId: string, chunkId?: number): MyPr {
     if (isUndefined(chunkId)) {
-      if (textSourceId in this.cachedPositions)
-        chunkId = this.cachedPositions[textSourceId] + 1;
-      else chunkId = 1;
+      chunkId = 1;
     }
 
     return this.sources[textSourceId].fetch(chunkId).then(response => {
