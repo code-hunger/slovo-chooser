@@ -87,12 +87,6 @@ export const createTextSource = (
 export default class ChunkRetriever {
   sources: Sources = {};
 
-  addTextSource(id: string, text: string, position: number = 1) {
-    if (this.sources[id]) return;
-
-    this.sources[id] = createTextSource(id, text, position);
-  }
-
   removeTextSource(id: string) {
     delete this.sources[id];
   }

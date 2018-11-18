@@ -1,12 +1,5 @@
 import * as React from "react";
-import {
-  find,
-  isUndefined,
-  get as getPath,
-  mapKeys,
-  assignWith,
-  values
-} from "lodash";
+import { find, isUndefined, get as getPath, mapKeys, values } from "lodash";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -17,7 +10,8 @@ import { WithStyles, Theme } from "@material-ui/core";
 
 import ChunkRetriever, {
   CachedPositions,
-  fetchSourcesFromServer
+  fetchSourcesFromServer,
+  createTextSource
 } from "../ChunkRetriever";
 
 import TextAdder from "./TextAdder";
@@ -53,7 +47,10 @@ class AppClass extends React.Component<Props, State> {
 
     fetchSourcesFromServer(props.textSourcePositions)
       .then(remoteSources => {
-        Object.assign(this.chunkRetriever.sources, mapKeys(remoteSources, "id"));
+        Object.assign(
+          this.chunkRetriever.sources,
+          mapKeys(remoteSources, "id")
+        );
         const sources = values(this.chunkRetriever.sources);
         this.setState({ sources });
         return sources;
@@ -72,15 +69,20 @@ class AppClass extends React.Component<Props, State> {
     };
   }
 
-  importLocalSources = (localTextSources: LocalTextSource[]) => {
-    localTextSources.forEach(textSource =>
-      this.chunkRetriever.addTextSource(
-        textSource.id,
-        textSource.chunks,
-        this.props.textSourcePositions[textSource.id]
+  importLocalSources = (localTextSources: LocalTextSource[]) =>
+    Object.assign(
+      this.chunkRetriever.sources,
+      mapKeys(
+        localTextSources.map(textSource =>
+          createTextSource(
+            textSource.id,
+            textSource.chunks,
+            this.props.textSourcePositions[textSource.id]
+          )
+        ),
+        "id"
       )
     );
-  };
 
   componentWillReceiveProps(nextProps: AppProps) {
     if (nextProps.localTextSources !== this.props.localTextSources) {
