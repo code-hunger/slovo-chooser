@@ -56,7 +56,7 @@ export const sourceFetchers = {
 };
 
 export default class ChunkRetriever {
-  private sources: Sources = {};
+  sources: Sources = {};
 
   fetchOptionsFromServer = (cachedPositions: CachedPositions) =>
     axios
@@ -93,20 +93,19 @@ export default class ChunkRetriever {
     delete this.sources[id];
   }
 
-  getOptions(): TextSource<string>[] {
-    return keys(this.sources).map(
+  getOptions(sources: Sources): TextSource<string>[] {
+    return keys(sources).map(
       key =>
         ({
           id: key,
-          description: this.sources[key].description,
-          chunkId: this.sources[key].chunkId,
+          description: sources[key].description,
+          chunkId: sources[key].chunkId,
           origin: "remote"
         } as TextSource<typeof key>)
     );
   }
 
-  getNextChunk(textSourceId: string, chunkId: number): MyPr {
-    const source = this.sources[textSourceId];
+  getNextChunk(source: PersistedTextSource, chunkId: number): MyPr {
     return sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
       source.chunkId = chunk.newId;
       return chunk;

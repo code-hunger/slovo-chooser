@@ -42,7 +42,7 @@ class AppClass extends React.Component<Props, State> {
     this.chunkRetriever = new ChunkRetriever();
     this.chunkRetriever
       .fetchOptionsFromServer(props.textSourcePositions)
-      .then(() => this.chunkRetriever.getOptions())
+      .then(() => this.chunkRetriever.getOptions(this.chunkRetriever.sources))
       .then(sources => {
         this.setState({ sources });
         return sources;
@@ -57,7 +57,7 @@ class AppClass extends React.Component<Props, State> {
 
     this.state = {
       textSourceId: undefined,
-      sources: this.chunkRetriever.getOptions()
+      sources: this.chunkRetriever.getOptions(this.chunkRetriever.sources)
     };
   }
 
@@ -70,7 +70,9 @@ class AppClass extends React.Component<Props, State> {
   componentWillReceiveProps(nextProps: AppProps) {
     if (nextProps.localTextSources !== this.props.localTextSources) {
       this.importLocalSources(nextProps.localTextSources);
-      this.setState({ sources: this.chunkRetriever.getOptions() });
+      this.setState({
+        sources: this.chunkRetriever.getOptions(this.chunkRetriever.sources)
+      });
     }
   }
 
@@ -80,16 +82,20 @@ class AppClass extends React.Component<Props, State> {
   ) => {
     if (isUndefined(textSourceId)) throw "No text source";
 
-    return this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
-      chunk => {
-        this.props.setText(chunk.text, chunk.newId, textSourceId);
-        this.setState({
-          sources: this.chunkRetriever.getOptions(),
-          textSourceId
-        });
-      },
-      fail => alert("Error fetching chunk from server: " + fail)
-    );
+    return this.chunkRetriever
+      .getNextChunk(this.chunkRetriever.sources[textSourceId], chunkId)
+      .then(
+        chunk => {
+          this.props.setText(chunk.text, chunk.newId, textSourceId);
+          this.setState({
+            sources: this.chunkRetriever.getOptions(
+              this.chunkRetriever.sources
+            ),
+            textSourceId
+          });
+        },
+        fail => alert("Error fetching chunk from server: " + fail)
+      );
   };
 
   setTextSource = (id: string) => {
@@ -105,7 +111,9 @@ class AppClass extends React.Component<Props, State> {
       ? false
       : () => {
           this.chunkRetriever.removeTextSource(id);
-          this.setState({ sources: this.chunkRetriever.getOptions() });
+          this.setState({
+            sources: this.chunkRetriever.getOptions(this.chunkRetriever.sources)
+          });
           this.props.textSourceRemover(localTextSourceId);
         };
   };
