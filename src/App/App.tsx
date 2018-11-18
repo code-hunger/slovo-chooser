@@ -1,5 +1,12 @@
 import * as React from "react";
-import { find, isUndefined, get as getPath, mapKeys, values } from "lodash";
+import {
+  find,
+  isUndefined,
+  get as getPath,
+  mapKeys,
+  assignWith,
+  values
+} from "lodash";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -47,9 +54,7 @@ class AppClass extends React.Component<Props, State> {
     fetchSourcesFromServer(props.textSourcePositions)
       .then(remoteSources => {
         Object.assign(this.chunkRetriever.sources, mapKeys(remoteSources, "id"));
-        return values(this.chunkRetriever.sources);
-      })
-      .then(sources => {
+        const sources = values(this.chunkRetriever.sources);
         this.setState({ sources });
         return sources;
       })
