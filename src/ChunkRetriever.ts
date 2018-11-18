@@ -108,7 +108,7 @@ export const getOptions = (sources: Sources) =>
         id: key,
         description: sources[key].description,
         chunkId: sources[key].chunkId,
-        origin: "remote"
+        origin: sources[key].origin
       } as TextSource<typeof key>)
   );
 
