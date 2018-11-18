@@ -56,14 +56,9 @@ export const sourceFetchers = {
 };
 
 export default class ChunkRetriever {
-  private cachedPositions: CachedPositions;
   private sources: Sources = {};
 
-  constructor(cachedPositions: CachedPositions = {}) {
-    this.cachedPositions = cachedPositions;
-  }
-
-  fetchOptionsFromServer = () =>
+  fetchOptionsFromServer = (cachedPositions: CachedPositions) =>
     axios
       .get("http://localhost:3000/status", { responseType: "json" })
       .then(({ data }) =>
@@ -75,7 +70,7 @@ export default class ChunkRetriever {
               value: file,
               id: file,
               origin: "remote",
-              chunkId: this.cachedPositions[file]
+              chunkId: cachedPositions[file]
             })
         )
       );
@@ -104,7 +99,7 @@ export default class ChunkRetriever {
         ({
           id: key,
           description: this.sources[key].description,
-          chunkId: this.cachedPositions[key],
+          chunkId: this.sources[key].chunkId,
           origin: "remote"
         } as TextSource<typeof key>)
     );
@@ -113,7 +108,6 @@ export default class ChunkRetriever {
   getNextChunk(textSourceId: string, chunkId: number): MyPr {
     const source = this.sources[textSourceId];
     return sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
-      this.cachedPositions[source.id] = chunk.newId;
       this.sources[source.id].chunkId = chunk.newId;
       return chunk;
     });
