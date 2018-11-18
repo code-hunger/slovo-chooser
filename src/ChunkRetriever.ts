@@ -60,21 +60,22 @@ export default class ChunkRetriever {
     this.cachedPositions = cachedPositions;
   }
 
-  getOptionsFromServer = () =>
+  fetchOptionsFromServer = () =>
     axios
       .get("http://localhost:3000/status", { responseType: "json" })
-      .then(({ data }) => {
-        forOwn(data, (_, file) => {
-          this.sources[file] = {
-            description: file.replace(/_/g, " "),
-            fetch: sourceFetchers.remote(
-              file,
-              chunkId => (this.cachedPositions[file] = chunkId)
-            )
-          };
-        });
-        return this.getOptions();
-      });
+      .then(({ data }) =>
+        forOwn(
+          data,
+          (_, file) =>
+            (this.sources[file] = {
+              description: file.replace(/_/g, " "),
+              fetch: sourceFetchers.remote(
+                file,
+                chunkId => (this.cachedPositions[file] = chunkId)
+              )
+            })
+        )
+      );
 
   addTextSource(id: string, chunks: string[]) {
     if (this.sources[id]) return false;
