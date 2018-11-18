@@ -1,5 +1,5 @@
 import * as React from "react";
-import { find, isUndefined, get as getPath, mapKeys } from "lodash";
+import { find, isUndefined, get as getPath, mapKeys, values } from "lodash";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -10,7 +10,6 @@ import { WithStyles, Theme } from "@material-ui/core";
 
 import ChunkRetriever, {
   CachedPositions,
-  getOptions,
   fetchSourcesFromServer
 } from "../ChunkRetriever";
 
@@ -48,7 +47,7 @@ class AppClass extends React.Component<Props, State> {
     fetchSourcesFromServer(props.textSourcePositions)
       .then(remoteSources => {
         Object.assign(this.chunkRetriever.sources, mapKeys(remoteSources, "id"));
-        return getOptions(this.chunkRetriever.sources);
+        return values(this.chunkRetriever.sources);
       })
       .then(sources => {
         this.setState({ sources });
@@ -64,7 +63,7 @@ class AppClass extends React.Component<Props, State> {
 
     this.state = {
       textSourceId: undefined,
-      sources: getOptions(this.chunkRetriever.sources)
+      sources: values(this.chunkRetriever.sources)
     };
   }
 
@@ -82,7 +81,7 @@ class AppClass extends React.Component<Props, State> {
     if (nextProps.localTextSources !== this.props.localTextSources) {
       this.importLocalSources(nextProps.localTextSources);
       this.setState({
-        sources: getOptions(this.chunkRetriever.sources)
+        sources: values(this.chunkRetriever.sources)
       });
     }
   }
@@ -97,7 +96,7 @@ class AppClass extends React.Component<Props, State> {
       chunk => {
         this.props.setText(chunk.text, chunk.newId, textSourceId);
         this.setState({
-          sources: getOptions(this.chunkRetriever.sources),
+          sources: values(this.chunkRetriever.sources),
           textSourceId
         });
       },
@@ -118,7 +117,7 @@ class AppClass extends React.Component<Props, State> {
       ? false
       : () => {
           this.chunkRetriever.removeTextSource(id);
-          this.setState({ sources: getOptions(this.chunkRetriever.sources) });
+          this.setState({ sources: values(this.chunkRetriever.sources) });
           this.props.textSourceRemover(localTextSourceId);
         };
   };
