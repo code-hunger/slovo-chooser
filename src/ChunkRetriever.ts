@@ -71,11 +71,7 @@ export const fetchSourcesFromServer = (cachedPositions: CachedPositions) =>
       )
     );
 
-export const createTextSource = (
-  id: string,
-  text: string,
-  position: number
-) =>
+export const createTextSource = (id: string, text: string, position: number) =>
   <PersistedTextSource>{
     id,
     value: text,
@@ -86,13 +82,6 @@ export const createTextSource = (
 
 export default class ChunkRetriever {
   sources: Sources = {};
-
-  removeTextSource(id: string) {
-    delete this.sources[id];
-  }
-
-  getNextChunk = (textSourceId: string, chunkId: number) =>
-    getNextChunk(this.sources[textSourceId], chunkId);
 }
 
 export const getNextChunk = (source: PersistedTextSource, chunkId: number) =>

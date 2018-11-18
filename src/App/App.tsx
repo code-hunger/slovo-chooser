@@ -11,7 +11,8 @@ import { WithStyles, Theme } from "@material-ui/core";
 import ChunkRetriever, {
   CachedPositions,
   fetchSourcesFromServer,
-  createTextSource
+  createTextSource,
+  getNextChunk
 } from "../ChunkRetriever";
 
 import TextAdder from "./TextAdder";
@@ -73,12 +74,8 @@ class AppClass extends React.Component<Props, State> {
     Object.assign(
       this.chunkRetriever.sources,
       mapKeys(
-        localTextSources.map(textSource =>
-          createTextSource(
-            textSource.id,
-            textSource.chunks,
-            this.props.textSourcePositions[textSource.id]
-          )
+        localTextSources.map(({ id, chunks }) =>
+          createTextSource(id, chunks, this.props.textSourcePositions[id])
         ),
         "id"
       )
@@ -99,7 +96,10 @@ class AppClass extends React.Component<Props, State> {
   ) => {
     if (isUndefined(textSourceId)) throw "No text source";
 
-    return this.chunkRetriever.getNextChunk(textSourceId, chunkId).then(
+    return getNextChunk(
+      this.chunkRetriever.sources[textSourceId],
+      chunkId
+    ).then(
       chunk => {
         this.props.setText(chunk.text, chunk.newId, textSourceId);
         this.setState({
@@ -123,7 +123,8 @@ class AppClass extends React.Component<Props, State> {
     return isUndefined(localTextSourceId)
       ? false
       : () => {
-          this.chunkRetriever.removeTextSource(id);
+          delete this.chunkRetriever.sources[id];
+
           this.setState({ sources: values(this.chunkRetriever.sources) });
           this.props.textSourceRemover(localTextSourceId);
         };
