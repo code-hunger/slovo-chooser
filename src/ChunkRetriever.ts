@@ -54,22 +54,30 @@ export const sourceFetchers = {
   remote: memoize(makeRemoteFetcher)
 };
 
+export const fetchSourcesFromServer = (cachedPositions: CachedPositions) =>
+  axios
+    .get("http://localhost:3000/status", { responseType: "json" })
+    .then(({ data }) =>
+      map(
+        data,
+        (_, file) =>
+          ({
+            description: file.replace(/_/g, " "),
+            value: file,
+            id: file,
+            origin: "remote",
+            chunkId: cachedPositions[file]
+          } as PersistedTextSource)
+      )
+    );
+
 export default class ChunkRetriever {
   sources: Sources = {};
 
-  fetchOptionsFromServer = (cachedPositions: CachedPositions) =>
-    axios
-      .get("http://localhost:3000/status", { responseType: "json" })
-      .then(({ data }) =>
-        map(data, (_, file) => ({
-          description: file.replace(/_/g, " "),
-          value: file,
-          id: file,
-          origin: "remote",
-          chunkId: cachedPositions[file]
-        } as PersistedTextSource))
-      )
-      .then(newSources => Object.assign(this.sources, newSources));
+  fetchOptionsFromServer = cachedPositions =>
+    fetchSourcesFromServer(cachedPositions).then(newSources =>
+      Object.assign(this.sources, newSources)
+    );
 
   addTextSource(id: string, text: string, position: number = 1) {
     if (this.sources[id]) return false;
