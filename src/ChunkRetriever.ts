@@ -103,18 +103,13 @@ export default class ChunkRetriever {
     );
   }
 
-  positionBySource = (textSourceId: string, newValue?: number) => {
-    if (isUndefined(newValue)) return this.cachedPositions[textSourceId];
-    return (this.cachedPositions[textSourceId] = newValue);
-  };
-
   getNextChunk(textSourceId: string, chunkId?: number): MyPr {
     if (isUndefined(chunkId)) {
       chunkId = 1;
     }
 
     return this.sources[textSourceId].fetch(chunkId).then(response => {
-      this.positionBySource(textSourceId, chunkId);
+      if (!isUndefined(chunkId)) this.cachedPositions[textSourceId] = chunkId;
       return response;
     });
   }
