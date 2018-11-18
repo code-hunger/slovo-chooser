@@ -38,7 +38,7 @@ function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
     case getType(actions.wordClicked):
       return update(words, {
         [action.payload]: {
-          classNames: (classes: ReadonlyArray<string>) =>
+          classNames: classes =>
             classes.indexOf("unknown") > -1
               ? without(classes, "unknown")
               : classes.concat("unknown")
@@ -109,7 +109,7 @@ function dictionaryReducer(dictionary: string = "", action: WordAction) {
 }
 
 export interface LocalTextSource extends TextSource<string> {
-  chunks: string[];
+  chunks: string;
   origin: "local";
 }
 
@@ -127,3 +127,8 @@ export const reducers = combineReducers({
 });
 
 export type State = StateType<typeof reducers>;
+
+export interface PersistedTextSource extends TextSource<string> {
+  value: string; // stores the value by which from the TextSource a line can be retrieved
+  chunkId: number;
+}

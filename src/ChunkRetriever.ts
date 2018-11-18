@@ -1,21 +1,25 @@
 import axios from "axios";
 import { isUndefined, keys, forOwn } from "lodash";
+import { memoize } from "lodash";
 import { TextSource } from "./App/TextSourceChooser";
+import { PersistedTextSource } from "./store";
 
 type MyPr = Promise<{ text: string; newId: number }>;
 
 export interface Sources {
-  [id: string]: {
-    fetch: (chunkId: number) => MyPr;
-    description: string;
-  };
+  [id: string]: PersistedTextSource;
 }
 
 export interface CachedPositions {
   [id: string]: number;
 }
 
-function makeLocalFetcher(textLines: string[]) {
+function makeLocalFetcher(text: string) {
+  const textLines =
+    typeof text === "string" // backward compatability
+      ? text.split("\n").filter(line => line !== "")
+      : text;
+
   return (chunkId: number): MyPr =>
     new Promise(
       (resolve, failure) =>
@@ -25,7 +29,7 @@ function makeLocalFetcher(textLines: string[]) {
     );
 }
 
-function makeRemoteFetcher(file: string, updateCachedPosition) {
+function makeRemoteFetcher(file: string) {
   return (chunkId: number): MyPr =>
     axios
       .get("http://localhost:3000/text", {
@@ -35,7 +39,6 @@ function makeRemoteFetcher(file: string, updateCachedPosition) {
       .then(
         ({ data }) => {
           if (data.error) throw data.error;
-          updateCachedPosition(data.chunkId);
           return { text: data.text, newId: data.chunkId };
         },
         error => {
@@ -48,8 +51,8 @@ function makeRemoteFetcher(file: string, updateCachedPosition) {
 }
 
 export const sourceFetchers = {
-  local: makeLocalFetcher,
-  remote: makeRemoteFetcher
+  local: memoize(makeLocalFetcher),
+  remote: memoize(makeRemoteFetcher)
 };
 
 export default class ChunkRetriever {
@@ -69,20 +72,23 @@ export default class ChunkRetriever {
           (_, file) =>
             (this.sources[file] = {
               description: file.replace(/_/g, " "),
-              fetch: sourceFetchers.remote(
-                file,
-                chunkId => (this.cachedPositions[file] = chunkId)
-              )
+              value: file,
+              id: file,
+              origin: "remote",
+              chunkId: this.cachedPositions[file]
             })
         )
       );
 
-  addTextSource(id: string, chunks: string[]) {
+  addTextSource(id: string, text: string) {
     if (this.sources[id]) return false;
 
     this.sources[id] = {
-      fetch: sourceFetchers.local(chunks),
-      description: id
+      origin: "local",
+      description: id,
+      id,
+      value: text,
+      chunkId: 1
     };
 
     return true;
@@ -105,9 +111,11 @@ export default class ChunkRetriever {
   }
 
   getNextChunk(textSourceId: string, chunkId: number): MyPr {
-    return this.sources[textSourceId].fetch(chunkId).then(response => {
-      this.cachedPositions[textSourceId] = chunkId;
-      return response;
+    const source = this.sources[textSourceId];
+    return sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
+      this.cachedPositions[source.id] = chunk.newId;
+      this.sources[source.id].chunkId = chunk.newId;
+      return chunk;
     });
   }
 }

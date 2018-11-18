@@ -17,7 +17,7 @@ const onDone = (id: string, text: string) =>
   addLocalTextSource({
     id,
     description: id,
-    chunks: text.split("\n").filter(line => line !== "")
+    chunks: text
   } as LocalTextSource);
 
 export default connect<void, DispatchProps, OutsideProps, State>(
