@@ -103,7 +103,7 @@ export default class ChunkRetriever {
     );
   }
 
-  getNextChunk(textSourceId: string, chunkId: number = 1): MyPr {
+  getNextChunk(textSourceId: string, chunkId: number): MyPr {
     return this.sources[textSourceId].fetch(chunkId).then(response => {
       this.cachedPositions[textSourceId] = chunkId;
       return response;

@@ -74,7 +74,7 @@ class AppClass extends React.Component<Props, State> {
   }
 
   switchToNextChunk = (
-    chunkId?: number,
+    chunkId: number,
     textSourceId: string | undefined = this.state.textSourceId
   ) => {
     if (isUndefined(textSourceId)) throw "No text source";
