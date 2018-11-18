@@ -1,5 +1,5 @@
 import axios from "axios";
-import { memoize, isUndefined, keys, map } from "lodash";
+import { memoize, map, values } from "lodash";
 import { TextSource } from "./App/TextSourceChooser";
 import { PersistedTextSource } from "./store";
 
@@ -96,16 +96,7 @@ export default class ChunkRetriever {
     getNextChunk(this.sources[textSourceId], chunkId);
 }
 
-export const getOptions = (sources: Sources) =>
-  keys(sources).map(
-    key =>
-      ({
-        id: key,
-        description: sources[key].description,
-        chunkId: sources[key].chunkId,
-        origin: sources[key].origin
-      } as TextSource<typeof key>)
-  );
+export const getOptions = (sources: Sources) => values(sources);
 
 export const getNextChunk = (source: PersistedTextSource, chunkId: number) =>
   sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
