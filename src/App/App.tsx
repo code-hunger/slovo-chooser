@@ -1,5 +1,5 @@
 import * as React from "react";
-import { find, isUndefined, get as getPath } from "lodash";
+import { find, isUndefined, get as getPath, mapKeys } from "lodash";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -8,7 +8,11 @@ import * as PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import { WithStyles, Theme } from "@material-ui/core";
 
-import ChunkRetriever, { CachedPositions, getOptions } from "../ChunkRetriever";
+import ChunkRetriever, {
+  CachedPositions,
+  getOptions,
+  fetchSourcesFromServer
+} from "../ChunkRetriever";
 
 import TextAdder from "./TextAdder";
 import TextSourceChooser, { TextSource } from "./TextSourceChooser";
@@ -40,9 +44,12 @@ class AppClass extends React.Component<Props, State> {
     super(props);
 
     this.chunkRetriever = new ChunkRetriever();
-    this.chunkRetriever
-      .fetchOptionsFromServer(props.textSourcePositions)
-      .then(() => getOptions(this.chunkRetriever.sources))
+
+    fetchSourcesFromServer(props.textSourcePositions)
+      .then(remoteSources => {
+        Object.assign(this.chunkRetriever.sources, mapKeys(remoteSources, "id"));
+        return getOptions(this.chunkRetriever.sources);
+      })
       .then(sources => {
         this.setState({ sources });
         return sources;

@@ -74,11 +74,6 @@ export const fetchSourcesFromServer = (cachedPositions: CachedPositions) =>
 export default class ChunkRetriever {
   sources: Sources = {};
 
-  fetchOptionsFromServer = cachedPositions =>
-    fetchSourcesFromServer(cachedPositions).then(newSources =>
-      Object.assign(this.sources, newSources)
-    );
-
   addTextSource(id: string, text: string, position: number = 1) {
     if (this.sources[id]) return false;
 
