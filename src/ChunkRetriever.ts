@@ -108,7 +108,7 @@ export default class ChunkRetriever {
   getNextChunk(textSourceId: string, chunkId: number): MyPr {
     const source = this.sources[textSourceId];
     return sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
-      this.sources[source.id].chunkId = chunk.newId;
+      source.chunkId = chunk.newId;
       return chunk;
     });
   }
