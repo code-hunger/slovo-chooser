@@ -32,21 +32,23 @@ export interface TextSource<IdType> {
   origin: keyof (typeof sourceFetchers);
 }
 
-interface Props<IdType> {
-  textSources: TextSource<IdType>[];
+interface Props<IdType, SourceT extends TextSource<IdType>> {
+  textSources: Map<string, SourceT>;
   setTextSource: (id: IdType) => void;
   currentSourceId?: IdType;
   removeTextSource: (id: IdType) => false | (() => void);
 }
 
-type PropsWithStyles<T> = Props<T> & WithStyles<typeof styles>;
+type PropsWithStyles<T, U extends TextSource<T>> = Props<T, U> &
+  WithStyles<typeof styles>;
 
 interface State {}
 
-class TextSourceChooser<IdType> extends React.PureComponent<
-  PropsWithStyles<IdType>,
-  State
-> {
+class TextSourceChooser<
+  IdType,
+  SourceT extends TextSource<IdType>
+> extends React.PureComponent<PropsWithStyles<IdType, SourceT>, State> {
+
   renderTextSourceItem = ({ id, description, chunkId }: TextSource<IdType>) => {
     const classes = this.props.classes;
     const isCurrent = id === this.props.currentSourceId;
@@ -76,7 +78,12 @@ class TextSourceChooser<IdType> extends React.PureComponent<
     return (
       <>
         <Typography variant="headline">Choose a text source</Typography>
-        <List>{this.props.textSources.map(this.renderTextSourceItem)}</List>
+        <List>
+          {Array.from(
+            this.props.textSources.values(),
+            this.renderTextSourceItem
+          )}
+        </List>
       </>
     );
   }

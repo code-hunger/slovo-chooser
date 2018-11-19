@@ -76,8 +76,10 @@ export const createTextSource = (id: string, text: string, position: number) =>
     origin: "local"
   };
 
-export const getNextChunk = (source: PersistedTextSource, chunkId: number) =>
+export const getNextChunk = (
+  source: Readonly<PersistedTextSource>,
+  chunkId: number
+) =>
   sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
-    source.chunkId = chunk.newId;
     return chunk;
   });

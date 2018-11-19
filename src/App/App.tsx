@@ -1,5 +1,6 @@
 import * as React from "react";
 import { find, isUndefined, get as getPath, mapKeys, values } from "lodash";
+import update from "immutability-helper";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -35,23 +36,26 @@ interface AppProps {
 
 interface State {
   textSourceId?: string;
-  sources: TextSource<string>[];
+  sources: Map<string, PersistedTextSource>;
 }
 
 class AppClass extends React.Component<Props, State> {
-  private chunkSources: {
-    [id: string]: PersistedTextSource;
-  } = {};
-
   constructor(props: Props) {
     super(props);
 
     fetchSourcesFromServer(props.textSourcePositions)
-      .then(remoteSources => {
-        Object.assign(this.chunkSources, mapKeys(remoteSources, "id"));
-        const sources = values(this.chunkSources);
-        this.setState({ sources });
-        return sources;
+      .then((remoteSources: PersistedTextSource[]) => {
+        this.setState(
+          update(this.state, {
+            sources: {
+              $add: remoteSources.map(source => [source.id, source]) as [
+                string,
+                PersistedTextSource
+              ][]
+            }
+          })
+        );
+        return remoteSources;
       })
       .catch(() => this.props.localTextSources)
       .then(sources => {
@@ -59,31 +63,26 @@ class AppClass extends React.Component<Props, State> {
         if (textSourceId) this.setTextSource(textSourceId);
       });
 
-    this.importLocalSources(props.localTextSources);
-
     this.state = {
       textSourceId: undefined,
-      sources: values(this.chunkSources)
+      sources: new Map(this.importLocalSources(props.localTextSources))
     };
   }
 
   importLocalSources = (localTextSources: LocalTextSource[]) =>
-    Object.assign(
-      this.chunkSources,
-      mapKeys(
-        localTextSources.map(({ id, chunks }) =>
-          createTextSource(id, chunks, this.props.textSourcePositions[id])
-        ),
-        "id"
+    localTextSources
+      .map(({ id, chunks }) =>
+        createTextSource(id, chunks, this.props.textSourcePositions[id])
       )
-    );
+      .map(source => [source.id, source]) as [string, PersistedTextSource][];
 
   componentWillReceiveProps(nextProps: AppProps) {
     if (nextProps.localTextSources !== this.props.localTextSources) {
-      this.importLocalSources(nextProps.localTextSources);
-      this.setState({
-        sources: values(this.chunkSources)
-      });
+      this.setState(
+        update(this.state, {
+          sources: { $add: this.importLocalSources(nextProps.localTextSources) }
+        })
+      );
     }
   }
 
@@ -91,15 +90,29 @@ class AppClass extends React.Component<Props, State> {
     chunkId: number,
     textSourceId: string | undefined = this.state.textSourceId
   ) => {
-    if (isUndefined(textSourceId)) throw "No text source";
+    if (isUndefined(textSourceId) || !this.state.sources.has(textSourceId))
+      throw "No text source";
 
-    return getNextChunk(this.chunkSources[textSourceId], chunkId).then(
+    const source = this.state.sources.get(textSourceId)!; // because the check above makes sure `sources` contains `textSourceId`. @TODO: fix this error-prone workaround
+
+    return getNextChunk(source, chunkId).then(
       chunk => {
         this.props.setText(chunk.text, chunk.newId, textSourceId);
-        this.setState({
-          sources: values(this.chunkSources),
-          textSourceId
-        });
+        const srr = {} as PersistedTextSource;
+        this.setState(
+          update(this.state, {
+            sources: (sources: Map<string, PersistedTextSource>) => {
+              const el = sources.get(textSourceId);
+
+              if (isUndefined(el)) return sources;
+
+              const updated = new Map(sources);
+              updated.set(textSourceId, { ...el, chunkId: chunk.newId });
+              return updated;
+            }
+          })
+        );
+        this.setState({ textSourceId });
       },
       fail => alert("Error fetching chunk from server: " + fail)
     );
@@ -108,7 +121,7 @@ class AppClass extends React.Component<Props, State> {
   setTextSource = (id: string) => {
     if (this.state.textSourceId === id) return;
 
-    this.switchToNextChunk(this.props.textSourcePositions[id], id);
+    this.switchToNextChunk(this.props.textSourcePositions[id] || 1, id);
   };
 
   removeTextSource = (id: string) => {
@@ -117,9 +130,7 @@ class AppClass extends React.Component<Props, State> {
     return isUndefined(localTextSourceId)
       ? false
       : () => {
-          delete this.chunkSources[id];
-
-          this.setState({ sources: values(this.chunkSources) });
+          this.setState(update(this.state, { sources: { $remove: [id] } }));
           this.props.textSourceRemover(localTextSourceId);
         };
   };
@@ -153,7 +164,7 @@ class AppClass extends React.Component<Props, State> {
               currentSourceId={textSourceId}
               removeTextSource={this.removeTextSource}
             />
-            <TextAdder autoOpen={this.state.sources.length < 1} />
+            <TextAdder autoOpen={this.state.sources.size < 1} />
           </Paper>
         </Grid>
         {isUndefined(textSourceId) ? null : (
