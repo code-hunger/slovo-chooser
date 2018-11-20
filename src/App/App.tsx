@@ -98,21 +98,14 @@ class AppClass extends React.Component<Props, State> {
     return getNextChunk(source, chunkId).then(
       chunk => {
         this.props.setText(chunk.text, chunk.newId, textSourceId);
-        const srr = {} as PersistedTextSource;
-        this.setState(
-          update(this.state, {
-            sources: (sources: Map<string, PersistedTextSource>) => {
-              const el = sources.get(textSourceId);
-
-              if (isUndefined(el)) return sources;
-
-              const updated = new Map(sources);
-              updated.set(textSourceId, { ...el, chunkId: chunk.newId });
-              return updated;
+        this.setState({
+          textSourceId,
+          sources: update(this.state.sources as any, {
+            [textSourceId]: {
+              chunkId: { $set: chunk.newId }
             }
           })
-        );
-        this.setState({ textSourceId });
+        });
       },
       fail => alert("Error fetching chunk from server: " + fail)
     );
