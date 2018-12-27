@@ -1,6 +1,7 @@
 import * as React from "react";
 import { find, isUndefined, get as getPath, mapKeys, values } from "lodash";
 import update from "immutability-helper";
+import { Maybe } from "monet";
 import "./App.css";
 
 import Grid from "@material-ui/core/Grid";
@@ -90,25 +91,24 @@ class AppClass extends React.Component<Props, State> {
     chunkId: number,
     textSourceId: string | undefined = this.state.textSourceId
   ) => {
-    if (isUndefined(textSourceId) || !this.state.sources.has(textSourceId))
-      throw "No text source";
-
-    const source = this.state.sources.get(textSourceId)!; // because the check above makes sure `sources` contains `textSourceId`. @TODO: fix this error-prone workaround
-
-    return getNextChunk(source, chunkId).then(
-      chunk => {
-        this.props.setText(chunk.text, chunk.newId, textSourceId);
-        this.setState({
-          textSourceId,
-          sources: update(this.state.sources as any, {
-            [textSourceId]: {
-              chunkId: { $set: chunk.newId }
-            }
-          })
-        });
-      },
-      fail => alert("Error fetching chunk from server: " + fail)
-    );
+    Maybe.fromNull(textSourceId)
+      .flatMap(id => Maybe.fromNull(this.state.sources.get(id)))
+      .map(source =>
+        getNextChunk(source, chunkId).then(
+          chunk => {
+            this.props.setText(chunk.text, chunk.newId, source.id);
+            this.setState({
+              textSourceId: source.id,
+              sources: update(this.state.sources as any, {
+                [source.id]: {
+                  chunkId: { $set: chunk.newId }
+                }
+              })
+            });
+          },
+          fail => alert("Error fetching chunk from server: " + fail)
+        )
+      );
   };
 
   setTextSource = (id: string) => {
