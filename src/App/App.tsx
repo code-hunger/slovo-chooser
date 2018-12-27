@@ -97,17 +97,9 @@ class AppClass extends React.Component<Props, State> {
       .flatMap(id => Maybe.fromNull(this.state.sources.get(id)))
       .map(R.partial(R.flip(getNextChunk), [chunkId]))
       .map(
-        R.then(([source, chunk]) => {
-          this.props.setText(chunk.text, chunk.newId, source.id);
-          this.setState({
-            textSourceId: source.id,
-            sources: update(this.state.sources as any, {
-              [source.id]: {
-                chunkId: { $set: chunk.newId }
-              }
-            })
-          });
-        })
+        R.then(([source, chunk]) =>
+          this.switchToChunk(source.id, chunk.newId, chunk.text)
+        )
       )
       .map(
         R.otherwise(fail => alert("Error fetching chunk from server: " + fail))
@@ -117,6 +109,18 @@ class AppClass extends React.Component<Props, State> {
     if (this.state.textSourceId === id) return;
 
     this.switchToNextChunk(this.props.textSourcePositions[id] || 1, id);
+  };
+
+  switchToChunk = (sourceId: string, newId: number, text: string) => {
+    this.props.setText(text, newId, sourceId);
+    this.setState({
+      textSourceId: sourceId,
+      sources: update(this.state.sources as any, {
+        [sourceId]: {
+          chunkId: { $set: newId }
+        }
+      })
+    });
   };
 
   removeTextSource = (id: string) => {
