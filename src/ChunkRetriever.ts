@@ -16,11 +16,10 @@ function makeLocalFetcher(text: string) {
       : text;
 
   return (chunkId: number): MyPr =>
-    new Promise(
-      (resolve, failure) =>
-        chunkId <= textLines.length && chunkId >= 1
-          ? resolve({ text: textLines[chunkId - 1], newId: chunkId })
-          : failure("Out of bounds")
+    new Promise((resolve, failure) =>
+      chunkId <= textLines.length && chunkId >= 1
+        ? resolve({ text: textLines[chunkId - 1], newId: chunkId })
+        : failure("Out of bounds")
     );
 }
 
@@ -80,6 +79,7 @@ export const getNextChunk = (
   source: Readonly<PersistedTextSource>,
   chunkId: number
 ) =>
-  sourceFetchers[source.origin](source.value)(chunkId).then(chunk => {
-    return chunk;
-  });
+  sourceFetchers[source.origin](source.value)(chunkId).then(chunk => [
+    source,
+    chunk
+  ]);

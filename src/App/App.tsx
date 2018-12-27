@@ -4,6 +4,8 @@ import update from "immutability-helper";
 import { Maybe } from "monet";
 import "./App.css";
 
+import * as R from "ramda";
+
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as PropTypes from "prop-types";
@@ -90,26 +92,26 @@ class AppClass extends React.Component<Props, State> {
   switchToNextChunk = (
     chunkId: number,
     textSourceId: string | undefined = this.state.textSourceId
-  ) => {
+  ) =>
     Maybe.fromNull(textSourceId)
       .flatMap(id => Maybe.fromNull(this.state.sources.get(id)))
-      .map(source =>
-        getNextChunk(source, chunkId).then(
-          chunk => {
-            this.props.setText(chunk.text, chunk.newId, source.id);
-            this.setState({
-              textSourceId: source.id,
-              sources: update(this.state.sources as any, {
-                [source.id]: {
-                  chunkId: { $set: chunk.newId }
-                }
-              })
-            });
-          },
-          fail => alert("Error fetching chunk from server: " + fail)
-        )
+      .map(R.partial(R.flip(getNextChunk), [chunkId]))
+      .map(
+        R.then(([source, chunk]) => {
+          this.props.setText(chunk.text, chunk.newId, source.id);
+          this.setState({
+            textSourceId: source.id,
+            sources: update(this.state.sources as any, {
+              [source.id]: {
+                chunkId: { $set: chunk.newId }
+              }
+            })
+          });
+        })
+      )
+      .map(
+        R.otherwise(fail => alert("Error fetching chunk from server: " + fail))
       );
-  };
 
   setTextSource = (id: string) => {
     if (this.state.textSourceId === id) return;
