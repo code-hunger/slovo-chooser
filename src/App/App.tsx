@@ -105,9 +105,7 @@ class AppClass extends React.Component<Props, State> {
 
   switchToNextChunk_ = (textSource: PersistedTextSource, chunkId: number) =>
     getNextChunk(textSource, chunkId)
-      .then(([source, chunk]) =>
-        this.switchToChunk(source.id, chunk.newId, chunk.text)
-      )
+      .then(chunk => this.switchToChunk(textSource.id, chunk.newId, chunk.text))
       .catch(fail => alert("Error fetching chunk from server: " + fail));
 
   setTextSource = (id: string) => {
