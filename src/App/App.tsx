@@ -6,6 +6,10 @@ import "./App.css";
 
 import * as R from "ramda";
 
+import S from "sanctuary";
+import $ from "sanctuary-def";
+import SMaybe from "sanctuary-maybe";
+
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as PropTypes from "prop-types";
@@ -89,12 +93,13 @@ class AppClass extends React.Component<Props, State> {
     }
   }
 
-  switchToNextChunk = (
-    chunkId: number,
-    textSourceId: string | undefined = this.state.textSourceId
-  ) =>
-    Maybe.fromNull(textSourceId)
-      .flatMap(id => Maybe.fromNull(this.state.sources.get(id)))
+  getTextSource = (id?: string) =>
+    Maybe.fromNull(id)
+      .orElse(Maybe.fromNull(this.state.textSourceId))
+      .chain(id => Maybe.fromNull(this.state.sources.get(id)));
+
+  switchToNextChunk = (chunkId: number, textSourceId?: string) =>
+    this.getTextSource(textSourceId)
       .map(R.partial(R.flip(getNextChunk), [chunkId]))
       .map(
         R.then(([source, chunk]) =>
