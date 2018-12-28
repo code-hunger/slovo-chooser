@@ -99,16 +99,16 @@ class AppClass extends React.Component<Props, State> {
       .chain(id => Maybe.fromNull(this.state.sources.get(id)));
 
   switchToNextChunk = (chunkId: number, textSourceId?: string) =>
-    this.getTextSource(textSourceId)
-      .map(R.partial(R.flip(getNextChunk), [chunkId]))
-      .map(
-        R.then(([source, chunk]) =>
-          this.switchToChunk(source.id, chunk.newId, chunk.text)
-        )
+    this.getTextSource(textSourceId).forEach(source =>
+      this.switchToNextChunk_(source, chunkId)
+    );
+
+  switchToNextChunk_ = (textSource: PersistedTextSource, chunkId: number) =>
+    getNextChunk(textSource, chunkId)
+      .then(([source, chunk]) =>
+        this.switchToChunk(source.id, chunk.newId, chunk.text)
       )
-      .map(
-        R.otherwise(fail => alert("Error fetching chunk from server: " + fail))
-      );
+      .catch(fail => alert("Error fetching chunk from server: " + fail));
 
   setTextSource = (id: string) => {
     if (this.state.textSourceId === id) return;

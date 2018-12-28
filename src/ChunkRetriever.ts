@@ -79,7 +79,7 @@ export const getNextChunk = (
   source: Readonly<PersistedTextSource>,
   chunkId: number
 ) =>
-  sourceFetchers[source.origin](source.value)(chunkId).then(chunk => [
-    source,
-    chunk
-  ]);
+  sourceFetchers[source.origin](source.value)(chunkId).then(
+    chunk =>
+      [source, chunk] as [PersistedTextSource, { text: string; newId: number }]
+  );
