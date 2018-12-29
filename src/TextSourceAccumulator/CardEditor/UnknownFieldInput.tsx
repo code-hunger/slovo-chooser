@@ -5,15 +5,6 @@ import { Word, NumberedWord } from "../../Word";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 
-interface UnknownFieldProps {
-  words: NumberedWord[];
-  usedHints: number[];
-
-  onReady: (value: string) => void;
-  toggleHints: (added: number[], removed: number[]) => void;
-  isDuplicate: (value: string) => boolean;
-}
-
 interface UnknownFieldState {
   value: string;
   isDuplicate: boolean;
@@ -39,14 +30,14 @@ function updateFieldWithNewHints(
 }
 
 class UnknownField extends React.PureComponent<
-  UnknownFieldProps,
+  PropsFromState & PropsFromDispatch & PropsFromOutside,
   UnknownFieldState
 > {
   state = { value: "", isDuplicate: false };
 
   updateDuplicateState = throttle(() => {
     this.setState(state => ({
-      isDuplicate: this.props.isDuplicate(state.value)
+      isDuplicate: this.isDuplicate(state.value)
     }));
   }, 500);
 
@@ -72,12 +63,19 @@ class UnknownField extends React.PureComponent<
     this.updateDuplicateState();
   };
 
-  componentWillReceiveProps(nextProps: UnknownFieldProps) {
+  isDuplicate = (value: string) =>
+    this.props.savedWords.findIndex(w => w === value) > -1;
+
+  componentWillReceiveProps(nextProps: PropsFromState) {
     const newHints = nextProps.usedHints,
       oldHints = this.props.usedHints;
 
-    const wordedOld = oldHints.map(hint => this.props.words[hint].word),
-      wordedNew = newHints.map(hint => nextProps.words[hint].word);
+    const wordedOld = oldHints.map(
+        hint => this.props.words[this.props.marked[hint]].word
+      ),
+      wordedNew = newHints.map(
+        hint => nextProps.words[nextProps.marked[hint]].word
+      );
 
     // Could be optimized, but no need for that
     const addedWords = difference(wordedNew, wordedOld),
@@ -120,12 +118,36 @@ class UnknownField extends React.PureComponent<
   }
 }
 
-import { toggleEditedUnknownWords } from "../../actions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { State } from "src/store";
+import { toggleEditedUnknownWords } from "../../actions";
 
-export default connect(
-  undefined,
+interface PropsFromOutside {
+  onReady: (value: string) => void;
+}
+interface PropsFromDispatch {
+  toggleHints: (added: number[], removed: number[]) => void;
+}
+interface PropsFromState {
+  words: NumberedWord[];
+  marked: number[];
+  usedHints: number[];
+  savedWords: string[];
+}
+
+export default connect<
+  PropsFromState,
+  PropsFromDispatch,
+  PropsFromOutside,
+  State
+>(
+  ({ cardState, words, savedWords }: State) => ({
+    usedHints: cardState.words.editedMarked,
+    marked: cardState.words.marked,
+    words,
+    savedWords
+  }),
   dispatch =>
     bindActionCreators({ toggleHints: toggleEditedUnknownWords }, dispatch)
 )(UnknownField);

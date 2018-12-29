@@ -19,7 +19,6 @@ interface Props {
     | React.ComponentClass<{ word: string }>
     | React.StatelessComponent<{ word: string }>;
 
-  readonly usedHints: number[];
   readonly chunkId: number;
 
   readonly marked: number[];
@@ -27,7 +26,6 @@ interface Props {
   readonly contextBoundaries: ContextBoundaries;
 
   readonly toggleSelectingContext: () => void;
-  readonly isDuplicate: (value: string) => boolean;
 }
 
 interface State {
@@ -67,7 +65,6 @@ export default class CardEditor extends React.Component<Props, State> {
 
   shouldComponentUpdate(nextProps: Props, newState: State) {
     return !(
-      isEqual(this.props.usedHints, nextProps.usedHints) &&
       this.state.unknownField === newState.unknownField &&
       this.state.unknownFieldMeaning === newState.unknownFieldMeaning &&
       this.state.dictionarySearch === newState.dictionarySearch &&
@@ -107,10 +104,7 @@ export default class CardEditor extends React.Component<Props, State> {
     this.setState({ dictionarySearch: value, unknownField: value });
 
   trySwitchChunk = (direction: 1 | -1) => {
-    if (
-      this.state.unknownField.length <= 1 ||
-      confirm("Are you sure?")
-    ) {
+    if (this.state.unknownField.length <= 1 || confirm("Are you sure?")) {
       this.resetState();
       this.props.switchChunk(direction);
     }
@@ -142,13 +136,7 @@ export default class CardEditor extends React.Component<Props, State> {
     return (
       <div className="cardEditor">
         <div className="cardEditorRow">
-          <UnknownField
-            words={this.state.marked}
-            usedHints={this.props.usedHints}
-            key="unknownField"
-            onReady={this.loadDictionary}
-            isDuplicate={this.props.isDuplicate}
-          />
+          <UnknownField key="unknownField" onReady={this.loadDictionary} />
         </div>
         {dictionarySearch.length ? (
           <>

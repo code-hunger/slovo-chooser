@@ -20,12 +20,9 @@ interface OutsideProps {
 }
 
 interface PropsFromState {
-  readonly usedHints: number[];
-
   readonly marked: number[];
   readonly words: NumberedWord[];
   readonly contextBoundaries: ContextBoundaries;
-  readonly isDuplicate: (value: string) => boolean;
 }
 
 interface PropsFromDispatch {
@@ -34,12 +31,9 @@ interface PropsFromDispatch {
 
 export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
   ({ cardState, words, savedWords }, ownProps) => ({
-    usedHints: cardState.words.editedMarked,
     marked: cardState.words.marked,
     words: words,
     contextBoundaries: cardState.contextBoundaries,
-
-    isDuplicate: (value: string) => savedWords.findIndex(w => w === value) > -1 
   }),
   dispatch => bindActionCreators({ toggleSelectingContext }, dispatch)
 )(CardEditor);
