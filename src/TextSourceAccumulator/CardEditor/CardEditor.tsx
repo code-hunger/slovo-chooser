@@ -26,7 +26,6 @@ interface Props {
   readonly words: NumberedWord[];
   readonly contextBoundaries: ContextBoundaries;
 
-  readonly toggleHints: (added: number[], removed: number[]) => void;
   readonly toggleSelectingContext: () => void;
   readonly isDuplicate: (value: string) => boolean;
 }
@@ -147,7 +146,6 @@ export default class CardEditor extends React.Component<Props, State> {
           <UnknownField
             words={this.state.marked}
             usedHints={this.props.usedHints}
-            toggleHints={this.props.toggleHints}
             key="unknownField"
             onReady={this.loadDictionary}
             isDuplicate={this.props.isDuplicate}

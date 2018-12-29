@@ -38,7 +38,7 @@ function updateFieldWithNewHints(
     .trim();
 }
 
-export default class UnknownField extends React.PureComponent<
+class UnknownField extends React.PureComponent<
   UnknownFieldProps,
   UnknownFieldState
 > {
@@ -119,3 +119,16 @@ export default class UnknownField extends React.PureComponent<
     );
   }
 }
+
+import {
+  toggleEditedUnknownWords,
+} from "../../actions";
+import { connect } from "react-redux";
+
+export default connect<void, { 
+  toggleHints: (added: number[], removed: number[]) => void
+ }>(undefined, dispatch => ({
+    toggleHints(added: number[], removed: number[]) {
+      dispatch(toggleEditedUnknownWords(added, removed));
+    }
+}))(UnknownField)

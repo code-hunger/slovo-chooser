@@ -28,7 +28,6 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  readonly toggleHints: (added: number[], removed: number[]) => void;
   readonly toggleSelectingContext: () => void;
 }
 
@@ -42,9 +41,6 @@ export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
     isDuplicate: (value: string) => savedWords.findIndex(w => w === value) > -1 
   }),
   dispatch => ({
-    toggleHints(added: number[], removed: number[]) {
-      dispatch(toggleEditedUnknownWords(added, removed));
-    },
     toggleSelectingContext() {
       dispatch(toggleSelectingContext());
     }
