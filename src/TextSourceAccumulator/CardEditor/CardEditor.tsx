@@ -109,8 +109,7 @@ export default class CardEditor extends React.Component<Props, State> {
   trySwitchChunk = (direction: 1 | -1) => {
     if (
       this.state.unknownField.length <= 1 ||
-      confirm("Are you sure?") ||
-      this.props.usedHints.length
+      confirm("Are you sure?")
     ) {
       this.resetState();
       this.props.switchChunk(direction);

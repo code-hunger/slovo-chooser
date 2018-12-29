@@ -4,12 +4,6 @@ import update from "immutability-helper";
 import { Maybe } from "monet";
 import "./App.css";
 
-import * as R from "ramda";
-
-import S from "sanctuary";
-import $ from "sanctuary-def";
-import SMaybe from "sanctuary-maybe";
-
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as PropTypes from "prop-types";
