@@ -1,27 +1,25 @@
 import * as React from "react";
 import { NumberedWord } from "../../Word";
 import CardEditor from "./CardEditor";
-import { toggleEditedUnknownWords, toggleSelectingContext } from "../../actions";
+import {
+  toggleEditedUnknownWords,
+  toggleSelectingContext
+} from "../../actions";
 
 import { SavedWord, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
 
 interface OutsideProps {
-  readonly onSave: (
-    obj: SavedWord,
-    chunkId: number,
-    textSourceId: string
-  ) => void;
+  readonly onSave: (obj: SavedWord, chunkId: number) => void;
   readonly switchChunk: (direction: 1 | -1) => void;
   readonly dictionary:
     | React.ComponentClass<{ word: string }>
     | React.StatelessComponent<{ word: string }>;
-  readonly textSourceId: string;
+  readonly chunkId: number;
 }
 
 interface PropsFromState {
   readonly usedHints: number[];
-  readonly chunkId: number;
 
   readonly marked: number[];
   readonly words: NumberedWord[];
@@ -35,16 +33,13 @@ interface PropsFromDispatch {
 }
 
 export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
-  ({ cardState, words, textSourcePositions, savedWords }, ownProps) => ({
-    chunkId: textSourcePositions[ownProps.textSourceId],
+  ({ cardState, words, savedWords }, ownProps) => ({
     usedHints: cardState.words.editedMarked,
     marked: cardState.words.marked,
     words: words,
     contextBoundaries: cardState.contextBoundaries,
 
-    isDuplicate(value: string) {
-      return savedWords.findIndex(w => w === value) > -1;
-    }
+    isDuplicate: (value: string) => savedWords.findIndex(w => w === value) > -1 
   }),
   dispatch => ({
     toggleHints(added: number[], removed: number[]) {

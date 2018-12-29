@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { Dispatch, bindActionCreators } from "redux";
+import { bindActionCreators } from "redux";
 
 import { State, WordAction, SavedChunks, SavedWord } from "../store";
 import { saveWord } from "../actions";
@@ -10,6 +10,7 @@ import {
 } from "../TextClickStrategies";
 import { NumberedWord } from "../Word";
 import TextSourceAccumulator from "../TextSourceAccumulator";
+import { CachedPositions } from "src/ChunkRetriever";
 
 type Props = PropsFromState & PropsFromDispatch & PropsFromOutside;
 
@@ -22,6 +23,7 @@ interface PropsFromState {
   words: NumberedWord[];
   savedChunks: { [chunkId: number]: SavedWord[] };
   isSelectingContext: boolean;
+  textSourcePositions: CachedPositions;
 }
 
 interface PropsFromDispatch {
@@ -32,11 +34,17 @@ interface PropsFromDispatch {
 }
 
 const mapStateToProps = (
-  { words, savedChunks, cardState: { isSelectingContext } }: State,
+  {
+    words,
+    savedChunks,
+    textSourcePositions,
+    cardState: { isSelectingContext }
+  }: State,
   { textSourceId }: Props
 ): PropsFromState => ({
   words,
   savedChunks: savedChunks[textSourceId],
+  textSourcePositions,
   isSelectingContext
 });
 

@@ -20,6 +20,7 @@ it("text source accumulator renders", () => {
     <Provider store={store}>
       <TextSourceAccumulator
         textSourceId="empty"
+        textSourcePositions={{}}
         switchChunk={jest.fn()}
 
         words={words}

@@ -13,16 +13,11 @@ import ContextStringField, {
 } from "./ContextStringField";
 
 interface Props {
-  readonly onSave: (
-    obj: SavedWord,
-    chunkId: number,
-    textSourceId: string
-  ) => void;
+  readonly onSave: (obj: SavedWord, chunkId: number) => void;
   readonly switchChunk: (direction: 1 | -1) => void;
   readonly dictionary:
     | React.ComponentClass<{ word: string }>
     | React.StatelessComponent<{ word: string }>;
-  readonly textSourceId: string;
 
   readonly usedHints: number[];
   readonly chunkId: number;
@@ -87,7 +82,7 @@ export default class CardEditor extends React.Component<Props, State> {
       unknownFieldMeaning: "",
       dictionarySearch: ""
     });
-  }
+  };
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.chunkId !== this.props.chunkId) {
@@ -107,7 +102,7 @@ export default class CardEditor extends React.Component<Props, State> {
         const unknownFieldMeaning = e.target.value;
         this.setState({ unknownFieldMeaning });
     }
-  }
+  };
 
   loadDictionary = (value: string) =>
     this.setState({ dictionarySearch: value, unknownField: value });
@@ -121,7 +116,7 @@ export default class CardEditor extends React.Component<Props, State> {
       this.resetState();
       this.props.switchChunk(direction);
     }
-  }
+  };
 
   trySwitchToNextChunk = () => this.trySwitchChunk(1);
 
@@ -137,11 +132,10 @@ export default class CardEditor extends React.Component<Props, State> {
           this.props.words
         )
       },
-      this.props.chunkId,
-      this.props.textSourceId
+      this.props.chunkId
     );
     this.resetState();
-  }
+  };
 
   render() {
     const dictionarySearch = this.state.dictionarySearch;

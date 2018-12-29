@@ -19,9 +19,11 @@ import { SavedChunks, SavedWord } from "../store";
 
 import { TextClickStrategy, UnknownWordSelector } from "../TextClickStrategies";
 import exportToCsv from "../exportToCSV";
+import { CachedPositions } from "src/ChunkRetriever";
 
 interface Props {
   textSourceId: string;
+  textSourcePositions: CachedPositions;
   switchChunk: (direction: 1 | -1) => void;
 
   words: NumberedWord[];
@@ -59,6 +61,8 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
 
   onWordClick = id => this.props.onWordClick(UnknownWordSelector, id);
   onContextMenu = id => this.props.onContextMenu(UnknownWordSelector, id);
+  onCardSave = (obj: SavedWord, chunkId: number) =>
+    this.props.onCardSave(obj, chunkId, this.props.textSourceId);
 
   render() {
     return (
@@ -89,8 +93,8 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
           <Paper className={this.props.classes.paper}>
             <CardEditor
               switchChunk={this.props.switchChunk}
-              onSave={this.props.onCardSave}
-              textSourceId={this.props.textSourceId}
+              onSave={this.onCardSave}
+              chunkId={this.props.textSourcePositions[this.props.textSourceId]}
               dictionary={Dictionary}
             />
           </Paper>
