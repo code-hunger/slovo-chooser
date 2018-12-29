@@ -70,7 +70,7 @@ class UnknownField extends React.PureComponent<
     }
 
     this.updateDuplicateState();
-  }
+  };
 
   componentWillReceiveProps(nextProps: UnknownFieldProps) {
     const newHints = nextProps.usedHints,
@@ -92,11 +92,11 @@ class UnknownField extends React.PureComponent<
 
   onReady = () => {
     this.props.onReady(this.state.value);
-  }
+  };
 
   onKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     if (e.keyCode === 13) this.onReady();
-  }
+  };
 
   render() {
     return (
@@ -120,15 +120,12 @@ class UnknownField extends React.PureComponent<
   }
 }
 
-import {
-  toggleEditedUnknownWords,
-} from "../../actions";
+import { toggleEditedUnknownWords } from "../../actions";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
-export default connect<void, { 
-  toggleHints: (added: number[], removed: number[]) => void
- }>(undefined, dispatch => ({
-    toggleHints(added: number[], removed: number[]) {
-      dispatch(toggleEditedUnknownWords(added, removed));
-    }
-}))(UnknownField)
+export default connect(
+  undefined,
+  dispatch =>
+    bindActionCreators({ toggleHints: toggleEditedUnknownWords }, dispatch)
+)(UnknownField);

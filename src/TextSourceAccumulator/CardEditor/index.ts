@@ -8,6 +8,7 @@ import {
 
 import { SavedWord, State, ContextBoundaries } from "../../store";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 interface OutsideProps {
   readonly onSave: (obj: SavedWord, chunkId: number) => void;
@@ -40,9 +41,5 @@ export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
 
     isDuplicate: (value: string) => savedWords.findIndex(w => w === value) > -1 
   }),
-  dispatch => ({
-    toggleSelectingContext() {
-      dispatch(toggleSelectingContext());
-    }
-  })
+  dispatch => bindActionCreators({ toggleSelectingContext }, dispatch)
 )(CardEditor);
