@@ -28,7 +28,7 @@ const markedWordStateToProps = (
 ): Word => ({
   word: words[marked[ownProps.index]].word,
   classNames:
-    editedMarked.indexOf(ownProps.index) > -1 ||
+    editedMarked.indexOf(marked[ownProps.index]) > -1 ||
     savedWords.indexOf(trim(ownProps.word, "\"',.")) > -1
       ? ownProps.classNames.concat("fade-word")
       : ownProps.classNames

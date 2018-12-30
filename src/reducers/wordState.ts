@@ -29,25 +29,15 @@ function editedMarkedReducer(
 ) {
   switch (action.type) {
     case getType(toggleEditedUnknownWord):
-      if (editedMarked.indexOf(action.payload) > -1)
-        return without(editedMarked, action.payload);
-      return editedMarked.concat(action.payload).sort((a, b) => a - b);
+      if (editedMarked.indexOf(marked[action.payload]) > -1)
+        return without(editedMarked,marked[action.payload]);
+      return editedMarked.concat(marked[action.payload]).sort((a, b) => a - b);
     case getType(toggleEditedUnknownWords):
       let cleaned = without(editedMarked, ...action.payload.removed);
       let withAdded = cleaned.concat(action.payload.added);
       return withAdded.sort((a, b) => a - b);
     case getType(wordClicked):
-      const editedMarkedIndex = marked.indexOf(action.payload);
-
-      if (editedMarkedIndex === -1)
-        return editedMarked.map(
-          word => (marked[word] >= action.payload ? word + 1 : word)
-        );
-
-      const withoutToggledWord = without(editedMarked, editedMarkedIndex);
-      return withoutToggledWord.map(
-        word => (word >= editedMarkedIndex ? word - 1 : word)
-      );
+      return without(editedMarked, action.payload);
     case getType(saveWord):
     case getType(setText):
       return emptyNumArr;

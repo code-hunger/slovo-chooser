@@ -43,10 +43,7 @@ class UnknownField extends React.PureComponent<
 
   onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const usedHints = this.props.usedHints,
-      unusedHints = without(
-        this.props.words.map(w => w.index),
-        ...this.props.usedHints
-      ),
+      unusedHints = without(this.props.marked, ...usedHints),
       value = e.target.value;
 
     this.setState({ value });
@@ -70,12 +67,8 @@ class UnknownField extends React.PureComponent<
     const newHints = nextProps.usedHints,
       oldHints = this.props.usedHints;
 
-    const wordedOld = oldHints.map(
-        hint => this.props.words[this.props.marked[hint]].word
-      ),
-      wordedNew = newHints.map(
-        hint => nextProps.words[nextProps.marked[hint]].word
-      );
+    const wordedOld = oldHints.map(hint => this.props.words[hint].word),
+      wordedNew = newHints.map(hint => nextProps.words[hint].word);
 
     // Could be optimized, but no need for that
     const addedWords = difference(wordedNew, wordedOld),
