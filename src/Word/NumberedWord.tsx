@@ -21,7 +21,7 @@ export class NumberedWordView extends React.PureComponent<
   NumberedWordViewProps,
   NumberedWordViewState
 > {
-  state = { classes: [] };
+  state = { classes: this.props.classNames };
 
   componentWillReceiveProps(newProps: NumberedWordViewProps) {
     if (
