@@ -13,12 +13,17 @@ function insideBoundaries(contextBoundaries: ContextBoundaries, index: number) {
 const mapStateToTextWordProps = (
   { words, savedWords, cardState: { contextBoundaries } }: State,
   { index }: NumberedWord
-) => ({
+): PropsFromState => ({
   word: words[index].word,
   classNames: words[index].classNames,
-  insideBoundaries: contextBoundaries && insideBoundaries(contextBoundaries, index),
+  insideBoundaries:
+    contextBoundaries && insideBoundaries(contextBoundaries, index)
 });
 
-export default connect<Word, null, { index: number }>(mapStateToTextWordProps)(
-  NumberedWordView
-);
+interface PropsFromState extends Word {
+  insideBoundaries: boolean;
+}
+
+export default connect<PropsFromState, null, { index: number }, State>(
+  mapStateToTextWordProps
+)(NumberedWordView);
