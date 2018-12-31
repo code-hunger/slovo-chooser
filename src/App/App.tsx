@@ -1,5 +1,5 @@
 import * as React from "react";
-import { find, isUndefined, get as getPath, mapKeys, values } from "lodash";
+import { find, isUndefined, get as getPath } from "lodash";
 import update from "immutability-helper";
 import { Maybe } from "monet";
 import "./App.css";
@@ -38,6 +38,7 @@ interface State {
   textSourceId?: string;
   sources: Map<string, PersistedTextSource>;
 }
+type TextSourcePair = [string, PersistedTextSource];
 
 class AppClass extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -48,10 +49,9 @@ class AppClass extends React.Component<Props, State> {
         this.setState(
           update(this.state, {
             sources: {
-              $add: remoteSources.map(source => [source.id, source]) as [
-                string,
-                PersistedTextSource
-              ][]
+              $add: remoteSources.map(
+                source => [source.id, source] as TextSourcePair
+              )
             }
           })
         );
@@ -74,7 +74,7 @@ class AppClass extends React.Component<Props, State> {
       .map(({ id, chunks }) =>
         createTextSource(id, chunks, this.props.textSourcePositions[id])
       )
-      .map(source => [source.id, source]) as [string, PersistedTextSource][];
+      .map(source => [source.id, source] as TextSourcePair);
 
   componentWillReceiveProps(nextProps: AppProps) {
     if (nextProps.localTextSources !== this.props.localTextSources) {
