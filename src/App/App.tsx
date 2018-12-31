@@ -39,7 +39,7 @@ interface AppProps {
 interface State {
   textSourceId?: string;
   sources: Map<string, PersistedTextSource>;
-  sourcePreview: string[];
+  sourcePreview: [number, string[]];
 }
 type TextSourcePair = [string, PersistedTextSource];
 
@@ -69,7 +69,7 @@ class AppClass extends React.Component<Props, State> {
     this.state = {
       textSourceId: undefined,
       sources: new Map(this.importLocalSources(props.localTextSources)),
-      sourcePreview: []
+      sourcePreview: [0, []]
     };
   }
 
@@ -128,7 +128,7 @@ class AppClass extends React.Component<Props, State> {
 
     getSourcePreview(source, newId)
       .then(sourcePreview => this.setState({ sourcePreview }))
-      .catch(() => this.setState({ sourcePreview: [] }));
+      .catch(() => this.setState({ sourcePreview: [0, []] }));
   };
 
   removeTextSource = (id: string) => {
@@ -174,7 +174,8 @@ class AppClass extends React.Component<Props, State> {
             />
           </Paper>
           <TextSourcePreviewer
-            text={this.state.sourcePreview}
+            text={this.state.sourcePreview[1]}
+            firstChunkId={this.state.sourcePreview[0]}
             paperClassName={classes.paper}
           />
         </Grid>

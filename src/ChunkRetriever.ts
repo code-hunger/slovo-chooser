@@ -22,7 +22,8 @@ function makeLocalFetcher(text: string) {
           ? resolve({ text: textLines[chunkId - 1], newId: chunkId })
           : failure("Out of bounds")
       ),
-    getPreview: (chunkId: number) => Promise.resolve(textLines)
+    getPreview: (chunkId: number) =>
+      Promise.resolve([0, textLines] as [number, string[]])
   };
 }
 
