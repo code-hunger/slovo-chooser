@@ -24,7 +24,6 @@ it("text source accumulator renders", () => {
         switchChunk={jest.fn()}
 
         words={words}
-        savedChunks={{}}
 
         isSelectingContext={false}
         onWordClick={onWordClick}

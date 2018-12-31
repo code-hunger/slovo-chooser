@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { State, WordAction, SavedChunks, SavedWord } from "../store";
+import { State, WordAction, SavedWord } from "../store";
 import { saveWord } from "../actions";
 import {
   ContextSelector,
@@ -21,7 +21,6 @@ interface PropsFromOutside {
 
 interface PropsFromState {
   words: NumberedWord[];
-  savedChunks: { [chunkId: number]: SavedWord[] };
   isSelectingContext: boolean;
   textSourcePositions: CachedPositions;
 }
@@ -33,17 +32,13 @@ interface PropsFromDispatch {
   onContextMenu: (strategy: TextClickStrategy, word: number) => void;
 }
 
-const mapStateToProps = (
-  {
-    words,
-    savedChunks,
-    textSourcePositions,
-    cardState: { isSelectingContext }
-  }: State,
-  { textSourceId }: Props
-): PropsFromState => ({
+const mapStateToProps = ({
   words,
-  savedChunks: savedChunks[textSourceId],
+  savedChunks,
+  textSourcePositions,
+  cardState: { isSelectingContext }
+}: State): PropsFromState => ({
+  words,
   textSourcePositions,
   isSelectingContext
 });

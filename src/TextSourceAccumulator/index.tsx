@@ -1,12 +1,10 @@
 import * as React from "react";
-import { flatMap, values } from "lodash";
 
 import Grid from "@material-ui/core/Grid";
 import * as PropTypes from "prop-types";
 import { WithStyles, Theme } from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 
 import TextWord from "./EnhancedTextWord";
@@ -15,10 +13,10 @@ import CardEditor from "./CardEditor";
 import UnknownWordList from "./UnknownWordsList";
 import { NumberedWord } from "../Word";
 import Dictionary from "./Dictionary";
-import { SavedChunks, SavedWord } from "../store";
+import DownloadButton from "./DownloadSaved";
+import { SavedWord } from "../store";
 
 import { TextClickStrategy, UnknownWordSelector } from "../TextClickStrategies";
-import exportToCsv from "../exportToCSV";
 import { CachedPositions } from "src/ChunkRetriever";
 
 interface Props {
@@ -27,7 +25,6 @@ interface Props {
   switchChunk: (direction: 1 | -1) => void;
 
   words: NumberedWord[];
-  savedChunks: { [chunkId: number]: SavedWord[] };
 
   onWordClick: (strategy: TextClickStrategy, id: number) => void;
   onContextMenu: (strategy: TextClickStrategy, word: number) => void;
@@ -54,11 +51,6 @@ const styles = (theme: Theme) => ({
 type StyledProps = Props & WithStyles<typeof styles>;
 
 class TextSourceAccumulator extends React.Component<StyledProps> {
-  generateCsvFile = () => {
-    const csvArray = flatMap(this.props.savedChunks).map(values);
-    exportToCsv(this.props.textSourceId + ".csv", csvArray);
-  };
-
   onWordClick = id => this.props.onWordClick(UnknownWordSelector, id);
   onContextMenu = id => this.props.onContextMenu(UnknownWordSelector, id);
   onCardSave = (obj: SavedWord, chunkId: number) =>
@@ -99,17 +91,7 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
             />
           </Paper>
         </Grid>
-        {this.props.savedChunks ? (
-          <Grid item>
-            <Button
-              variant="contained"
-              onClick={this.generateCsvFile}
-              fullWidth
-            >
-              Generate a <kbd>csv</kbd> file for anki
-            </Button>
-          </Grid>
-        ) : null}
+        <DownloadButton textSourceId={this.props.textSourceId} />
       </Grid>
     );
   }
