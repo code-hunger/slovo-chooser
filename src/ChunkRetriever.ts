@@ -23,7 +23,7 @@ function makeLocalFetcher(text: string) {
           : failure("Out of bounds")
       ),
     getPreview: (chunkId: number) =>
-      Promise.resolve([0, textLines] as [number, string[]])
+      Promise.resolve([1, textLines] as [number, string[]])
   };
 }
 

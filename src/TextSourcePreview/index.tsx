@@ -6,19 +6,23 @@ import Paper from "@material-ui/core/Paper";
 interface Props {
   text: string[];
   firstChunkId: number;
+  currentChunkId?: number;
 
   paperClassName: string;
 }
 
 export default class TextSourcePreviewer extends React.PureComponent<Props> {
-  renderChunk = (chunk: string, id: number) => (
-    <p>
-      {id + this.props.firstChunkId}: {chunk}
-    </p>
-  );
+  renderChunk = (chunk: string, id: number) => {
+    const isCurrent = this.props.firstChunkId + id == this.props.currentChunkId;
+    return (
+      <p style={{ color: isCurrent ? "red" : "inherit" }}>
+        {id + this.props.firstChunkId}: {chunk}
+      </p>
+    );
+  };
 
   render() {
-    if (!this.props.text.length) return null;
+    if (!this.props.text.length || !this.props.currentChunkId) return null;
 
     return (
       <Paper className={this.props.paperClassName}>

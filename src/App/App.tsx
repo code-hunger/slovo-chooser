@@ -176,6 +176,7 @@ class AppClass extends React.Component<Props, State> {
           <TextSourcePreviewer
             text={this.state.sourcePreview[1]}
             firstChunkId={this.state.sourcePreview[0]}
+            currentChunkId={textSourceId ? this.props.textSourcePositions[textSourceId] : undefined}
             paperClassName={classes.paper}
           />
         </Grid>
