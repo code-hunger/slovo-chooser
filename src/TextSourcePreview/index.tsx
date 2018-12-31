@@ -9,13 +9,15 @@ interface Props {
 }
 
 export default class TextSourcePreviewer extends React.PureComponent<Props> {
+  renderChunk = (chunk: string) => <p>{chunk}</p>;
+
   render() {
     if (!this.props.text.length) return null;
 
     return (
       <Paper className={this.props.paperClassName}>
         <Typography variant="headline">Text source preview</Typography>
-        {this.props.text}
+        {this.props.text.map(this.renderChunk)}
       </Paper>
     );
   }
