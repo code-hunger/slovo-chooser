@@ -15,33 +15,41 @@ function makeLocalFetcher(text: string) {
       ? text.split("\n").filter(line => line !== "")
       : text;
 
-  return (chunkId: number): MyPr =>
-    new Promise((resolve, failure) =>
-      chunkId <= textLines.length && chunkId >= 1
-        ? resolve({ text: textLines[chunkId - 1], newId: chunkId })
-        : failure("Out of bounds")
-    );
+  return {
+    getChunk: (chunkId: number): MyPr =>
+      new Promise((resolve, failure) =>
+        chunkId <= textLines.length && chunkId >= 1
+          ? resolve({ text: textLines[chunkId - 1], newId: chunkId })
+          : failure("Out of bounds")
+      ),
+    getPreview: (chunkId: number) => Promise.resolve(textLines)
+  };
 }
 
 function makeRemoteFetcher(file: string) {
-  return (chunkId: number): MyPr =>
-    axios
-      .get("http://localhost:3000/text", {
-        params: { chunkId, file },
-        responseType: "json"
-      })
-      .then(
-        ({ data }) => {
-          if (data.error) throw data.error;
-          return { text: data.text, newId: data.chunkId };
-        },
-        error => {
-          if (error.response) {
-            throw error.response.data.error;
+  return {
+    getChunk: (chunkId: number): MyPr =>
+      axios
+        .get("http://localhost:3000/text", {
+          params: { chunkId, file },
+          responseType: "json"
+        })
+        .then(
+          ({ data }) => {
+            if (data.error) throw data.error;
+            return { text: data.text, newId: data.chunkId };
+          },
+          error => {
+            if (error.response) {
+              throw error.response.data.error;
+            }
+            throw "Unknown error happened";
           }
-          throw "Unknown error happened";
-        }
-      );
+        ),
+    getPreview(chunkId: number) {
+      return Promise.reject();
+    }
+  };
 }
 
 export const sourceFetchers = {
@@ -79,4 +87,9 @@ export const createTextSource = (
 });
 
 export const getNextChunk = (source: PersistedTextSource, chunkId: number) =>
-  sourceFetchers[source.origin](source.value)(chunkId);
+  sourceFetchers[source.origin](source.value).getChunk(chunkId);
+
+export const getSourcePreview = (
+  source: PersistedTextSource,
+  chunkId: number
+) => sourceFetchers[source.origin](source.value).getPreview(chunkId);
