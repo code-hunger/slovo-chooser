@@ -17,8 +17,7 @@ import {
   getNextChunk
 } from "../ChunkRetriever";
 
-import TextAdder from "./TextAdder";
-import TextSourceChooser, { TextSource } from "./TextSourceChooser";
+import TextSourceChooser from "./TextSourceChooser";
 import { NumberedWord } from "../Word";
 import TextSourceAccumulator from "./TextSourceAccumulator";
 import SavedWordsContainer from "../SavedWordsContainer";
@@ -160,7 +159,6 @@ class AppClass extends React.Component<Props, State> {
               currentSourceId={textSourceId}
               removeTextSource={this.removeTextSource}
             />
-            <TextAdder autoOpen={this.state.sources.size < 1} />
           </Paper>
         </Grid>
         {isUndefined(textSourceId) ? null : (

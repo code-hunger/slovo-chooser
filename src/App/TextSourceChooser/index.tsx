@@ -13,6 +13,7 @@ import Badge from "@material-ui/core/Badge";
 import Typography from "@material-ui/core/Typography";
 
 import { sourceFetchers } from "../../ChunkRetriever";
+import TextAdder from "../TextAdder";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -93,7 +94,12 @@ class TextSourceChooser<
         <Typography variant="headline" onClick={this.toggleCollapse}>
           Choose a text source
         </Typography>
-        {this.state.collapsed ? null : this.renderList()}
+        {this.state.collapsed ? null : (
+          <>
+            {this.renderList()}
+            <TextAdder autoOpen={this.props.textSources.size < 1} />
+          </>
+        )}
       </>
     );
   }
