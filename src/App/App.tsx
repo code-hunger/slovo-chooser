@@ -14,7 +14,8 @@ import {
   CachedPositions,
   fetchSourcesFromServer,
   createTextSource,
-  getNextChunk
+  getNextChunk,
+  getSourcePreview
 } from "../ChunkRetriever";
 
 import TextSourceChooser from "./TextSourceChooser";
@@ -37,6 +38,7 @@ interface AppProps {
 interface State {
   textSourceId?: string;
   sources: Map<string, PersistedTextSource>;
+  sourcePreview: string[];
 }
 type TextSourcePair = [string, PersistedTextSource];
 
@@ -65,7 +67,8 @@ class AppClass extends React.Component<Props, State> {
 
     this.state = {
       textSourceId: undefined,
-      sources: new Map(this.importLocalSources(props.localTextSources))
+      sources: new Map(this.importLocalSources(props.localTextSources)),
+      sourcePreview: []
     };
   }
 
@@ -117,6 +120,10 @@ class AppClass extends React.Component<Props, State> {
         }
       })
     });
+
+    getSourcePreview(source, newId)
+      .then(sourcePreview => this.setState({ sourcePreview }))
+      .catch(() => this.setState({ sourcePreview: [] }));
   };
 
   removeTextSource = (id: string) => {
@@ -143,6 +150,7 @@ class AppClass extends React.Component<Props, State> {
     const classes = this.props.classes;
     const textSourceId = this.state.textSourceId;
     const hasTextSource = !isUndefined(textSourceId);
+
     return (
       <Grid container spacing={16} className={classes.root} justify="center">
         <Grid
