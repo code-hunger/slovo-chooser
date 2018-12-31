@@ -66,14 +66,17 @@ export const fetchSourcesFromServer = (cachedPositions: CachedPositions) =>
       )
     );
 
-export const createTextSource = (id: string, text: string, position: number) =>
-  <PersistedTextSource>{
-    id,
-    value: text,
-    description: id,
-    chunkId: position,
-    origin: "local"
-  };
+export const createTextSource = (
+  id: string,
+  text: string,
+  position: number
+): PersistedTextSource => ({
+  id,
+  value: text,
+  description: id,
+  chunkId: position,
+  origin: "local"
+});
 
 export const getNextChunk = (source: PersistedTextSource, chunkId: number) =>
   sourceFetchers[source.origin](source.value)(chunkId);
