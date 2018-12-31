@@ -24,6 +24,7 @@ import TextSourceAccumulator from "./TextSourceAccumulator";
 import SavedWordsContainer from "../SavedWordsContainer";
 
 import { PersistedTextSource, LocalTextSource } from "../store";
+import TextSourcePreviewer from "src/TextSourcePreview";
 
 type Props = AppProps & WithStyles<typeof styles>;
 
@@ -110,7 +111,11 @@ class AppClass extends React.Component<Props, State> {
     this.switchToNextChunk(this.props.textSourcePositions[id] || 1, id);
   };
 
-  switchToChunk = (source: PersistedTextSource, newId: number, text: string) => {
+  switchToChunk = (
+    source: PersistedTextSource,
+    newId: number,
+    text: string
+  ) => {
     this.props.setText(text, newId, source.id);
     this.setState({
       textSourceId: source.id,
@@ -168,6 +173,10 @@ class AppClass extends React.Component<Props, State> {
               removeTextSource={this.removeTextSource}
             />
           </Paper>
+          <TextSourcePreviewer
+            text={this.state.sourcePreview}
+            paperClassName={classes.paper}
+          />
         </Grid>
         {isUndefined(textSourceId) ? null : (
           <Grid item lg={6} md={8} xs={12}>
@@ -193,7 +202,8 @@ const styles = (theme: Theme) => ({
     padding: theme.spacing.unit
   },
   paper: {
-    padding: theme.spacing.unit * 2
+    padding: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 1
   }
 });
 
