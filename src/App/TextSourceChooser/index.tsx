@@ -42,12 +42,15 @@ interface Props<IdType, SourceT extends TextSource<IdType>> {
 type PropsWithStyles<T, U extends TextSource<T>> = Props<T, U> &
   WithStyles<typeof styles>;
 
-interface State {}
+interface State {
+  collapsed: boolean;
+}
 
 class TextSourceChooser<
   IdType,
   SourceT extends TextSource<IdType>
 > extends React.PureComponent<PropsWithStyles<IdType, SourceT>, State> {
+  state = { collapsed: false };
 
   renderTextSourceItem = ({ id, description, chunkId }: TextSource<IdType>) => {
     const classes = this.props.classes;
@@ -74,16 +77,23 @@ class TextSourceChooser<
     );
   };
 
+  renderList = () => (
+    <List>
+      {Array.from(this.props.textSources.values(), this.renderTextSourceItem)}
+    </List>
+  );
+
+  toggleCollapse = () => {
+    this.setState(({ collapsed }) => ({ collapsed: !collapsed }));
+  };
+
   render() {
     return (
       <>
-        <Typography variant="headline">Choose a text source</Typography>
-        <List>
-          {Array.from(
-            this.props.textSources.values(),
-            this.renderTextSourceItem
-          )}
-        </List>
+        <Typography variant="headline" onClick={this.toggleCollapse}>
+          Choose a text source
+        </Typography>
+        {this.state.collapsed ? null : this.renderList()}
       </>
     );
   }
