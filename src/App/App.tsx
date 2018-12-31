@@ -98,7 +98,7 @@ class AppClass extends React.Component<Props, State> {
 
   switchToNextChunk_ = (textSource: PersistedTextSource, chunkId: number) =>
     getNextChunk(textSource, chunkId)
-      .then(chunk => this.switchToChunk(textSource.id, chunk.newId, chunk.text))
+      .then(chunk => this.switchToChunk(textSource, chunk.newId, chunk.text))
       .catch(fail => alert("Error fetching chunk from server: " + fail));
 
   setTextSource = (id: string) => {
@@ -107,12 +107,12 @@ class AppClass extends React.Component<Props, State> {
     this.switchToNextChunk(this.props.textSourcePositions[id] || 1, id);
   };
 
-  switchToChunk = (sourceId: string, newId: number, text: string) => {
-    this.props.setText(text, newId, sourceId);
+  switchToChunk = (source: PersistedTextSource, newId: number, text: string) => {
+    this.props.setText(text, newId, source.id);
     this.setState({
-      textSourceId: sourceId,
+      textSourceId: source.id,
       sources: update(this.state.sources as any, {
-        [sourceId]: {
+        [source.id]: {
           chunkId: { $set: newId }
         }
       })
