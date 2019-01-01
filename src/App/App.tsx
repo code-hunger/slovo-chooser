@@ -160,9 +160,9 @@ class AppClass extends React.Component<Props, State> {
       <Grid container spacing={16} className={classes.root} justify="center">
         <Grid
           item
-          lg={hasTextSource ? 3 : 4}
-          md={hasTextSource ? 4 : 6}
-          sm={hasTextSource ? 12 : 8}
+          lg={hasTextSource ? 4 : 4}
+          md={hasTextSource ? 5 : 6}
+          sm={hasTextSource ? 5 : 8}
           xs={12}
         >
           <Paper className={classes.paper}>
@@ -176,19 +176,21 @@ class AppClass extends React.Component<Props, State> {
           <TextSourcePreviewer
             text={this.state.sourcePreview[1]}
             firstChunkId={this.state.sourcePreview[0]}
-            currentChunkId={textSourceId ? this.props.textSourcePositions[textSourceId] : undefined}
+            currentChunkId={
+              textSourceId
+                ? this.props.textSourcePositions[textSourceId]
+                : undefined
+            }
             paperClassName={classes.paper}
           />
         </Grid>
-        {isUndefined(textSourceId) ? null : (
-          <Grid item lg={6} md={8} xs={12}>
+        <Grid item lg={8} md={hasTextSource ? 7 : 6} sm={hasTextSource ? 7 : 8} xs={12}>
+          {isUndefined(textSourceId) ? null : (
             <TextSourceAccumulator
               switchChunk={this.switchChunk}
               textSourceId={textSourceId}
             />
-          </Grid>
-        )}
-        <Grid item lg={3} xs={12}>
+          )}
           <Paper className={classes.paper}>
             <SavedWordsContainer textSourceId={textSourceId} maxRows={10} />
           </Paper>

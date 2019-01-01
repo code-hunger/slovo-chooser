@@ -59,7 +59,7 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
   render() {
     return (
       <Grid container justify="center" spacing={8}>
-        <Grid item sm={8} xs={12}>
+        <Grid item lg={8} xs={12}>
           <Paper className={this.props.classes.fullHeight}>
             <Typography variant="headline">
               Choose words to check meaning:
@@ -75,7 +75,7 @@ class TextSourceAccumulator extends React.Component<StyledProps> {
             />
           </Paper>
         </Grid>
-        <Grid item sm={4} xs={12}>
+        <Grid item lg={4} xs={12}>
           <Paper className={this.props.classes.fullHeight}>
             <Typography variant="headline">Marked unknown:</Typography>
             <UnknownWordList tabIndex={0} />
