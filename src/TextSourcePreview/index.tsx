@@ -20,7 +20,7 @@ interface State {
 }
 
 const max = (a, b) => (a > b ? a : b);
-const equals = a => b => a == b;
+const equals = a => b => a === b;
 
 export default class TextSourcePreviewer extends React.PureComponent<
   Props,
@@ -50,7 +50,7 @@ export default class TextSourcePreviewer extends React.PureComponent<
           cursor: isCurrent ? "default" : "pointer"
         }}
         key={id}
-        onClick={() =>
+        onClick={isCurrent ? undefined : () =>
           /* @TODO Fix; slow - creates a new function each render;  but unimportant ATM" */ this.props.switchToChunk(
             id + this.firstShown() + 1
           )
