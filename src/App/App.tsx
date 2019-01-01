@@ -181,6 +181,7 @@ class AppClass extends React.Component<Props, State> {
                 ? this.props.textSourcePositions[textSourceId]
                 : undefined
             }
+            switchToChunk={this.switchToNextChunk}
             paperClassName={classes.paper}
           />
         </Grid>

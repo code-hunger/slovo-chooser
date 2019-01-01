@@ -9,6 +9,8 @@ interface Props {
   firstChunkId: number;
   currentChunkId?: number;
 
+  switchToChunk: (chunkId: number) => void;
+
   paperClassName: string;
 }
 
@@ -42,7 +44,18 @@ export default class TextSourcePreviewer extends React.PureComponent<
       .orJust(false);
 
     return (
-      <p style={{ color: isCurrent ? "red" : "inherit" }} key={id}>
+      <p
+        style={{
+          color: isCurrent ? "red" : "inherit",
+          cursor: isCurrent ? "default" : "pointer"
+        }}
+        key={id}
+        onClick={() =>
+          /* @TODO Fix; slow - creates a new function each render;  but unimportant ATM" */ this.props.switchToChunk(
+            id + this.firstShown() + 1
+          )
+        }
+      >
         {id + this.firstShown() + 1}: {chunk}
       </p>
     );
