@@ -14,6 +14,7 @@ import { CardState, cardStateReducer } from "./reducers/cardState";
 
 export { SavedWord, SavedChunks };
 export { ContextBoundaries } from "./reducers/cardState";
+import { dictionaryReducer } from "./reducers/dictionaries";
 
 import { ActionType, StateType, getType } from "typesafe-actions";
 import * as actions from "./actions";
@@ -98,14 +99,6 @@ function localTextSourcesReducer(
     default:
       return sources;
   }
-}
-
-function dictionaryReducer(dictionary: string = "", action: WordAction) {
-  switch (action.type) {
-    case getType(actions.setDictionary):
-      return action.payload;
-  }
-  return dictionary;
 }
 
 export interface LocalTextSource extends TextSource<string> {
