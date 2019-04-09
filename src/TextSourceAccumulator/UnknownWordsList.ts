@@ -3,7 +3,7 @@ import { State, WordAction } from "../store";
 import { Word, NumberedWord, NumberedWordView } from "../Word";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import UnknownWordList from "../UnknownWordList";
+import { UnknownWordList } from "shadow-cljs/project.UnknownWordList";
 import { trim } from "lodash";
 import { toggleEditedUnknownWord } from "../actions";
 
