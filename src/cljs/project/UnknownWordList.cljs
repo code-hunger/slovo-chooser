@@ -9,17 +9,18 @@
     {:display-name 'UnknownWordList
      :reagent-render
       (fn [props]
-        (if (empty? (:words props))
-          "No marked words"
-          [KeyboardSelectableContainer
-           {:elementCount (count (props :words))
-            :onSelectElement (props :onWordClick)
-            :handler handler}
-           [WordCollector
-            {:className "unknownWordsList"
-             :wordType (:wordType props)
-             :words (:words props)
-             :tabIndex (:tabIndex props)
-             :onWordClick #((:onWordClick props) (.-index (nth (:words props) %)))
-             :onContextMenu (constantly true)}]
-           ]))}))
+        (let [words (:words props)]
+          (if (empty? words)
+            "No marked words"
+            [KeyboardSelectableContainer
+             {:elementCount (count words)
+              :onSelectElement (props :onWordClick)
+              :handler handler}
+             [WordCollector
+              {:className "unknownWordsList"
+               :wordType (:wordType props)
+               :words words
+               :tabIndex (:tabIndex props)
+               :onWordClick #((:onWordClick props) (.-index (nth words %)))
+               :onContextMenu (constantly true)}]
+             ])))}))
