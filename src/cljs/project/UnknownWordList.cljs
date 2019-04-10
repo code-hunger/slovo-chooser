@@ -1,9 +1,9 @@
 (ns project.UnknownWordList
   (:require [reagent.core :as r]
-             ["shadow-cljs/project.keyboardFocusable" :refer (KeyboardSelectableContainer)]
-             ["shadow-cljs/project.WordCollector" :refer (WordCollector)]
-             ["shadow-cljs/project.TEKeyboardHandler" :refer (handler)]
-             ["@material-ui/core/Typography"  :default Typography']))
+            [project.keyboardFocusable :refer (KeyboardSelectableContainer)]
+            [project.WordCollector :refer (WordCollector)]
+            [project.TEKeyboardHandler :refer (handler)]
+            ["@material-ui/core/Typography" :default Typography']))
 
 (def Typography (r/adapt-react-class Typography'))
 

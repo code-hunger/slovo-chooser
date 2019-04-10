@@ -1,7 +1,7 @@
 (ns project.TextEditor
   (:require [reagent.core :as r]
-             ["shadow-cljs/project.keyboardFocusable" :refer (KeyboardSelectableContainer)]
-             ["shadow-cljs/project.WordCollector" :refer (WordCollector)]))
+            [project.keyboardFocusable :refer (KeyboardSelectableContainer)]
+            [project.WordCollector :refer (WordCollector)]))
 
 (def TextEditor
   (r/create-class

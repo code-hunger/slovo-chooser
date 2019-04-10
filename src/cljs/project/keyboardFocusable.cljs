@@ -1,6 +1,6 @@
 (ns project.keyboardFocusable
   (:require [reagent.core :as r]
-            [ "shadow-cljs/project.TEKeyboardHandler" :refer (handler)]))
+            [project.TEKeyboardHandler :refer (handler)]))
 
 (def KeyboardSelectableContainer
   (r/create-class
