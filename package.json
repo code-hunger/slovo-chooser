@@ -21,16 +21,16 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-moment": "^0.7.9",
-    "react-redux": "^5.1.1",
-    "react-scripts-ts": "2.14.0",
+    "react-redux": "^7.0.1",
+    "react-scripts": "^2.1.8",
     "redux": "^4.0.1",
-    "typesafe-actions": "^2.2.0"
+    "typesafe-actions": "^4.0.0"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "test-with-coverage": "cat ./coverage/lcov.info | codacy-coverage --username code-hunger --projectName slovo-chooser"
@@ -41,14 +41,20 @@
     "@types/node": "^9.6.47",
     "@types/react": "^16.8.13",
     "@types/react-dom": "^16.8.4",
-    "@types/react-redux": "^6.0.14",
+    "@types/react-redux": "^7.0.6",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "gh-pages": "^1.2.0",
-    "typescript": "^2.9.2",
+    "typescript": "^3.4.3",
     "why-did-you-update": "^0.1.1"
   },
   "setupFiles": [
     "<rootDir>/src/setupTests.ts"
+  ],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
   ]
 }
