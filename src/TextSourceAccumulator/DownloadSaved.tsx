@@ -6,7 +6,8 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
 import exportToCsv from "../exportToCSV";
-import { SavedChunks, SavedWord, State } from "../store";
+import { State } from "../store";
+import { SavedWord } from "../reducers/savedChunks";
 import { connect } from "react-redux";
 
 interface PropsFromState {

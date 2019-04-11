@@ -7,7 +7,8 @@ import UnknownField from "./UnknownFieldInput";
 import Button from "@material-ui/core/Button";
 
 import { isEqual } from "lodash";
-import { SavedWord, ContextBoundaries } from "../../store";
+import { ContextBoundaries } from "../../reducers/cardState";
+import { SavedWord } from "../../reducers/savedChunks";
 import ContextStringField, {
   generateContextString
 } from "./ContextStringField";

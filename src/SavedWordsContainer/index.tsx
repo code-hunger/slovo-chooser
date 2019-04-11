@@ -1,5 +1,6 @@
 import * as React from "react";
-import { State, SavedWord, SavedChunks } from "../store";
+import { State } from "../store";
+import { SavedWord, SavedChunks } from "../reducers/savedChunks";
 import { connect } from "react-redux";
 import { NumberedWord } from "..//Word";
 
@@ -24,7 +25,7 @@ import { reverse, isUndefined, flattenDeep, flatMap, values } from "lodash";
 
 export const NoWordsTable = withStyles({
   root: { textAlign: "center", fontStyle: "italic" }
-})(props => (
+})((props : any) => (
   <TableBody>
     <TableRow>
       <TableCell colSpan={2} classes={props.classes}>

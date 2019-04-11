@@ -71,7 +71,7 @@ export const fetchSourcesFromServer = (cachedPositions: CachedPositions) =>
             id: file,
             origin: "remote",
             chunkId: cachedPositions[file]
-          } as PersistedTextSource)
+          })
       )
     );
 

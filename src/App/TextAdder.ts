@@ -17,8 +17,9 @@ const onDone = (id: string, text: string) =>
   addLocalTextSource({
     id,
     description: id,
-    chunks: text
-  } as LocalTextSource);
+    chunks: text,
+    origin: "local"
+  });
 
 export default connect<void, DispatchProps, OutsideProps, State>(
   null,

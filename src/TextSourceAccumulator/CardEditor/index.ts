@@ -6,7 +6,9 @@ import {
   toggleSelectingContext
 } from "../../actions";
 
-import { SavedWord, State, ContextBoundaries } from "../../store";
+import { State } from "../../store";
+import { ContextBoundaries } from "../../reducers/cardState";
+import { SavedWord } from "../../reducers/savedChunks";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -26,14 +28,14 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-  readonly toggleSelectingContext: () => void;
+  readonly toggleSelectingContext: (any) => void;
 }
 
 export default connect<PropsFromState, PropsFromDispatch, OutsideProps, State>(
   ({ cardState, words, savedWords }, ownProps) => ({
     marked: cardState.words.marked,
     words: words,
-    contextBoundaries: cardState.contextBoundaries,
+    contextBoundaries: cardState.contextBoundaries
   }),
-  dispatch => bindActionCreators({ toggleSelectingContext }, dispatch)
+  { toggleSelectingContext }
 )(CardEditor);

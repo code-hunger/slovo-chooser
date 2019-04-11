@@ -113,7 +113,7 @@ class UnknownField extends React.PureComponent<
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { State } from "src/store";
+import { State } from "../../../src/store";
 import { toggleEditedUnknownWords } from "../../actions";
 
 interface PropsFromOutside {

@@ -14,10 +14,10 @@ import UnknownWordList from "./UnknownWordsList";
 import { NumberedWord } from "../Word";
 import Dictionary from "./Dictionary";
 import DownloadButton from "./DownloadSaved";
-import { SavedWord } from "../store";
+import { SavedWord } from "../reducers/savedChunks";
 
 import { TextClickStrategy, UnknownWordSelector } from "../TextClickStrategies";
-import { CachedPositions } from "src/ChunkRetriever";
+import { CachedPositions } from "../../src/ChunkRetriever";
 
 interface Props {
   textSourceId: string;

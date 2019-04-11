@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { State, WordAction, SavedWord } from "../store";
+import { State, WordAction } from "../store";
 import { saveWord } from "../actions";
 import {
   ContextSelector,
@@ -10,7 +10,8 @@ import {
 } from "../TextClickStrategies";
 import { NumberedWord } from "../Word";
 import TextSourceAccumulator from "../TextSourceAccumulator";
-import { CachedPositions } from "src/ChunkRetriever";
+import { CachedPositions } from "../../src/ChunkRetriever";
+import { SavedWord } from "../reducers/savedChunks";
 
 type Props = PropsFromState & PropsFromDispatch & PropsFromOutside;
 

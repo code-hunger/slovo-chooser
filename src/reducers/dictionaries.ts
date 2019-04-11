@@ -1,6 +1,6 @@
 import { getType } from "typesafe-actions";
 import * as actions from "../actions";
-import { WordAction } from "src/store";
+import { WordAction } from "../../src/store";
 
 export interface DictionaryStore {
   current: string;

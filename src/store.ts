@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers, Reducer } from "redux";
 import update from "immutability-helper";
 import { NumberedWord } from "./Word";
 import { CachedPositions } from "./ChunkRetriever";
@@ -12,8 +12,6 @@ import {
 } from "./reducers/savedChunks";
 import { CardState, cardStateReducer } from "./reducers/cardState";
 
-export { SavedWord, SavedChunks };
-export { ContextBoundaries } from "./reducers/cardState";
 import { dictionaryReducer } from "./reducers/dictionaries";
 
 import { ActionType, StateType, getType } from "typesafe-actions";
@@ -23,7 +21,10 @@ const emptyStrArr: string[] = [];
 
 export type WordAction = ActionType<typeof actions>;
 
-function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
+const textWordsReducer: Reducer<NumberedWord[], WordAction> = (
+  words: NumberedWord[] = [],
+  action: WordAction
+) => {
   switch (action.type) {
     case getType(actions.setText):
       const newWords = action.payload.text.substr(0, 1000).split(/[\s—–]+/gu);
@@ -48,7 +49,7 @@ function textWordsReducer(words: NumberedWord[] = [], action: WordAction) {
     default:
       return words;
   }
-}
+};
 
 function savedWordsReducer(savedWords: string[] = [], action: WordAction) {
   switch (action.type) {
@@ -101,7 +102,7 @@ function localTextSourcesReducer(
   }
 }
 
-export interface LocalTextSource extends TextSource<string> {
+export interface LocalTextSource extends TextSource {
   chunks: string;
   origin: "local";
 }
@@ -121,7 +122,7 @@ export const reducers = combineReducers({
 
 export type State = StateType<typeof reducers>;
 
-export interface PersistedTextSource extends TextSource<string> {
+export interface PersistedTextSource extends TextSource {
   value: string; // stores the value by which from the TextSource a line can be retrieved
   chunkId: number;
 }

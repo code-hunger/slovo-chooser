@@ -18,13 +18,13 @@ import {
   getSourcePreview
 } from "../ChunkRetriever";
 
-import TextSourceChooser from "./TextSourceChooser";
+import TextSourceChooser, { TextSource } from "./TextSourceChooser";
 import { NumberedWord } from "../Word";
 import TextSourceAccumulator from "./TextSourceAccumulator";
 import SavedWordsContainer from "../SavedWordsContainer";
 
 import { PersistedTextSource, LocalTextSource } from "../store";
-import TextSourcePreviewer from "src/TextSourcePreview";
+import TextSourcePreviewer from "../TextSourcePreview";
 
 type Props = AppProps & WithStyles<typeof styles>;
 

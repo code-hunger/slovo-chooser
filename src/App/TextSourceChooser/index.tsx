@@ -14,6 +14,7 @@ import Typography from "@material-ui/core/Typography";
 
 import { sourceFetchers } from "../../ChunkRetriever";
 import TextAdder from "../TextAdder";
+import { PersistedTextSource } from "../../store";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -26,34 +27,30 @@ const styles = (theme: Theme) =>
     }
   });
 
-export interface TextSource<IdType> {
-  id: IdType;
+export interface TextSource {
+  id: string;
   description: string;
   chunkId?: number;
   origin: keyof (typeof sourceFetchers);
 }
 
-interface Props<IdType, SourceT extends TextSource<IdType>> {
-  textSources: Map<string, SourceT>;
-  setTextSource: (id: IdType) => void;
-  currentSourceId?: IdType;
-  removeTextSource: (id: IdType) => false | (() => void);
+interface Props {
+  textSources: Map<string, PersistedTextSource>;
+  setTextSource: (id: string) => void;
+  currentSourceId?: string;
+  removeTextSource: (id: string) => false | (() => void);
 }
 
-type PropsWithStyles<T, U extends TextSource<T>> = Props<T, U> &
-  WithStyles<typeof styles>;
+type PropsWithStyles = Props & WithStyles<typeof styles>;
 
 interface State {
   collapsed: boolean;
 }
 
-class TextSourceChooser<
-  IdType,
-  SourceT extends TextSource<IdType>
-> extends React.PureComponent<PropsWithStyles<IdType, SourceT>, State> {
+class TextSourceChooser extends React.PureComponent<PropsWithStyles, State> {
   state = { collapsed: false };
 
-  renderTextSourceItem = ({ id, description, chunkId }: TextSource<IdType>) => {
+  renderTextSourceItem = ({ id, description, chunkId }: TextSource) => {
     const classes = this.props.classes;
     const isCurrent = id === this.props.currentSourceId;
     const textSourceRemover = this.props.removeTextSource(id);

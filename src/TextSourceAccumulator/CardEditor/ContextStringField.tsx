@@ -1,5 +1,6 @@
 import * as React from "react";
-import { WordAction, State, ContextBoundaries } from "../../store";
+import { WordAction, State } from "../../store";
+import { ContextBoundaries } from "../../reducers/cardState";
 import { connect } from "react-redux";
 import { Word, NumberedWord } from "../../Word";
 
