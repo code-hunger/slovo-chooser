@@ -14,22 +14,20 @@ interface Props {
 }
 
 interface State {
+  id: string;
+  value: string;
   isOpen: boolean;
 }
 
 export default class TextAdder extends React.PureComponent<Props, State> {
-  private textField: { value: string } | null;
-  private textIdField: { value: string } | null;
-
-  state = { isOpen: false };
+  state = { id: "", value: "", isOpen: false };
 
   onDone = () => {
-    if (this.textField === null || this.textIdField === null) return;
+    if (!this.isValid()) return;
 
-    this.props.onDone(
-      this.textIdField.value || "Unnamed text source",
-      this.textField.value
-    );
+    this.props.onDone(this.state.id, this.state.value);
+    this.setState({ id: "", value: "" });
+
     this.handleClose();
   };
 
@@ -41,13 +39,19 @@ export default class TextAdder extends React.PureComponent<Props, State> {
     this.setState({ isOpen: false });
   };
 
-  inputRef = (el: { value: string; name: "text" | "textId" } | null) => {
-    if (el !== null) {
-      this[el.name + "Field"] = el; // I acknowledge it's an awful code style, but it's completely type-safe and it's cool
-    } else {
-      this.textField = null;
-      this.textIdField = null;
+  onChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    switch (e.target.name) {
+      case "text":
+        this.setState({ value: e.target.value });
+        break;
+      case "textId":
+        this.setState({ id: e.target.value });
+        break;
     }
+  };
+
+  isValid = () => {
+    return this.state.id.length > 1 && this.state.value.length > 10;
   };
 
   render() {
@@ -76,19 +80,21 @@ export default class TextAdder extends React.PureComponent<Props, State> {
               id="name"
               label="Text source name"
               type="text"
+              onChange={this.onChange}
               name="textId"
-              inputRef={this.inputRef}
+              value={this.state.id}
             />
             <TextField
+              onChange={this.onChange}
               name="text"
-              inputRef={this.inputRef}
+              value={this.state.value}
               label="Enter text source content here"
               multiline
               fullWidth
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.onDone} color="primary">
+            <Button onClick={this.onDone} color="primary" disabled={!this.isValid()}>
               Add text source
             </Button>
             <Button
