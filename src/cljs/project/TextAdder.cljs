@@ -19,56 +19,56 @@
 (defn valid? [nname content]
   (and (< 1 (.-length nname)) (< 10 (.-length content))))
 
-(def TextAdder2
+(def default-state {:is-open false
+                    :text-name ""
+                    :text-content ""})
+
+(def TextAdder
   (r/create-class
     {:display-name 'TextAdder2
      :reagent-render
      (fn [props]
-       (r/with-let [state (r/atom {:is-open false
-                                   :text-name ""
-                                   :text-content ""})]
-         (js/console.log "Rerender! State is: 0 " (:is-open @state))
+       (r/with-let [state (r/atom default-state)]
+         (js/console.log "Rerender! State is: -5 " (:is-open @state))
          [:div
           [Button
            {:onClick #(swap! state update-in [:is-open] not)
             :variant 'outlined
             :color 'primary}
            (str "Add a new text source 1")]
+
           [Dialog
            {:open (or (:is-open @state) (:autoOpen props))
             :onClose #(swap! state assoc :is-open false)
             :aria-labelledby "form-dialog-title"
             :fullWidth true }
+
            [DialogTitle { :id "form-dialog-title" } "Add a new text sourse!"]
+
            [DialogContent
-            [TextField {:id "name"
-                        :margin "dense"
+            [TextField {:name 'textId
                         :label "Text sourse name"
-                        :type "text"
-                        :onChange #(swap! state assoc :text-name (.-value (.-target %)))
-                        :name "textId"
                         :value (:text-name @state)
+                        :onChange #(swap! state assoc :text-name (.-value (.-target %)))
+                        :margin 'dense
                         :autoFocus true}]
-            [TextField {:name "text"
-                        :value (:text-content @state)
+            [TextField {:name 'text
                         :label "Enter text source content here"
-                        :onChange #(swap! state assoc :text-content (.-value (.-target %)))                         :multiline true
+                        :value (:text-content @state)
+                        :onChange #(swap! state assoc :text-content (.-value (.-target %)))
+                        :multiline true
                         :fullWidth true}]]
+
            [DialogActions
             [Button {:onClick (fn []
                                 (let [nname (:text-name @state)
                                       content (:text-content @state)]
-                                  (if (valid? nname content)
-                                    (do
-                                      ((:onDone props) nname content)
-                                      (reset! state {:is-open false
-                                                     :text-name ""
-                                                     :text-content ""})))))
-                     :color "primary"
-                     :disabled (not (valid? (:text-name @state) (:text-content @state)))}
+                                  ((:onDone props) nname content)
+                                  (reset! state default-state)))
+                     :disabled (not (valid? (:text-name @state) (:text-content @state)))
+                     :color 'primary}
              "Add text sourse"]
             [Button {:onClick #(swap! state assoc :is-open false)
-                     :color "secondary"
-                     :disabled (:autoOpen props)}
-             "Cancel"]]
-           ]]))}))
+                     :disabled (:autoOpen props)
+                     :color 'secondary}
+             "Cancel"]]]]))}))
