@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 
 import { State, LocalTextSource } from "../store";
 import { addLocalTextSource } from "../actions";
-import TextAdder from "../TextAdder";
+import { TextAdder } from "shadow-cljs/project.TextAdder";
 
 interface DispatchProps {
   onDone: (id: string, text: string) => void;
