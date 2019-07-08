@@ -29,19 +29,16 @@
      :reagent-render
      (fn [props]
        (r/with-let [state (r/atom default-state)]
-         (js/console.log "Rerender! State is: -5 " (:is-open @state))
          [:div
-          [Button
-           {:onClick #(swap! state update-in [:is-open] not)
-            :variant 'outlined
-            :color 'primary}
-           (str "Add a new text source 1")]
+          [Button {:onClick #(swap! state assoc :is-open true)
+                   :variant 'outlined
+                   :color 'primary}
+           (str "Add a new text source")]
 
-          [Dialog
-           {:open (or (:is-open @state) (:autoOpen props))
-            :onClose #(swap! state assoc :is-open false)
-            :aria-labelledby "form-dialog-title"
-            :fullWidth true }
+          [Dialog {:open (or (:is-open @state) (:autoOpen props))
+                   :onClose #(swap! state assoc :is-open false)
+                   :aria-labelledby "form-dialog-title"
+                   :fullWidth true }
 
            [DialogTitle { :id "form-dialog-title" } "Add a new text sourse!"]
 
