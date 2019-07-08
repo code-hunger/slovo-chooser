@@ -3,10 +3,10 @@
             [project.TEKeyboardHandler :refer (handler)]))
 
 (defn KeyboardSelectableContainer
-  [{:keys [elementCount onSelectElement children]} children2]
+  [{:keys [elementCount onSelectElement]} children]
   (r/with-let [value (r/atom 0)]
     [:div 
      {:style {:position 'relative}
       :on-key-down #(swap! value handler elementCount % onSelectElement)}
-     (if (> @value 0) [:div#wordNumberTyped "Typing: " @value])
-     (or children children2)]))
+     (if (pos? @value) [:div#wordNumberTyped "Typing: " @value])
+     children]))
