@@ -1,6 +1,10 @@
 import * as React from "react";
 import { State } from "../store";
-import { SavedWord, SavedChunksInSource, SavedChunks } from "../reducers/savedChunks";
+import {
+  SavedWord,
+  SavedChunksInSource,
+  SavedChunks
+} from "../reducers/savedChunks";
 import { connect } from "react-redux";
 import { NumberedWord } from "..//Word";
 
@@ -9,6 +13,7 @@ import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -28,7 +33,7 @@ export const NoWordsTable = withStyles({
 })((props: any) => (
   <TableBody>
     <TableRow>
-      <TableCell colSpan={2} classes={props.classes}>
+      <TableCell colSpan={3} classes={props.classes}>
         No words added yet
       </TableCell>
     </TableRow>
@@ -89,6 +94,14 @@ class SavedWordsContainer extends React.PureComponent<
       <TableRow key={word.word}>
         <TableCell classes={this.props.classes}>{word.word}</TableCell>
         <TableCell>{word.meaning}</TableCell>
+        <TableCell padding="dense">
+          <IconButton aria-label="Edit">
+            <EditIcon />
+          </IconButton>
+          <IconButton aria-label="Delete">
+            <DeleteIcon />
+          </IconButton>
+        </TableCell>
       </TableRow>
     );
   };
@@ -104,7 +117,7 @@ class SavedWordsContainer extends React.PureComponent<
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell colSpan={2} classes={this.props.classes}>
+            <TableCell colSpan={3} classes={this.props.classes}>
               <Typography variant="headline">Recently added words</Typography>
             </TableCell>
           </TableRow>
