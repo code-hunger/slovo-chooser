@@ -11,10 +11,12 @@ export interface SavedWord {
   readonly context: string;
 }
 
-export interface SavedChunks {
-  [textSourceId: string]: {
+export interface SavedChunk {
     [chunkId: number]: SavedWord[];
-  };
+}
+
+export interface SavedChunks {
+  [textSourceId: string]: SavedChunk;
 }
 
 function saveWord(
