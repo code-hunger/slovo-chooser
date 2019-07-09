@@ -21,11 +21,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 
-import { reverse, isUndefined, flattenDeep, flatMap, values } from "lodash";
+import { reverse, isUndefined, keys, flatMap, takeRight } from "lodash";
 
 export const NoWordsTable = withStyles({
   root: { textAlign: "center", fontStyle: "italic" }
-})((props : any) => (
+})((props: any) => (
   <TableBody>
     <TableRow>
       <TableCell colSpan={2} classes={props.classes}>
@@ -51,6 +51,15 @@ const wordCellStyles = createStyles({
 
 type StyledProps = Props & WithStyles<typeof wordCellStyles>;
 
+const getLastWords = (allWords: SavedChunks, count, sourceId): SavedWord[] => {
+  const currentChunks = allWords[sourceId];
+  if (!currentChunks) return [];
+
+  // The last N words can be found in at most the last N chunks
+  const lastNkeys = takeRight(keys(currentChunks).sort(), count);
+  return takeRight(flatMap(lastNkeys, key => currentChunks[key]), count);
+};
+
 class SavedWordsContainer extends React.PureComponent<
   StyledProps,
   { words: SavedWord[] }
@@ -65,10 +74,11 @@ class SavedWordsContainer extends React.PureComponent<
     ) {
       this.setState({
         words: reverse(
-          (isUndefined(nextProps.textSourceId)
-            ? flattenDeep(flatMap(nextProps.savedChunks).map(values))
-            : flatMap(nextProps.savedChunks[nextProps.textSourceId])
-          ).slice(-nextProps.maxRows)
+          getLastWords(
+            nextProps.savedChunks,
+            nextProps.maxRows,
+            nextProps.textSourceId
+          )
         )
       });
     }
