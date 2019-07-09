@@ -12,7 +12,7 @@ export interface SavedWord {
 }
 
 export interface SavedChunksInSource {
-    [chunkId: number]: SavedWord[];
+  [chunkId: number]: SavedWord[];
 }
 
 export interface SavedChunks {
@@ -20,34 +20,34 @@ export interface SavedChunks {
 }
 
 function saveWord(
-  savedChunks: SavedChunks,
+  savedChunksInSource: SavedChunksInSource,
   sourceId: string,
   chunkId: number,
   obj: SavedWord
 ) {
-  if (isUndefined(savedChunks[sourceId]))
-    return update(savedChunks, {
+  if (isUndefined(savedChunksInSource))
+    return {
       $merge: {
         [sourceId]: { [chunkId]: [obj] }
       }
-    });
+    };
 
-  if (isUndefined(savedChunks[sourceId][chunkId]))
-    return update(savedChunks, {
+  if (isUndefined(savedChunksInSource[chunkId]))
+    return {
       [sourceId]: {
         $merge: {
           [chunkId]: [obj]
         }
       }
-    });
+    };
 
-  return update(savedChunks, {
+  return {
     [sourceId]: {
       [chunkId]: {
         $push: [obj]
       }
     }
-  } as any);
+  };
 }
 
 export function savedChunksReducer(
@@ -56,11 +56,14 @@ export function savedChunksReducer(
 ) {
   switch (action.type) {
     case getType(actions.saveWord):
-      return saveWord(
+      return update(
         savedChunks,
-        action.payload.textSourceId,
-        action.payload.chunkId,
-        action.payload.obj
+        saveWord(
+          savedChunks[action.payload.textSourceId],
+          action.payload.textSourceId,
+          action.payload.chunkId,
+          action.payload.obj
+        )
       );
     case getType(actions.removeLocalTextSource):
       return update(savedChunks, {
