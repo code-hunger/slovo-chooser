@@ -1,6 +1,6 @@
 import * as React from "react";
 import { State } from "../store";
-import { SavedWord, SavedChunk, SavedChunks } from "../reducers/savedChunks";
+import { SavedWord, SavedChunksInSource, SavedChunks } from "../reducers/savedChunks";
 import { connect } from "react-redux";
 import { NumberedWord } from "..//Word";
 
@@ -52,7 +52,7 @@ const wordCellStyles = createStyles({
 type StyledProps = Props & WithStyles<typeof wordCellStyles>;
 
 const getLastWords = (allWords: SavedChunks, count, sourceId): SavedWord[] => {
-  const currentChunks : SavedChunk = allWords[sourceId];
+  const currentChunks: SavedChunksInSource = allWords[sourceId];
   if (!currentChunks) return [];
 
   // The last N words can be found in at most the last N chunks
