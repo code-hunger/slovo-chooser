@@ -17,7 +17,7 @@ import { dictionaryReducer } from "./reducers/dictionaries";
 import { ActionType, StateType, getType } from "typesafe-actions";
 import * as actions from "./actions";
 
-const emptyStrArr: string[] = [];
+const emptyArr = [];
 
 export type WordAction = ActionType<typeof actions>;
 
@@ -34,7 +34,7 @@ const textWordsReducer: Reducer<NumberedWord[], WordAction> = (
         .map((word, index) => ({
           index,
           word,
-          classNames: emptyStrArr
+          classNames: emptyArr
         }))
         .value();
     case getType(actions.wordClicked):

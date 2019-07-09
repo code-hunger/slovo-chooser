@@ -3,29 +3,29 @@ import { setText, saveWord, wordClicked, toggleEditedUnknownWord, toggleEditedUn
 import { getType } from "typesafe-actions";
 import { without, isUndefined } from "lodash";
 
-const emptyNumArr: number[] = [];
+const emptyArr = [];
 
 export interface WordState {
   marked: number[];
   editedMarked: number[];
 }
 
-function markedWordsReducer(state: number[] = emptyNumArr, action: WordAction) {
+function markedWordsReducer(state: number[] = emptyArr, action: WordAction) {
   switch (action.type) {
     case getType(wordClicked):
       if (state.indexOf(action.payload) > -1) return without(state, action.payload);
       return state.concat(action.payload).sort((a, b) => a - b);
     case getType(setText):
-      return emptyNumArr;
+      return emptyArr;
     default:
       return state;
   }
 }
 
 function editedMarkedReducer(
-  editedMarked: number[] = emptyNumArr,
+  editedMarked: number[] = emptyArr,
   action: WordAction,
-  marked: number[] = emptyNumArr
+  marked: number[] = emptyArr
 ) {
   switch (action.type) {
     case getType(toggleEditedUnknownWord):
@@ -40,7 +40,7 @@ function editedMarkedReducer(
       return without(editedMarked, action.payload);
     case getType(saveWord):
     case getType(setText):
-      return emptyNumArr;
+      return emptyArr;
     default:
       return editedMarked;
   }
