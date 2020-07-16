@@ -14,7 +14,7 @@
     "codacy-coverage": "^3.4.0",
     "create-react-class": "^15.6.3",
     "immutability-helper": "^2.9.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "monet": "^0.9.0",
