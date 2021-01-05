@@ -10,7 +10,7 @@
     "@material-ui/icons": "^3.0.0",
     "@types/lodash": "^4.14.136",
     "@types/prop-types": "^15.7.1",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "codacy-coverage": "^3.4.0",
     "create-react-class": "^15.6.3",
     "immutability-helper": "^2.9.1",
